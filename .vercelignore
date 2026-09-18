@@ -1,0 +1,6 @@
+.git
+.github
+tests
+scratch
+.env
+.env.example
