@@ -1,0 +1,14 @@
+{
+    "The email has already been taken.": "Alamat email ini sudah terdaftar. Silakan gunakan email lain atau masuk ke akun Anda.",
+    "The password field is required.": "Kata sandi wajib diisi.",
+    "The email field is required.": "Alamat email wajib diisi.",
+    "The name field is required.": "Nama lengkap wajib diisi.",
+    "These credentials do not match our records.": "Email atau kata sandi yang Anda masukkan salah.",
+    "Too many login attempts. Please try again in :seconds seconds.": "Terlalu banyak percobaan masuk. Silakan coba lagi dalam :seconds detik.",
+    "The provided password is incorrect.": "Kata sandi yang dimasukkan salah.",
+    "Please wait before retrying.": "Harap tunggu sebelum mencoba kembali.",
+    "We have emailed your password reset link.": "Kami telah mengirimkan tautan reset kata sandi ke email Anda.",
+    "This password reset token is invalid.": "Token reset kata sandi ini tidak valid.",
+    "We can't find a user with that email address.": "Kami tidak dapat menemukan pengguna dengan alamat email tersebut.",
+    "Your password has been reset.": "Kata sandi Anda telah berhasil direset."
+}
