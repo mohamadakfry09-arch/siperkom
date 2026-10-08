@@ -1,58 +1,121 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# SIPERKOM (Sistem Informasi Pelayanan Pengaduan Komunikasi)
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="public/images/logo-cirebon.png" alt="SIPERKOM Logo" width="120" onerror="this.style.display='none'"/>
 </p>
 
-## About Laravel
+<p align="center">
+  <strong>Sistem Informasi Pelaporan & Penanganan Gangguan Infrastruktur Komunikasi</strong><br>
+  Dinas Komunikasi dan Informatika (Diskominfo) Kabupaten Cirebon
+</p>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+<p align="center">
+  <a href="https://laravel.com"><img src="https://img.shields.io/badge/Laravel-11%2B-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel"></a>
+  <a href="https://php.net"><img src="https://img.shields.io/badge/PHP-8.2%2B-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP"></a>
+  <a href="https://tailwindcss.com"><img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS"></a>
+  <a href="https://vercel.com"><img src="https://img.shields.io/badge/Deploy-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel"></a>
+</p>
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 🌐 Live Demo & Deployment
 
-## Learning Laravel
+Aplikasi ini dapat diakses secara online:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- 🔗 **Live Demo URL:** `https://siperkom.vercel.app` *(atau URL Vercel/Hosting Anda)*
+- 📦 **Repository GitHub:** [https://github.com/nifaryngoding-beep/SIPERKOM](https://github.com/nifaryngoding-beep/SIPERKOM)
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## 📌 Ringkasan Sistem (UI / UX Showcase)
 
-## Agentic Development
+SIPERKOM dirancang dengan antarmuka modern, responsif (mendukung desktop & mobile), serta alur kerja yang intuitif untuk mempermudah pelaporan dan penanganan insiden infrastruktur komunikasi.
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### 🌟 Fitur Utama
 
+#### 1. 👥 Portal Publik & Pelapor (Desa / Instansi)
+- **Landing Page Modern:** Pengenalan layanan, statistik laporan real-time, dan cek status tiket pengaduan secara instan tanpa login.
+- **Login & Register Khusus Pelapor:** Autentikasi mandiri untuk perwakilan desa / instansi.
+- **Dashboard Pelapor Mobile-Friendly:** Dilengkapi bottom navigation bar ala native mobile app untuk kemudahan akses dari smartphone.
+- **Formulir Pengaduan Cepat:** Input judul, kategori masalah, deskripsi, lokasi, serta unggah bukti foto kendala.
+- **Tracking & Riwayat Antrean:** Memantau progres penanganan secara transparan (*Menunggu*, *Diproses*, *Selesai*).
+- **Profil & Manajemen Akun:** Pengelolaan data kontak dan instansi pelapor.
+
+#### 2. 🛡️ Portal Administrator & Teknisi
+- **Dashboard Analitik & Statistik:** Kartu metrik jumlah aduan, grafik persentase penyelesaian, dan notifikasi insiden mendesak.
+- **Manajemen Antrean & Disposisi:** Penugasan teknisi lapangan dan pembaruan status pengerjaan secara real-time.
+- **Rekap & Laporan:** Filter data berdasarkan bulan/tahun, ekspor laporan, dan dokumentasi penyelesaian.
+- **Manajemen Pengguna & Hak Akses:** Pengaturan akun admin, teknisi, dan pelapor desa.
+
+---
+
+## 🚀 Cara Menghubungkan Live Demo ke GitHub
+
+Jika Anda ingin mengaktifkan Live Demo via **Vercel** secara otomatis dari repository ini:
+
+1. Kunjungi [Vercel](https://vercel.com) dan login menggunakan akun GitHub Anda.
+2. Klik tombol **"Add New..."** ➔ **"Project"**.
+3. Pilih repository **`nifaryngoding-beep/SIPERKOM`** lalu klik **Import**.
+4. Pada bagian **Environment Variables**, tambahkan konfigurasi dasar:
+   - `APP_NAME` : `SIPERKOM`
+   - `APP_ENV` : `production`
+   - `APP_KEY` : *(Salin dari file `.env` lokal Anda)*
+   - `APP_URL` : *(URL Vercel yang dihasilkan)*
+5. Klik **Deploy**.
+6. Salin domain yang didapat (misal `https://siperkom.vercel.app`), lalu di halaman repository GitHub:
+   - Klik ikon gerigi **⚙️ (Edit repository details)** di kanan atas.
+   - Masukkan link tersebut ke kolom **Website**.
+   - Simpan (*Save changes*). Link Live Demo akan otomatis muncul di bagian teratas repository GitHub!
+
+---
+
+## 💻 Panduan Instalasi Lokal
+
+Jika ingin menjalankan aplikasi ini di komputer lokal:
+
+### 1. Clone Repository
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone https://github.com/nifaryngoding-beep/SIPERKOM.git
+cd SIPERKOM
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### 2. Instal Dependensi
+```bash
+composer install
+npm install
+```
 
-## Contributing
+### 3. Konfigurasi Environment
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+Sesuaikan konfigurasi database di file `.env`:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=siperkom
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 4. Migrasi & Seeder Database
+```bash
+php artisan migrate --seed
+```
 
-## Code of Conduct
+### 5. Jalankan Server Lokal
+```bash
+# Terminal 1 (Laravel Server)
+php artisan serve
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# Terminal 2 (Vite Asset Bundler)
+npm run dev
+```
+Akses aplikasi melalui browser di `http://127.0.0.1:8000`.
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 📄 Lisensi
+Proyek ini dikembangkan untuk kebutuhan operasional layanan komunikasi dan informatika.
