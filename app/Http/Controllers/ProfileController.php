@@ -28,8 +28,12 @@ class ProfileController extends Controller
      * @param Request $request
      * @return View
      */
-    public function edit(Request $request): View
+    public function edit(Request $request): View|RedirectResponse
     {
+        if (in_array(strtolower($request->user()->role ?? ''), ['admin', 'teknisi'])) {
+            return redirect()->route('admin.profil.edit');
+        }
+
         return view('pelapor.profile.edit', [
             'user' => $request->user(),
         ]);

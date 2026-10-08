@@ -10,7 +10,7 @@
 
     <link rel="icon" href="{{ asset('images/cirebon.png') }}" type="image/png">
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @include('partials.assets')
     @include('partials.session-guard')
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -57,6 +57,41 @@
             border-bottom-left-radius: 0;
         }
 
+        /* Panel Dropdown Notifikasi Responsif */
+        @media (max-width: 639px) {
+            .pelapor-notif-backdrop {
+                position: fixed !important;
+                inset: 0 !important;
+                background-color: rgba(0, 0, 0, 0.35) !important;
+                backdrop-filter: blur(2px) !important;
+                -webkit-backdrop-filter: blur(2px) !important;
+                z-index: 9998 !important;
+            }
+            .pelapor-notif-dropdown {
+                position: fixed !important;
+                top: 56px !important;
+                left: 10px !important;
+                right: 10px !important;
+                width: auto !important;
+                max-width: calc(100vw - 20px) !important;
+                box-sizing: border-box !important;
+                margin: 0 auto !important;
+                z-index: 9999 !important;
+            }
+        }
+        @media (min-width: 640px) {
+            .pelapor-notif-backdrop {
+                display: none !important;
+            }
+            .pelapor-notif-dropdown {
+                position: absolute !important;
+                right: 0 !important;
+                top: calc(100% + 8px) !important;
+                width: 340px !important;
+                z-index: 50 !important;
+            }
+        }
+
         /* Hilangkan scrollbar native */
         .no-scrollbar::-webkit-scrollbar {
             display: none !important;
@@ -68,7 +103,17 @@
             scrollbar-width: none !important;
         }
 
-        @media (min-width: 1024px) {
+        @media (max-width: 767px) {
+            .desktop-layout > aside {
+                display: none !important;
+            }
+        }
+
+        @media (min-width: 768px) {
+            html, body {
+                height: 100% !important;
+                overflow: hidden !important;
+            }
             .mobile-rounded-sidebar {
                 border-top-right-radius: 1.5rem !important;
                 border-bottom-right-radius: 1.5rem !important;
@@ -76,8 +121,45 @@
                 border-bottom-left-radius: 1.5rem !important;
             }
             .desktop-layout {
-                height: 100vh;
-                overflow: hidden;
+                height: 100vh !important;
+                max-height: 100vh !important;
+                height: 100dvh !important;
+                max-height: 100dvh !important;
+                overflow: hidden !important;
+                padding: 0.75rem !important;
+                gap: 0.75rem !important;
+                box-sizing: border-box !important;
+            }
+            .desktop-layout > aside {
+                display: flex !important;
+                width: min(18.5rem, calc(100vw - 1rem)) !important;
+                min-width: min(18.5rem, calc(100vw - 1rem)) !important;
+                max-width: min(18.5rem, calc(100vw - 1rem)) !important;
+                flex-shrink: 0 !important;
+                height: 100% !important;
+                max-height: 100% !important;
+                min-height: 0 !important;
+                position: static !important;
+                top: auto !important;
+                bottom: auto !important;
+                border-radius: 1.5rem !important;
+                box-sizing: border-box !important;
+            }
+            .desktop-layout > aside .pelapor-mobile-actions {
+                position: relative !important;
+                bottom: auto !important;
+                left: auto !important;
+                right: auto !important;
+                margin-top: auto !important;
+            }
+            .desktop-layout > main {
+                min-width: 0 !important;
+                flex: 1 1 0% !important;
+                height: 100% !important;
+                max-height: 100% !important;
+                min-height: 0 !important;
+                border-radius: 1.5rem !important;
+                box-sizing: border-box !important;
             }
         }
 
@@ -96,74 +178,210 @@
             outline-offset: 2px;
         }
 
+        html {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        button, a, input, select, textarea, [role="button"] {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* ============================================================
+           SMOOTH ANIMATION SYSTEM — Semua Elemen Pelapor
+           Menggunakan GPU-accelerated transform & spring cubic-bezier
+        ============================================================ */
+
+        /* --- Global: Semua elemen interaktif pakai GPU layer --- */
+        button, a, input, select, textarea,
+        .card-smooth, [role="button"] {
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            transform: translateZ(0);
+        }
+
+        /* --- Transisi default semua tombol & link --- */
+        button, a, .btn-touch {
+            will-change: transform;
+            transition:
+                transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1),
+                background-color 0.15s ease,
+                border-color 0.15s ease,
+                box-shadow 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+                opacity 0.15s ease,
+                color 0.15s ease;
+        }
+
+        /* --- Tap/press feedback yang fluid --- */
+        button:active:not(:disabled),
+        a:active,
+        .btn-touch:active:not(:disabled) {
+            transform: scale(0.96) translateZ(0);
+            transition: transform 0.08s ease-out;
+        }
+
+        /* --- Kartu statistik & info: hover naik halus --- */
+        .rounded-2xl, .rounded-xl {
+            transition:
+                transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.3s ease,
+                border-color 0.25s ease,
+                background-color 0.25s ease;
+        }
+
+        /* --- Hover naik di kartu statistik --- */
+        a.rounded-2xl:hover, a.rounded-xl:hover {
+            transform: translateY(-2px) translateZ(0);
+            box-shadow: 0 8px 24px rgba(7, 37, 68, 0.12);
+        }
+
+
+        /* === MODAL: Entrance smooth dari bawah === */
+        .modal-enter {
+            animation: modalSlideUp 0.38s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
+        }
+        .modal-leave {
+            animation: modalSlideDown 0.28s cubic-bezier(0.4, 0, 1, 1) forwards;
+        }
+
+        @keyframes modalSlideUp {
+            from { opacity: 0; transform: translateY(24px) scale(0.97); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes modalSlideDown {
+            from { opacity: 1; transform: translateY(0) scale(1); }
+            to   { opacity: 0; transform: translateY(20px) scale(0.97); }
+        }
+
+        /* === NOTIFIKASI DROPDOWN: Smooth scale+fade === */
+        [x-show][x-transition] {
+            transform-origin: top right;
+        }
+
+        /* === TOAST / ALERT: Slide masuk dari kanan === */
+        .toast-enter {
+            animation: toastIn 0.4s cubic-bezier(0.34, 1.4, 0.64, 1) forwards;
+        }
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateX(60px) scale(0.95); }
+            to   { opacity: 1; transform: translateX(0) scale(1); }
+        }
+
+        /* === BADGE & COUNTER: Bounce muncul === */
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        /* === SMOOTH SCROLL untuk konten utama === */
         .scrollable-content {
             -webkit-overflow-scrolling: touch;
-            touch-action: pan-y;
+            scroll-behavior: smooth;
+            min-width: 0;
+        }
+
+        /* === PAGE LOAD: Fade in halus === */
+        @keyframes pageLoad {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+        main.pelapor-main-container {
+            animation: pageLoad 0.35s ease forwards;
+        }
+
+        /* === MENU ITEM SIDEBAR: Hover smooth === */
+        nav a {
+            transition:
+                background-color 0.22s ease,
+                color 0.22s ease,
+                transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+                border-color 0.22s ease !important;
+        }
+        nav a:hover {
+            transform: translateX(3px) translateZ(0);
+        }
+
+        /* === AVATAR/PROFIL CARD: Smooth scale === */
+        .group:hover .group-hover\:scale-105 {
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* === INPUT FOCUS: Smooth border & shadow === */
+        input, select, textarea {
+            transition:
+                border-color 0.22s ease,
+                box-shadow 0.22s ease,
+                background-color 0.22s ease;
+        }
+
+        /* === ICON DALAM TOMBOL: Rotate/scale micro-animation === */
+        button svg, a svg {
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         html.overflow-hidden, body.overflow-hidden {
             overflow: hidden !important;
-            touch-action: none !important;
-            overscroll-behavior: none !important;
             height: 100% !important;
         }
 
-        @media (max-width: 1023px) {
-            .mega-mendung-bg {
-                overscroll-behavior: none !important;
-                touch-action: none !important;
+        /* Reduced motion: hormati preferensi aksesibilitas */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
             }
+        }
     </style>
 </head>
 <body class="antialiased bg-[var(--batik-cream)] text-[var(--ink)]"
     x-data="pelaporApp(window.__initialReports)"
     :class="{ 'overflow-hidden touch-none overscroll-none': reportModalOpen || sidebarOpen }">
 
-    <div class="desktop-layout flex flex-row relative min-h-screen lg:min-h-0 lg:p-3 lg:gap-3 bg-[var(--batik-cream)]">
+    <div class="desktop-layout flex flex-row relative min-h-screen md:min-h-0 md:p-3 md:gap-3 bg-[var(--batik-cream)]">
 
-        <!-- BACKDROP MOBILE -->
-        <div x-show="sidebarOpen"
-            x-cloak
-            x-transition.opacity
-            @click="sidebarOpen = false"
-            @touchmove.prevent
-            @wheel.prevent
-            class="fixed inset-0 bg-black/60 z-40 lg:hidden transition-opacity touch-none overscroll-none">
-        </div>
-
-        <!-- ============ SIDEBAR PELAPOR (SAMA PERSIS DENGAN REKAP & RIWAYAT) ============ -->
-        <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
-            @touchmove.stop.prevent="if (window.innerWidth < 1024) $event.preventDefault()"
-            class="fixed lg:static top-3.5 left-0 z-50 lg:z-auto w-[76vw] max-w-[275px] lg:w-[min(18rem,calc(100vw-1rem))] lg:max-w-none mega-mendung-bg flex flex-col justify-between p-4 sm:p-5 lg:p-6 text-white shrink-0 shadow-2xl transition-transform duration-300 ease-out h-[78vh] max-h-[580px] lg:h-full lg:max-h-none overflow-hidden lg:overflow-y-auto no-scrollbar touch-none lg:touch-auto overscroll-none select-none mobile-rounded-sidebar border-0 outline-none">
+        <!-- ============ SIDEBAR PELAPOR (Hanya Tampil di Desktop / Laptop) ============ -->
+        <aside class="hidden md:flex md:static w-[min(18.5rem,calc(100vw-1rem))] mega-mendung-bg flex-col justify-between p-4 md:p-4.5 text-white shrink-0 shadow-2xl h-full overflow-y-auto no-scrollbar select-none mobile-rounded-sidebar border-0 outline-none">
 
             <!-- BAGIAN ATAS: USER BADGE, MENU -->
             <div class="space-y-3.5 lg:space-y-4">
 
-                <!-- User Profile Card -->
-                <a href="{{ route('pelapor.profile.edit') ?? '#' }}" class="bg-gradient-to-r from-[#0b335c]/85 via-[#0c3966]/80 to-[#072544]/90 border border-blue-300/30 hover:border-blue-400/50 p-3 rounded-2xl flex items-center justify-between transition-all duration-200 group shadow-lg backdrop-blur-sm">
-                    <div class="flex items-center gap-3 min-w-0 flex-1">
-                        <div class="relative shrink-0">
-                            @if(Auth::user()->avatar ?? false)
-                                <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="w-10 h-10 rounded-xl object-cover ring-2 ring-blue-400/60 shadow-md" alt="Avatar">
-                            @else
-                                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 via-indigo-600 to-[#0b335c] text-white font-black flex items-center justify-center text-xs shadow-md ring-1 ring-white/30 tracking-wider">
-                                    {{ strtoupper(substr(Auth::user()->name ?? 'PL', 0, 2)) }}
-                                </div>
-                            @endif
-                        </div>
-                        <div class="min-w-0 flex-1 leading-tight">
-                            <p class="font-bold text-xs lg:text-[13px] text-white leading-snug break-words line-clamp-2" title="{{ Auth::user()->name ?? 'Pelapor' }}">
-                                {{ Auth::user()->name ?? 'Pelapor' }}
-                            </p>
-                            <p class="text-[10.5px] text-blue-200/80 truncate capitalize mt-0.5 flex items-center gap-1">
-                                <svg class="w-3 h-3 text-amber-400/80 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
-                                <span class="truncate">{{ Auth::user()->alamat ?: (Auth::user()->kecamatan ?? 'Kabupaten Cirebon') }}</span>
-                            </p>
+                <!-- User Profile Card (Modern Glassmorphic Style & Interactive) -->
+                <a href="{{ route('pelapor.profile.edit') }}" 
+                   @click="sidebarOpen = false"
+                   class="group relative overflow-hidden bg-gradient-to-r from-white/[0.12] via-[#0c3966]/60 to-white/[0.04] hover:from-white/[0.18] hover:via-[#0c3966]/80 hover:to-white/[0.08] active:scale-[0.98] border border-white/15 hover:border-[var(--keraton-gold)]/70 active:border-[var(--keraton-gold)] p-2.5 sm:p-3 rounded-2xl flex items-center gap-2.5 sm:gap-3 shadow-lg shadow-black/20 backdrop-blur-md transition-all duration-200 cursor-pointer select-none touch-manipulation">
+                    
+                    <!-- Ambient Top Highlight & Soft Glow -->
+                    <div class="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+                    <div class="absolute -right-6 -bottom-6 w-16 h-16 bg-[var(--keraton-gold)]/10 rounded-full blur-xl group-hover:bg-[var(--keraton-gold)]/20 transition-all pointer-events-none"></div>
+
+                    <!-- Avatar with Ring and Live Status Dot -->
+                    <div class="relative shrink-0">
+                        <img src="{{ Auth::user()->avatar_url }}" 
+                             onerror="this.src='{{ asset('images/pelapor-avatar.svg') }}'"
+                             class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl object-cover ring-2 ring-[var(--keraton-gold)]/80 ring-offset-2 ring-offset-[#072544] shadow-md group-hover:scale-105 group-hover:ring-[var(--keraton-gold)] transition-all duration-200" 
+                             alt="Foto Profil">
+                    </div>
+
+                    <!-- User Name & Role Badge -->
+                    <div class="min-w-0 flex-1">
+                        <p class="font-bold text-xs sm:text-[13px] text-white leading-tight tracking-tight truncate group-hover:text-[var(--keraton-gold-soft)] transition-colors" 
+                           title="{{ Auth::user()->name ?? 'Pelapor' }}">
+                            {{ Auth::user()->name ?? 'Pelapor' }}
+                        </p>
+                        <div class="flex items-center gap-1.5 mt-1">
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/10 border border-white/20 text-white/70 text-[10px] font-semibold tracking-wide">
+                                <svg class="w-2.5 h-2.5 shrink-0 text-[var(--keraton-gold-soft)]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                <span>Pelapor</span>
+                            </span>
                         </div>
                     </div>
-                    <svg class="w-4 h-4 text-blue-300/80 group-hover:text-white group-hover:translate-x-0.5 transition shrink-0 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
-                    </svg>
+
+                    <!-- Right Chevron / Action Hint -->
+                    <div class="shrink-0 w-6 h-6 rounded-lg bg-white/5 border border-white/10 group-hover:bg-white/15 group-hover:border-[var(--keraton-gold)]/40 flex items-center justify-center text-white/40 group-hover:text-[var(--keraton-gold-soft)] group-hover:translate-x-0.5 transition-all duration-200">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
                 </a>
 
                 <!-- Navigasi Menu Pelapor -->
@@ -196,47 +414,60 @@
             <!-- BAGIAN BAWAH: TOMBOL PAS DI DASAR -->
             <div class="pelapor-mobile-actions relative z-10 pt-4 pb-1 lg:pt-4 lg:pb-0 space-y-2 lg:space-y-2.5 shrink-0 mt-auto">
                 <!-- Tombol Keluar -->
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" 
-                            class="w-full flex items-center justify-center gap-2 bg-[#7A2331] hover:bg-[#6A1D2A] active:scale-[0.98] text-white py-2.5 rounded-2xl text-xs font-bold transition shadow-md border border-white/10">
-                        <svg class="w-4 h-4 shrink-0 translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                        </svg>
-                        <span class="translate-y-0.5">Keluar</span>
-                    </button>
-                </form>
+                <button type="button" 
+                        @click="openLogoutModal()"
+                        class="w-full flex items-center justify-center gap-2 bg-[#7A2331] hover:bg-[#6A1D2A] active:scale-[0.98] text-white py-2.5 rounded-2xl text-xs font-bold transition shadow-md border border-white/10 cursor-pointer">
+                    <svg class="w-4 h-4 shrink-0 translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                    </svg>
+                    <span class="translate-y-0.5">Keluar</span>
+                </button>
             </div>
         </aside>
 
         <!-- ============ KONTEN UTAMA DASHBOARD ============ -->
-        <main class="flex-1 flex flex-col h-full bg-white lg:rounded-3xl shadow-sm border border-[#E3DCC8] transition-all"
+        <main class="flex-1 flex flex-col h-full bg-white md:rounded-3xl shadow-sm border border-[#E3DCC8] transition-all"
               :class="(sidebarOpen || reportModalOpen) ? 'overflow-hidden pointer-events-none touch-none select-none' : 'overflow-y-auto scrollable-content'">
 
-            <header class="bg-white border-b border-[#E3DCC8] px-3 sm:px-6 py-2.5 sm:py-3.5 sticky top-0 z-20 flex items-center justify-between shadow-2xs gap-2 sm:gap-3 shrink-0 lg:rounded-t-3xl">
-                <div class="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
-                    <button type="button" @click="sidebarOpen = true" aria-label="Buka menu" class="lg:hidden w-9 h-9 rounded-xl bg-[var(--batik-cream)] border border-[#E3DCC8] text-[var(--mm-900)] shrink-0 hover:bg-[#F3EBD8] active:scale-95 transition flex items-center justify-center shadow-2xs">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-                    </button>
+            <header class="bg-white/95 backdrop-blur-md border-b border-[#E3DCC8] px-3.5 sm:px-6 py-2.5 sm:py-3.5 sticky top-0 z-30 flex items-center justify-between shadow-[0_2px_12px_rgba(7,37,68,0.04)] gap-2.5 sm:gap-3 shrink-0 md:rounded-t-3xl relative">
+                <!-- Garis Aksen Emas Halus di Bawah Header -->
+                <div class="absolute bottom-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-[var(--keraton-gold)]/50 to-transparent pointer-events-none"></div>
+
+                <!-- Sisi Kiri: Judul Halaman Bersih & Ringkas -->
+                <div class="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
                     <div class="min-w-0">
-                        <h2 class="font-display font-bold text-xs sm:text-sm text-[var(--mm-900)] truncate">Dashboard Pelapor</h2>
-                        <p class="text-[9px] text-gray-500 truncate sm:hidden font-medium">{{ Auth::user()->alamat ?: (Auth::user()->kecamatan ?? 'Kabupaten Cirebon') }}</p>
+                        <h2 class="font-display font-bold text-sm sm:text-base text-[var(--mm-900)] tracking-tight truncate">
+                            Dashboard Pelapor
+                        </h2>
+                        <p class="text-[10px] sm:text-xs text-gray-500 font-medium truncate">
+                            SIPERKOM Kabupaten Cirebon
+                        </p>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-2 sm:gap-3 shrink-0">
                     <!-- Notifikasi Lonceng Pelapor (Selesai, Ditolak, & Menunggu Part) -->
                     <div class="relative" x-data="{ notifOpen: false }">
+                        <!-- Backdrop Mobile -->
+                        <div x-show="notifOpen" x-cloak @click="notifOpen = false" 
+                             class="pelapor-notif-backdrop"
+                             x-transition:enter="transition ease-out duration-150"
+                             x-transition:enter-start="opacity-0"
+                             x-transition:enter-end="opacity-100"
+                             x-transition:leave="transition ease-in duration-100"
+                             x-transition:leave-start="opacity-100"
+                             x-transition:leave-end="opacity-0"></div>
+
                         <button type="button" @click="notifOpen = !notifOpen" 
-                                class="relative w-9 h-9 rounded-xl bg-[var(--batik-cream)] border border-[#E3DCC8] hover:bg-[#F3EBD8] active:scale-95 transition cursor-pointer text-[var(--mm-900)] flex items-center justify-center shadow-2xs" 
+                                class="relative w-10 h-10 sm:w-10.5 sm:h-10.5 rounded-2xl bg-gradient-to-b from-white to-[var(--batik-cream)] border border-[#E3DCC8] hover:border-[var(--keraton-gold)] active:scale-95 transition-all duration-200 cursor-pointer text-[var(--mm-900)] flex items-center justify-center shadow-xs hover:shadow shrink-0" 
                                 aria-label="Notifikasi Status Laporan" title="Notifikasi Status Laporan">
-                            <svg class="w-5 h-5 text-[var(--mm-800)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                            <svg class="w-5 h-5 text-[var(--mm-900)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                             </svg>
                             
                             <!-- Counter Badge -->
                             <span x-show="notifReports.length > 0" x-cloak 
-                                  class="absolute -top-1 -right-1 bg-[var(--keraton-maroon)] text-white text-[9px] font-bold min-w-[16px] h-[16px] px-0.5 rounded-full flex items-center justify-center shadow-sm animate-pulse border border-white" 
+                                  class="absolute -top-1 -right-1 bg-gradient-to-r from-rose-600 to-[#7A2331] text-white text-[9px] font-extrabold min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center shadow-md border-2 border-white animate-pulse" 
                                   x-text="notifReports.length"></span>
                         </button>
                         
@@ -248,7 +479,7 @@
                              x-transition:leave="transition ease-in duration-100" 
                              x-transition:leave-start="opacity-100 translate-y-0 scale-100" 
                              x-transition:leave-end="opacity-0 translate-y-1 scale-95" 
-                             class="absolute right-[-15px] sm:right-0 top-full mt-2 w-[290px] max-w-[calc(100vw-2rem)] sm:w-[330px] bg-white border border-[#E3DCC8] rounded-2xl shadow-xl z-50 overflow-hidden text-left flex flex-col max-h-[75vh] sm:max-h-[460px]">
+                             class="pelapor-notif-dropdown bg-white border border-[#E3DCC8] rounded-2xl shadow-2xl overflow-hidden text-left flex flex-col max-h-[75vh] sm:max-h-[460px]">
                             
                             <!-- Header Dropdown Rapi & Elegan Sesuai Referensi -->
                             <div class="px-3.5 py-2.5 border-b border-[#E3DCC8] bg-[var(--batik-cream)] flex justify-between items-center shrink-0">
@@ -376,47 +607,62 @@
                         </div>
                     </div>
 
-                    <div class="w-[78px] shrink-0 border-l border-[#E3DCC8] pl-2 sm:w-auto sm:pl-3 text-right">
-                        <p class="text-[10px] font-bold leading-tight whitespace-nowrap sm:text-xs text-[var(--mm-900)]">{{ date('d M Y') }}</p>
-                        <p class="text-[8px] leading-tight sm:text-[10px] text-gray-500">Kabupaten Cirebon</p>
+                    <!-- Tanggal (Hanya tampil di sm ke atas / tablet & desktop agar header mobile lega dan lapang) -->
+                    <div class="hidden sm:block border-l border-[#E3DCC8] pl-3 text-right">
+                        <p class="text-xs font-bold leading-tight whitespace-nowrap text-[var(--mm-900)]">{{ date('d M Y') }}</p>
+                        <p class="text-[10px] leading-tight text-gray-500">Kabupaten Cirebon</p>
                     </div>
+
+                    <!-- Tombol Keluar Cepat Mobile di Header (Elegan Keraton Maroon) -->
+                    <button type="button" 
+                            @click="openLogoutModal()"
+                            class="w-10 h-10 sm:w-10.5 sm:h-10.5 rounded-2xl bg-gradient-to-b from-rose-50/90 to-rose-100/90 border border-rose-200/90 hover:border-rose-300 active:scale-95 text-[#7A2331] flex items-center justify-center shadow-xs hover:shadow active:bg-rose-200 transition-all duration-200 cursor-pointer md:hidden shrink-0" 
+                            title="Keluar dari Akun" aria-label="Keluar dari Akun">
+                        <svg class="w-5 h-5 text-[#7A2331]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                        </svg>
+                    </button>
                 </div>
             </header>
 
-            <div class="p-3 sm:p-6 lg:p-8 space-y-3.5 sm:space-y-5 flex-1 pb-8">
+            <div class="p-3 sm:p-6 lg:p-8 space-y-3.5 sm:space-y-5 flex-1 lg:pb-8">
 
-                <!-- BANNER SELAMAT DATANG -->
-                <div class="mega-mendung-bg p-3.5 sm:p-6 rounded-2xl shadow-md text-white flex flex-col md:flex-row justify-between items-start md:items-center gap-3 sm:gap-4 relative overflow-hidden">
-                    <div class="space-y-1 relative z-10 min-w-0">
-                        <div class="inline-flex items-center gap-1.5 bg-white/10 border border-white/20 px-2.5 py-0.5 rounded-full text-[9px] sm:text-[11px] text-[var(--keraton-gold-soft)] font-semibold backdrop-blur-xs">
+                <!-- BANNER SELAMAT DATANG MEGA MENDUNG PELAPOR -->
+                <div class="mega-mendung-bg p-3.5 sm:p-6 lg:p-8 rounded-2xl shadow-md text-white flex flex-col md:flex-row justify-between items-start md:items-center gap-3 sm:gap-4 relative overflow-hidden border border-[var(--mm-600)]">
+                    <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+
+                    <!-- KIRI: Identitas & Teks Selamat Datang -->
+                    <div class="space-y-1 sm:space-y-1.5 relative z-10 min-w-0">
+                        <div class="inline-flex items-center gap-1.5 bg-white/15 border border-white/20 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[9px] sm:text-[11px] text-[var(--keraton-gold-soft)] font-semibold backdrop-blur-sm">
                             <span class="w-1.5 h-1.5 rounded-full bg-[var(--keraton-gold)] shrink-0"></span>
-                            <span>Portal Resmi SIPERKOM</span>
+                            <span>🏛️ Portal Resmi SIPERKOM</span>
                         </div>
                         <h2 class="font-display text-lg sm:text-2xl lg:text-3xl font-extrabold tracking-tight break-words">
                             Selamat Datang, {{ Auth::user()->name ?? 'Pelapor' }}!
                         </h2>
                         <p class="text-[10.5px] sm:text-sm text-[var(--mm-200)] max-w-xl leading-relaxed">
-                            Layanan terpadu perbaikan fasilitas komputer & printer di lingkungan Pemerintah Kabupaten Cirebon.
+                            Layanan terpadu aduan dan perbaikan fasilitas komputer &amp; printer Pemkab Cirebon.
                         </p>
                     </div>
 
+                    <!-- KANAN: Tombol Buat Laporan (Persis Sejajar & Responsif seperti Tombol Banner) -->
                     <div class="relative z-10 shrink-0 w-full md:w-auto flex flex-col items-stretch md:items-end gap-1.5 pt-1 md:pt-0">
-                        <button type="button" 
-                                @click="openReportModal()" 
-                                :class="activeReportsCount >= 2 
-                                    ? 'bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 shadow-xs' 
+                        <button type="button"
+                                @click="openReportModal()"
+                                :class="activeReportsCount >= 2
+                                    ? 'bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 shadow-xs'
                                     : 'bg-[var(--keraton-gold)] hover:bg-[var(--keraton-gold-soft)] text-[var(--mm-900)] shadow-md'"
-                                class="w-full md:w-auto justify-center px-4 py-2.5 sm:px-5 sm:py-3 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer active:scale-98">
+                                class="w-full md:w-auto justify-center px-4 py-2.5 sm:px-5 sm:py-3 bg-[var(--keraton-gold)] hover:bg-[var(--keraton-gold-soft)] text-[var(--mm-900)] rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer active:scale-98 shadow-md">
                             <template x-if="activeReportsCount < 2">
                                 <span class="flex items-center gap-2">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
-                                    Buat Laporan Kerusakan
+                                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                                    <span>Buat Laporan Kerusakan</span>
                                 </span>
                             </template>
                             <template x-if="activeReportsCount >= 2">
                                 <span class="flex items-center gap-2 text-amber-900">
                                     <svg class="w-4 h-4 text-amber-700 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                                    Antrean Aktif Penuh (2/2)
+                                    <span>Antrean Aktif Penuh (2/2)</span>
                                 </span>
                             </template>
                         </button>
@@ -427,11 +673,28 @@
                     </div>
                 </div>
 
+
+                @if(($totalLaporan ?? 0) == 0)
+                    <!-- PEMBERITAHUAN KOSONG JIKA BELUM ADA LAPORAN -->
+                    <div class="bg-white p-4 sm:p-6 rounded-2xl border border-[#E3DCC8] shadow-xs text-center space-y-2">
+                        <div class="w-11 h-11 mx-auto bg-amber-50 border border-amber-200/80 rounded-xl flex items-center justify-center text-amber-600">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a2 2 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        </div>
+                        <h4 class="font-display font-bold text-xs sm:text-sm text-[var(--mm-900)]">
+                            Belum Ada Pengajuan Laporan
+                        </h4>
+                        <p class="text-[10px] sm:text-[11px] text-gray-500 max-w-md mx-auto leading-relaxed">
+                            Anda belum memiliki riwayat pengaduan fasilitas IT. Silakan klik tombol <strong>Buat Laporan Kerusakan</strong> di atas untuk membuat laporan aduan baru.
+                        </p>
+                    </div>
+                @endif
+
                 <!-- NOTIFIKASI STATUS SELESAI, DITOLAK & MENUNGGU PART UNTUK PELAPOR -->
                 @php
-                    $listSelesai = collect($laporans ?? [])->where('status', 'Selesai');
-                    $listDitolak = collect($laporans ?? [])->where('status', 'Ditolak');
-                    $listMenungguPart = collect($laporans ?? [])->where('status', 'Menunggu Part');
+                    $sourceNotifs = collect($allUserLaporans ?? $laporans ?? []);
+                    $listSelesai = $sourceNotifs->where('status', 'Selesai');
+                    $listDitolak = $sourceNotifs->where('status', 'Ditolak');
+                    $listMenungguPart = $sourceNotifs->where('status', 'Menunggu Part');
                 @endphp
 
                 @if($listMenungguPart->count() > 0)
@@ -586,27 +849,37 @@
                         </div>
                     </div>
 
-                    <!-- KOTAK KONSULTASI WHATSAPP -->
-                    <div class="flex items-center justify-between gap-2.5 mega-mendung-bg text-white p-3 sm:p-4 rounded-xl relative overflow-hidden shadow-xs">
-                        <div class="relative z-10 space-y-0.5 min-w-0">
-                            <div class="flex items-center gap-1.5">
-                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
-                                <p class="text-xs sm:text-sm font-bold truncate">Butuh Bantuan Mendesak?</p>
+                    <!-- KOTAK KONSULTASI WHATSAPP (LENGKAP, JELAS & BEBAS CACAT BORDER) -->
+                    <div class="mega-mendung-bg text-white p-3.5 sm:p-4.5 rounded-2xl relative overflow-hidden shadow-md border-0">
+                        <div class="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+                            <!-- Teks Informasi -->
+                            <div class="space-y-1 min-w-0">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+                                    <h4 class="text-xs sm:text-sm font-bold tracking-tight text-white">Butuh Bantuan Mendesak?</h4>
+                                </div>
+                                <p class="text-[11px] sm:text-xs text-[var(--mm-200)] leading-relaxed">
+                                    Hubungi teknisi SIPERKOM via WhatsApp jika Anda membutuhkan konsultasi cepat atau kendala perbaikan darurat.
+                                </p>
                             </div>
-                            <p class="text-[10px] sm:text-[11px] text-[var(--mm-200)] leading-tight truncate sm:whitespace-normal">Hubungi teknisi SIPERKOM via WhatsApp jika ada kendala darurat.</p>
-                        </div>
-                        <div class="relative z-10 shrink-0">
-                            <a href="https://wa.me/6285321812643?text=Halo%20Admin%20Teknisi%20SIPERKOM,%20saya%20ingin%20konsultasi%20terkait%20perbaikan." 
-                               target="_blank" 
-                               rel="noopener noreferrer" 
-                               class="flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 bg-[#008f53] hover:bg-[#007b47] text-white rounded-lg text-[11px] sm:text-xs font-bold transition shadow-xs cursor-pointer active:scale-98">
-                                <svg class="w-3.5 h-3.5 shrink-0 fill-current" viewBox="0 0 24 24">
-                                    <path d="M12.012 2c-5.506 0-9.989 4.478-9.99 9.984 0 1.764.459 3.487 1.333 5.006l-1.417 5.176 5.297-1.389c1.474.802 3.136 1.224 4.773 1.225h.004c5.505 0 9.988-4.478 9.989-9.985 0-2.668-1.037-5.176-2.922-7.062a9.923 9.923 0 0 0-7.067-2.955zm5.834 14.161c-.246.692-1.424 1.326-1.964 1.383-.496.052-1.127.078-1.821-.144-.429-.138-.981-.322-1.688-.629-2.978-1.291-4.919-4.321-5.069-4.52-.149-.199-1.218-1.621-1.218-3.092 0-1.471.769-2.195 1.042-2.493.273-.298.595-.372.794-.372.198 0 .397.001.571.01.184.009.432-.07.675.515.248.595.843 2.059.917 2.208.075.149.124.322.025.521-.099.198-.149.322-.298.496-.149.174-.313.388-.447.521-.149.149-.304.312-.131.608.174.298.772 1.274 1.657 2.062 1.139 1.014 2.1 1.327 2.398 1.476.298.149.471.124.645-.075.174-.198.745-.868.943-1.166.198-.298.397-.248.67-.149.273.099 1.737.819 2.035.968.298.149.496.223.57.347.074.124.074.719-.172 1.411z"/>
-                                </svg>
-                                <span>WhatsApp</span>
-                            </a>
+
+                            <!-- Tombol WhatsApp Mobile-Friendly -->
+                            <div class="shrink-0 w-full sm:w-auto">
+                                <a href="https://wa.me/6285321812643?text=Halo%20Admin%20Teknisi%20SIPERKOM,%20saya%20ingin%20konsultasi%20terkait%20perbaikan." 
+                                   target="_blank" 
+                                   rel="noopener noreferrer" 
+                                   class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-emerald-950/20 active:scale-[0.97] cursor-pointer border border-emerald-400/30">
+                                    <svg class="w-4 h-4 shrink-0 fill-current" viewBox="0 0 24 24">
+                                        <path d="M12.012 2c-5.506 0-9.989 4.478-9.99 9.984 0 1.764.459 3.487 1.333 5.006l-1.417 5.176 5.297-1.389c1.474.802 3.136 1.224 4.773 1.225h.004c5.505 0 9.988-4.478 9.989-9.985 0-2.668-1.037-5.176-2.922-7.062a9.923 9.923 0 0 0-7.067-2.955zm5.834 14.161c-.246.692-1.424 1.326-1.964 1.383-.496.052-1.127.078-1.821-.144-.429-.138-.981-.322-1.688-.629-2.978-1.291-4.919-4.321-5.069-4.52-.149-.199-1.218-1.621-1.218-3.092 0-1.471.769-2.195 1.042-2.493.273-.298.595-.372.794-.372.198 0 .397.001.571.01.184.009.432-.07.675.515.248.595.843 2.059.917 2.208.075.149.124.322.025.521-.099.198-.149.322-.298.496-.149.174-.313.388-.447.521-.149.149-.304.312-.131.608.174.298.772 1.274 1.657 2.062 1.139 1.014 2.1 1.327 2.398 1.476.298.149.471.124.645-.075.174-.198.745-.868.943-1.166.198-.298.397-.248.67-.149.273.099 1.737.819 2.035.968.298.149.496.223.57.347.074.124.074.719-.172 1.411z"/>
+                                    </svg>
+                                    <span>Hubungi via WhatsApp</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
+
+                    <!-- Spacer Khusus Mobile dengan jarak ideal (tidak dempet dan tidak bolong) -->
+                    <div class="block md:hidden w-full pointer-events-none select-none" style="height: 2.25rem;" aria-hidden="true"></div>
 
                 </div>
 
@@ -615,263 +888,357 @@
 
     </div>
 
-    <!-- MODAL FORMULIR LAPORAN KERUSAKAN -->
+    <!-- KOMPONEN NAVIGASI BAWAH MOBILE -->
+    @include('pelapor.partials.bottom-nav', ['active' => 'dashboard'])
+
+    <!-- MODAL FORMULIR LAPORAN KERUSAKAN (PREMIUM NATIVE MOBILE BOTTOM SHEET) -->
     <div x-show="reportModalOpen"
         x-cloak
-        x-transition.opacity
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
         @keydown.escape.window="closeReportModal()"
-        @click.self="closeReportModal()"
-        class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 p-0 sm:p-4 backdrop-blur-xs"
+        class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-xs p-0 sm:p-4"
         role="dialog"
         aria-modal="true">
-        <div class="bg-white rounded-t-[28px] sm:rounded-2xl max-w-lg w-full p-5 sm:p-6 space-y-4 shadow-2xl border border-slate-100 sm:border-[#E3DCC8] max-h-[92vh] sm:max-h-[88vh] overflow-y-auto scrollable-content"
+        
+        <!-- Backdrop Dimmer Dismiss -->
+        <div class="fixed inset-0" @click="closeReportModal()"></div>
+        
+        <!-- Kartu Modal / Bottom Sheet -->
+        <div x-show="reportModalOpen"
+            x-transition:enter="transition transform ease-[cubic-bezier(0.16,1,0.3,1)] duration-300"
+            x-transition:enter-start="translate-y-full sm:translate-y-0 sm:scale-95 sm:opacity-0"
+            x-transition:enter-end="translate-y-0 sm:scale-100 sm:opacity-100"
+            x-transition:leave="transition transform ease-[cubic-bezier(0.4,0,0.2,1)] duration-200"
+            x-transition:leave-start="translate-y-0 sm:scale-100 sm:opacity-100"
+            x-transition:leave-end="translate-y-full sm:translate-y-0 sm:scale-95 sm:opacity-0"
+            class="relative z-10 w-full sm:max-w-lg bg-white rounded-t-[28px] rounded-b-none sm:rounded-3xl shadow-2xl border-t border-x border-slate-100 sm:border-[#E3DCC8] sm:border-b flex flex-col max-h-[92vh] sm:max-h-[85vh] overflow-hidden"
+            style="touch-action: pan-y;"
             @click.stop>
             
-            <!-- Handle Bar Mobile -->
-            <div class="w-12 h-1.5 bg-slate-300 rounded-full mx-auto mb-1 sm:hidden"></div>
+            <!-- Header Modal (Pinned di Atas) -->
+            <div class="shrink-0 bg-white px-5 sm:px-6 pt-3 sm:pt-5 pb-3 border-b border-slate-100 select-none">
+                <!-- Handle Bar Mobile -->
+                <div class="w-12 h-1.5 bg-slate-300 rounded-full mx-auto mb-2.5 sm:hidden"></div>
 
-            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                <div>
-                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-bold bg-[var(--mm-800)]/10 text-[var(--mm-800)] uppercase tracking-wider mb-1">Tiket Baru</span>
-                    <h3 class="font-display font-extrabold text-base sm:text-lg text-[var(--mm-900)]">Formulir Laporan Kerusakan</h3>
-                </div>
-                <button type="button" @click="closeReportModal()" aria-label="Tutup formulir" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-colors text-sm font-bold">✕</button>
-            </div>
-
-            <!-- Peringatan Kuota Laporan Aktif (Anti-Spam) -->
-            <div x-show="activeReportsCount >= 2" x-cloak class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 flex items-start gap-2">
-                <svg class="w-4 h-4 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                </svg>
-                <div>
-                    <strong class="font-bold text-amber-900">Batas Laporan Aktif Tercapai (Maks. 2)</strong>
-                    <p class="text-[11px] text-amber-800/90 mt-0.5 leading-relaxed">Anda telah memiliki 2 laporan yang sedang diproses teknisi. Laporan ke-3 tidak dapat dibuat guna mencegah penumpukan (spam). Silakan tunggu hingga laporan saat ini selesai.</p>
-                </div>
-            </div>
-
-            <form @submit.prevent="addReport()" class="space-y-4 text-xs">
-                <!-- Dropdown Kustom Jenis Perangkat (Modern & Ramah Sentuhan Mobile) -->
-                <div x-data="{ openJenis: false }" class="space-y-1.5">
-                    <label class="block font-bold text-slate-700 text-xs">Jenis Perangkat <span class="text-rose-500">*</span></label>
-                    <input type="hidden" name="jenis" :value="newReport.jenis" required>
-                    
-                    <div class="relative">
-                        <button type="button" @click="openJenis = !openJenis"
-                                class="w-full bg-slate-50 hover:bg-slate-100/70 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:py-3 text-xs font-medium text-left flex items-center justify-between gap-2 focus:outline-none focus:border-[var(--mm-600)] focus:ring-2 focus:ring-[var(--mm-600)]/15 transition-all shadow-2xs"
-                                :class="newReport.jenis ? 'text-slate-800 bg-white' : 'text-slate-400'">
-                            <span class="truncate">
-                                <template x-if="newReport.jenis === 'PC'">
-                                    <strong class="text-slate-800 font-bold">Komputer Unit / PC</strong>
-                                </template>
-                                <template x-if="newReport.jenis === 'Laptop'">
-                                    <strong class="text-slate-800 font-bold">Laptop</strong>
-                                </template>
-                                <template x-if="newReport.jenis === 'Printer'">
-                                    <strong class="text-slate-800 font-bold">Printer</strong>
-                                </template>
-                                <template x-if="newReport.jenis === 'Scanner'">
-                                    <strong class="text-slate-800 font-bold">Scanner</strong>
-                                </template>
-                                <template x-if="newReport.jenis === 'Jaringan'">
-                                    <strong class="text-slate-800 font-bold">Jaringan / Router</strong>
-                                </template>
-                                <template x-if="newReport.jenis === 'Lainnya'">
-                                    <strong class="text-slate-800 font-bold">Lainnya</strong>
-                                </template>
-                                <template x-if="!newReport.jenis">
-                                    <span>Pilih Jenis Perangkat...</span>
-                                </template>
+                <div class="flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <div class="w-8 h-8 rounded-xl bg-[var(--batik-cream)] border border-[#E3DCC8] flex items-center justify-center text-[var(--keraton-gold)] shadow-2xs shrink-0">
+                            <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        </div>
+                        <div class="min-w-0">
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-200">
+                                <span class="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></span> TIKET BARU
                             </span>
-                            <svg class="w-4 h-4 text-slate-400 transition-transform duration-200 shrink-0" :class="openJenis && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                            </svg>
-                        </button>
+                            <h3 class="font-display font-extrabold text-base sm:text-lg text-[var(--mm-900)] leading-tight truncate mt-0.5">Formulir Laporan Kerusakan</h3>
+                        </div>
+                    </div>
+                    <button type="button" @click="closeReportModal()" aria-label="Tutup formulir" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-500 hover:text-slate-800 flex items-center justify-center transition text-sm font-bold cursor-pointer shrink-0">✕</button>
+                </div>
 
-                        <!-- Menu Pilihan Dropdown Elegan (Bersih & Rapi Tanpa Icon) -->
-                        <div x-show="openJenis"
-                             x-transition:enter="transition ease-out duration-150"
-                             x-transition:enter-start="opacity-0 -translate-y-2 scale-98"
-                             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
-                             x-transition:leave="transition ease-in duration-100"
-                             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
-                             x-transition:leave-end="opacity-0 -translate-y-2 scale-98"
-                             @click.outside="openJenis = false"
-                             class="absolute left-0 right-0 mt-1.5 bg-white rounded-xl border border-slate-200 shadow-2xl z-50 overflow-hidden py-1 divide-y divide-slate-50 max-h-60 overflow-y-auto"
-                             style="display: none;">
-                            
-                            <button type="button" @click="newReport.jenis = 'PC'; openJenis = false"
-                                    class="w-full text-left px-3.5 py-2.5 sm:py-3 text-xs font-medium hover:bg-slate-50 transition-colors flex items-center justify-between"
-                                    :class="newReport.jenis === 'PC' ? 'bg-sky-50/80 text-[var(--mm-900)] font-bold' : 'text-slate-700'">
-                                <span>Komputer Unit / PC</span>
-                                <span x-show="newReport.jenis === 'PC'" class="text-[var(--mm-600)] font-bold">✓</span>
+                <!-- Peringatan Kuota Laporan Aktif (Anti-Spam) -->
+                <div x-show="activeReportsCount >= 2" x-cloak class="mt-2.5 p-2.5 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 flex items-start gap-2">
+                    <svg class="w-4 h-4 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                    <div>
+                        <strong class="font-bold text-amber-900">Batas Laporan Aktif Tercapai (Maks. 2)</strong>
+                        <p class="text-[10.5px] text-amber-800/90 leading-relaxed">Maksimal 2 laporan aktif dalam antrean. Selesaikan laporan yang ada sebelum membuat laporan baru.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Container -->
+            <form @submit.prevent="addReport()" class="flex-1 flex flex-col min-h-0 overflow-hidden text-xs">
+                <!-- Area Scrollable Formulir yang Mulus & Responsif -->
+                <div class="flex-1 overflow-y-auto px-5 sm:px-6 py-4 space-y-4 overscroll-contain touch-pan-y"
+                     style="-webkit-overflow-scrolling: touch; overscroll-behavior: contain;">
+                    <!-- Input Jenis Perangkat (Ketik Manual Murni) -->
+                    <div class="space-y-1.5">
+                        <label for="jenis-perangkat" class="block font-bold text-slate-700 text-xs">Jenis Perangkat <span class="text-rose-500">*</span></label>
+                        <input id="jenis-perangkat" type="text" x-model="newReport.jenis" required maxlength="100"
+                               placeholder="cth. Laptop / Komputer / Printer / Scanner"
+                               @keydown.enter.prevent
+                               autocomplete="off"
+                               class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:py-3 text-xs font-medium focus:bg-white focus:outline-none focus:border-[var(--mm-600)] focus:ring-2 focus:ring-[var(--mm-600)]/15 transition-all text-slate-800 placeholder:text-slate-400">
+                    </div>
+
+                    <!-- Nama / Merk Perangkat -->
+                    <div class="space-y-1.5">
+                        <label for="nama-perangkat" class="block font-bold text-slate-700 text-xs">Nama / Merk Perangkat <span class="text-rose-500">*</span></label>
+                        <input id="nama-perangkat" type="text" x-model="newReport.perangkat" required maxlength="100" placeholder="cth. Epson L3110 / PC Admin ASUS"
+                               @keydown.enter.prevent
+                               class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:py-3 text-xs font-medium focus:bg-white focus:outline-none focus:border-[var(--mm-600)] focus:ring-2 focus:ring-[var(--mm-600)]/15 transition-all text-slate-800 placeholder:text-slate-400">
+                    </div>
+
+                    <!-- Detail Kerusakan / Kendala -->
+                    <div class="space-y-1.5">
+                        <div class="flex items-center justify-between">
+                            <label for="detail-kendala" class="font-bold text-slate-700 text-xs">Detail Kerusakan / Kendala <span class="text-rose-500">*</span></label>
+                            <span class="text-[10px] text-slate-400 font-medium" x-text="`${newReport.kendala.length}/300`"></span>
+                        </div>
+                        <textarea id="detail-kendala" x-model="newReport.kendala" required maxlength="300" rows="3" placeholder="Jelaskan kendala fasilitas fisik atau teknis yang dialami..."
+                                  class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-medium focus:bg-white focus:outline-none focus:border-[var(--mm-600)] focus:ring-2 focus:ring-[var(--mm-600)]/15 transition-all text-slate-800 placeholder:text-slate-400 resize-none"></textarea>
+                    </div>
+
+                    <!-- Selektor Interaktif Tingkat Urgensi -->
+                    <div class="space-y-1.5">
+                        <label class="block font-bold text-slate-700 text-xs">Tingkat Urgensi</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button type="button" @click="newReport.prioritas = 'Rendah'"
+                                    class="py-2.5 px-2 rounded-xl border text-xs font-bold text-center transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                                    :class="newReport.prioritas === 'Rendah' ? 'bg-emerald-50 border-emerald-400 text-emerald-800 ring-2 ring-emerald-400/20 shadow-xs' : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                <span>Rendah</span>
                             </button>
-                            <button type="button" @click="newReport.jenis = 'Laptop'; openJenis = false"
-                                    class="w-full text-left px-3.5 py-2.5 sm:py-3 text-xs font-medium hover:bg-slate-50 transition-colors flex items-center justify-between"
-                                    :class="newReport.jenis === 'Laptop' ? 'bg-sky-50/80 text-[var(--mm-900)] font-bold' : 'text-slate-700'">
-                                <span>Laptop</span>
-                                <span x-show="newReport.jenis === 'Laptop'" class="text-[var(--mm-600)] font-bold">✓</span>
+                            <button type="button" @click="newReport.prioritas = 'Sedang'"
+                                    class="py-2.5 px-2 rounded-xl border text-xs font-bold text-center transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                                    :class="newReport.prioritas === 'Sedang' ? 'bg-amber-50 border-amber-400 text-amber-800 ring-2 ring-amber-400/20 shadow-xs' : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'">
+                                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                                <span>Sedang</span>
                             </button>
-                            <button type="button" @click="newReport.jenis = 'Printer'; openJenis = false"
-                                    class="w-full text-left px-3.5 py-2.5 sm:py-3 text-xs font-medium hover:bg-slate-50 transition-colors flex items-center justify-between"
-                                    :class="newReport.jenis === 'Printer' ? 'bg-sky-50/80 text-[var(--mm-900)] font-bold' : 'text-slate-700'">
-                                <span>Printer</span>
-                                <span x-show="newReport.jenis === 'Printer'" class="text-[var(--mm-600)] font-bold">✓</span>
-                            </button>
-                            <button type="button" @click="newReport.jenis = 'Scanner'; openJenis = false"
-                                    class="w-full text-left px-3.5 py-2.5 sm:py-3 text-xs font-medium hover:bg-slate-50 transition-colors flex items-center justify-between"
-                                    :class="newReport.jenis === 'Scanner' ? 'bg-sky-50/80 text-[var(--mm-900)] font-bold' : 'text-slate-700'">
-                                <span>Scanner</span>
-                                <span x-show="newReport.jenis === 'Scanner'" class="text-[var(--mm-600)] font-bold">✓</span>
-                            </button>
-                            <button type="button" @click="newReport.jenis = 'Jaringan'; openJenis = false"
-                                    class="w-full text-left px-3.5 py-2.5 sm:py-3 text-xs font-medium hover:bg-slate-50 transition-colors flex items-center justify-between"
-                                    :class="newReport.jenis === 'Jaringan' ? 'bg-sky-50/80 text-[var(--mm-900)] font-bold' : 'text-slate-700'">
-                                <span>Jaringan / Router</span>
-                                <span x-show="newReport.jenis === 'Jaringan'" class="text-[var(--mm-600)] font-bold">✓</span>
-                            </button>
-                            <button type="button" @click="newReport.jenis = 'Lainnya'; openJenis = false"
-                                    class="w-full text-left px-3.5 py-2.5 sm:py-3 text-xs font-medium hover:bg-slate-50 transition-colors flex items-center justify-between"
-                                    :class="newReport.jenis === 'Lainnya' ? 'bg-sky-50/80 text-[var(--mm-900)] font-bold' : 'text-slate-700'">
-                                <span>Lainnya</span>
-                                <span x-show="newReport.jenis === 'Lainnya'" class="text-[var(--mm-600)] font-bold">✓</span>
+                            <button type="button" @click="newReport.prioritas = 'Tinggi'"
+                                    class="py-2.5 px-2 rounded-xl border text-xs font-bold text-center transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                                    :class="newReport.prioritas === 'Tinggi' ? 'bg-rose-50 border-rose-400 text-rose-800 ring-2 ring-rose-400/20 shadow-xs' : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'">
+                                <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                                <span>Tinggi</span>
                             </button>
                         </div>
                     </div>
-                </div>
 
-                <!-- Nama / Merk Perangkat -->
-                <div class="space-y-1.5">
-                    <label for="nama-perangkat" class="block font-bold text-slate-700 text-xs">Nama / Merk Perangkat <span class="text-rose-500">*</span></label>
-                    <input id="nama-perangkat" type="text" x-model="newReport.perangkat" required maxlength="100" placeholder="cth. Epson L3110 / PC Admin ASUS"
-                           @keydown.enter.prevent
-                           class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:py-3 text-xs font-medium focus:bg-white focus:outline-none focus:border-[var(--mm-600)] focus:ring-2 focus:ring-[var(--mm-600)]/15 transition-all text-slate-800 placeholder:text-slate-400">
-                </div>
+                    <!-- Unggah Foto Fisik Unit (Opsional) -->
+                    <div class="space-y-1.5">
+                        <label class="block font-bold text-slate-700 text-xs">Unggah Foto Unit Barang <span class="text-slate-400 font-normal">(Opsional)</span></label>
+                        <input id="upload-foto" type="file" accept="image/*" x-ref="fotoInput" @change="handleFileUpload($event, 'foto')" class="hidden">
+                        
+                        <div x-show="!newReport.foto">
+                            <button type="button" @click="$refs.fotoInput.click()"
+                                    class="w-full py-3 px-4 rounded-xl border-2 border-dashed border-slate-200 hover:border-blue-500 hover:bg-blue-50/50 active:scale-[0.99] transition-all flex items-center justify-center gap-2 text-slate-600 font-semibold text-xs cursor-pointer bg-slate-50/40">
+                                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                                <span>Ambil Foto atau Pilih dari Galeri</span>
+                            </button>
+                            <p class="text-[10px] text-slate-400 mt-1">Format: JPG, JPEG, PNG (Maks. 5 MB). Bisa lewat kamera atau galeri.</p>
+                        </div>
 
-                <!-- Detail Kerusakan / Kendala -->
-                <div class="space-y-1.5">
-                    <div class="flex items-center justify-between">
-                        <label for="detail-kendala" class="font-bold text-slate-700 text-xs">Detail Kerusakan / Kendala <span class="text-rose-500">*</span></label>
-                        <span class="text-[10px] text-slate-400 font-medium" x-text="`${newReport.kendala.length}/300`"></span>
-                    </div>
-                    <textarea id="detail-kendala" x-model="newReport.kendala" required maxlength="300" rows="3" placeholder="Jelaskan kendala fasilitas fisik atau teknis yang dialami..."
-                              class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-medium focus:bg-white focus:outline-none focus:border-[var(--mm-600)] focus:ring-2 focus:ring-[var(--mm-600)]/15 transition-all text-slate-800 placeholder:text-slate-400 resize-none"></textarea>
-                </div>
-
-                <!-- Selektor Interaktif Tingkat Urgensi -->
-                <div class="space-y-1.5">
-                    <label class="block font-bold text-slate-700 text-xs">Tingkat Urgensi</label>
-                    <div class="grid grid-cols-3 gap-2">
-                        <button type="button" @click="newReport.prioritas = 'Rendah'"
-                                class="py-2.5 px-2 rounded-xl border text-xs font-bold text-center transition-all flex items-center justify-center gap-1.5"
-                                :class="newReport.prioritas === 'Rendah' ? 'bg-emerald-50 border-emerald-400 text-emerald-800 ring-2 ring-emerald-400/20 shadow-xs' : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'">
-                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                            <span>Rendah</span>
-                        </button>
-                        <button type="button" @click="newReport.prioritas = 'Sedang'"
-                                class="py-2.5 px-2 rounded-xl border text-xs font-bold text-center transition-all flex items-center justify-center gap-1.5"
-                                :class="newReport.prioritas === 'Sedang' ? 'bg-amber-50 border-amber-400 text-amber-800 ring-2 ring-amber-400/20 shadow-xs' : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'">
-                            <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-                            <span>Sedang</span>
-                        </button>
-                        <button type="button" @click="newReport.prioritas = 'Tinggi'"
-                                class="py-2.5 px-2 rounded-xl border text-xs font-bold text-center transition-all flex items-center justify-center gap-1.5"
-                                :class="newReport.prioritas === 'Tinggi' ? 'bg-rose-50 border-rose-400 text-rose-800 ring-2 ring-rose-400/20 shadow-xs' : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'">
-                            <span class="w-2 h-2 rounded-full bg-rose-500"></span>
-                            <span>Tinggi</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Unggah Foto Fisik Unit (Opsional) -->
-                <div class="space-y-1.5">
-                    <label class="block font-bold text-slate-700 text-xs">Unggah Foto Unit Barang <span class="text-slate-400 font-normal">(Opsional)</span></label>
-                    <input id="upload-foto" type="file" accept="image/*" x-ref="fotoInput" @change="handleFileUpload($event, 'foto')" class="hidden">
-                    
-                    <div x-show="!newReport.foto">
-                        <button type="button" @click="$refs.fotoInput.click()"
-                                class="w-full py-3 px-4 rounded-xl border-2 border-dashed border-slate-200 hover:border-[var(--mm-600)] hover:bg-slate-50/80 active:scale-[0.99] transition-all flex items-center justify-center gap-2 text-slate-600 font-semibold text-xs">
-                            <svg class="w-4 h-4 text-[var(--mm-600)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
-                            </svg>
-                            <span>Pilih Foto dari Galeri / Kamera</span>
-                        </button>
-                        <p class="text-[10px] text-slate-400 mt-1">Format: JPG, JPEG, PNG (Min. 20 KB, Maks. 5 MB)</p>
+                        <div x-show="newReport.foto" x-cloak class="relative mt-2">
+                            <img :src="newReport.foto" class="w-full max-h-48 object-cover rounded-xl border border-slate-200 shadow-sm" alt="Pratinjau foto kerusakan">
+                            <button type="button" @click="clearFile('foto')" aria-label="Hapus foto"
+                                    class="absolute top-2 right-2 px-2.5 py-1 rounded-full bg-black/70 text-white text-[11px] font-bold flex items-center gap-1 hover:bg-black/90 shadow cursor-pointer">
+                                <span>✕ Hapus</span>
+                            </button>
+                        </div>
                     </div>
 
-                    <div x-show="newReport.foto" x-cloak class="relative mt-2">
-                        <img :src="newReport.foto" class="w-full max-h-36 object-cover rounded-xl border border-slate-200 shadow-sm" alt="Pratinjau foto kerusakan">
-                        <button type="button" @click="clearFile('foto')" aria-label="Hapus foto"
-                                class="absolute top-2 right-2 px-2.5 py-1 rounded-full bg-black/70 text-white text-[11px] font-bold flex items-center gap-1 hover:bg-black/90 shadow">
-                            <span>✕ Hapus</span>
-                        </button>
-                    </div>
-                </div>
+                    <!-- Unggah Dokumen Pendukung PDF (Wajib) -->
+                    <div class="space-y-1.5">
+                        <label class="block font-bold text-slate-700 text-xs">Unggah Dokumen Pendukung <span class="text-rose-500 font-bold">* (PDF Wajib)</span></label>
+                        <input id="upload-dokumen" type="file" accept="application/pdf" x-ref="dokumenInput" @change="handleFileUpload($event, 'dokumen')" class="hidden">
+                        
+                        <div x-show="!newReport.dokumen">
+                            <button type="button" @click="$refs.dokumenInput.click()"
+                                    class="w-full py-3 px-4 rounded-xl border-2 border-dashed border-slate-200 hover:border-[var(--mm-600)] hover:bg-slate-50/80 active:scale-[0.99] transition-all flex items-center justify-center gap-2 text-slate-600 font-semibold text-xs cursor-pointer">
+                                <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                                <span>Pilih Dokumen PDF Surat / Berita Acara</span>
+                            </button>
+                            <p class="text-[10px] text-slate-400 mt-1">Format: PDF (Min. 10 KB, Maks. 10 MB). Contoh: Surat Pengantar / Berita Acara</p>
+                        </div>
 
-                <!-- Unggah Dokumen Pendukung PDF (Wajib) -->
-                <div class="space-y-1.5">
-                    <label class="block font-bold text-slate-700 text-xs">Unggah Dokumen Pendukung <span class="text-rose-500 font-bold">* (PDF Wajib)</span></label>
-                    <input id="upload-dokumen" type="file" accept="application/pdf" x-ref="dokumenInput" @change="handleFileUpload($event, 'dokumen')" class="hidden">
-                    
-                    <div x-show="!newReport.dokumen">
-                        <button type="button" @click="$refs.dokumenInput.click()"
-                                class="w-full py-3 px-4 rounded-xl border-2 border-dashed border-slate-200 hover:border-[var(--mm-600)] hover:bg-slate-50/80 active:scale-[0.99] transition-all flex items-center justify-center gap-2 text-slate-600 font-semibold text-xs">
-                            <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div x-show="newReport.dokumen" x-cloak class="mt-1 flex items-center gap-2.5 bg-emerald-50 border border-emerald-200 rounded-xl px-3.5 py-2.5">
+                            <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                             </svg>
-                            <span>Pilih Dokumen PDF Surat / Berita Acara</span>
-                        </button>
-                        <p class="text-[10px] text-slate-400 mt-1">Format: PDF (Min. 10 KB, Maks. 10 MB). Contoh: Surat Pengantar / Berita Acara</p>
+                            <div class="truncate flex-1">
+                                <span class="text-xs font-bold text-emerald-900 block truncate" x-text="newReport.dokumenNama"></span>
+                                <span class="text-[10px] text-emerald-600 font-medium">✓ Berkas PDF siap dikirim</span>
+                            </div>
+                            <button type="button" @click="clearFile('dokumen')" aria-label="Hapus dokumen" class="p-1 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-colors cursor-pointer">✕</button>
+                        </div>
                     </div>
 
-                    <div x-show="newReport.dokumen" x-cloak class="mt-1 flex items-center gap-2.5 bg-emerald-50 border border-emerald-200 rounded-xl px-3.5 py-2.5">
-                        <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                        </svg>
-                        <div class="truncate flex-1">
-                            <span class="text-xs font-bold text-emerald-900 block truncate" x-text="newReport.dokumenNama"></span>
-                            <span class="text-[10px] text-emerald-600 font-medium">✓ Berkas PDF siap dikirim</span>
-                        </div>
-                        <button type="button" @click="clearFile('dokumen')" aria-label="Hapus dokumen" class="p-1 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-colors">✕</button>
-                    </div>
+                    <!-- Spacer bawah agar scroll nyaman dan lega -->
+                    <div class="h-3"></div>
                 </div>
 
-                <!-- Tombol Batal & Kirim -->
-                <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
-                    <button type="button" @click="closeReportModal()" :disabled="submitting"
-                            class="btn-touch px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-xs transition disabled:opacity-50">
-                        Batal
-                    </button>
-                    <button type="submit" :disabled="submitting || activeReportsCount >= 2"
-                            :class="activeReportsCount >= 2 ? 'opacity-50 cursor-not-allowed bg-slate-300 text-slate-500' : 'bg-gradient-to-r from-[var(--mm-900)] to-[var(--mm-800)] hover:from-[var(--mm-800)] hover:to-[var(--mm-900)] text-white'"
-                            class="btn-touch px-5 py-2.5 rounded-xl font-bold text-xs transition shadow-lg shadow-[var(--mm-900)]/20 active:scale-[0.98] flex items-center gap-2 border border-[var(--keraton-gold)]/40">
-                        <svg x-show="submitting" x-cloak class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                        </svg>
-                        <span x-text="submitting ? 'Mengirim...' : (activeReportsCount >= 2 ? 'Antrean Penuh' : 'Kirim Laporan')"></span>
-                    </button>
+                <!-- Footer Tombol Aksi (Fixed Sticky di Bagian Bawah Layar) -->
+                <div class="shrink-0 bg-white/95 backdrop-blur-sm border-t border-slate-100 px-5 sm:px-6 py-3.5 sm:py-4 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] z-20"
+                     style="padding-bottom: max(1rem, env(safe-area-inset-bottom, 1rem));">
+                    <div class="flex items-center gap-3">
+                        <!-- Tombol Batal (1/3 Lebar, Elegan & Mudah Dicapai Jempol) -->
+                        <button type="button" @click="closeReportModal()" :disabled="submitting"
+                                class="w-1/3 py-3 px-4 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 rounded-xl font-bold text-xs transition flex items-center justify-center cursor-pointer shadow-2xs">
+                            Batal
+                        </button>
+
+                        <!-- Tombol Kirim Laporan (2/3 Lebar, Gradient Mega Mendung Mewah & Berisi) -->
+                        <button type="submit" :disabled="submitting || activeReportsCount >= 2"
+                                :class="activeReportsCount >= 2 
+                                    ? 'opacity-50 cursor-not-allowed bg-slate-300 text-slate-500' 
+                                    : 'bg-gradient-to-r from-[var(--mm-900)] to-[var(--mm-800)] hover:from-[var(--mm-800)] hover:to-[var(--mm-900)] text-white shadow-lg shadow-[var(--mm-900)]/25 active:scale-[0.98] border border-[var(--keraton-gold)]/50'"
+                                class="flex-1 py-3 px-5 rounded-xl font-bold text-xs transition flex items-center justify-center gap-2 cursor-pointer">
+                            <svg x-show="submitting" x-cloak class="w-4 h-4 animate-spin shrink-0" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                            </svg>
+                            <span x-text="submitting ? 'Mengirim Laporan...' : (activeReportsCount >= 2 ? 'Antrean Penuh' : 'Kirim Laporan')"></span>
+                            <svg x-show="!submitting && activeReportsCount < 2" class="w-4 h-4 text-[var(--keraton-gold)] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- TOAST NOTIFIKASI -->
-    <div x-show="toast.show" x-cloak x-transition
-        class="fixed bottom-5 right-5 z-[60] text-white px-4 py-3 rounded-xl shadow-2xl text-xs font-semibold flex items-center gap-2.5 border border-white/10 max-w-sm"
-        :class="toast.type === 'error' ? 'bg-[var(--keraton-maroon)]' : (toast.type === 'info' ? 'bg-blue-800' : 'bg-[var(--mm-900)]')">
-        <template x-if="toast.type === 'error'">
-            <svg class="w-4 h-4 text-rose-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
-        </template>
-        <template x-if="toast.type !== 'error'">
-            <svg class="w-4 h-4 text-emerald-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-        </template>
-        <span x-text="toast.message" class="leading-snug"></span>
+    <!-- ================= MODAL KAMERA LANGSUNG (WEBCAM LAPTOP / KAMERA HP) ================= -->
+    <div x-show="cameraModalOpen"
+        x-cloak
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        @keydown.escape.window="stopCamera()"
+        class="fixed inset-0 z-[70] flex items-center justify-center bg-black/85 backdrop-blur-md p-3 sm:p-6"
+        role="dialog"
+        aria-modal="true">
+        
+        <div class="relative w-full max-w-lg bg-slate-900 rounded-3xl overflow-hidden shadow-2xl border border-white/20 flex flex-col max-h-[92vh]">
+            <!-- Header Kamera -->
+            <div class="px-4 py-3 bg-slate-800/80 border-b border-white/10 flex items-center justify-between text-white shrink-0">
+                <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></span>
+                    <h3 class="font-bold text-xs sm:text-sm">Kamera Laptop / Perangkat</h3>
+                </div>
+                <button type="button" @click="stopCamera()" class="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition cursor-pointer" aria-label="Tutup kamera">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <!-- Viewfinder Area -->
+            <div class="relative bg-black flex-1 flex items-center justify-center min-h-[260px] sm:min-h-[340px] overflow-hidden">
+                <!-- Video Stream Element -->
+                <video x-ref="videoPreview" autoplay playsinline muted class="w-full h-full object-cover"></video>
+
+                <!-- Loading State -->
+                <div x-show="cameraLoading" class="absolute inset-0 bg-slate-900 flex flex-col items-center justify-center text-white gap-2">
+                    <svg class="w-7 h-7 animate-spin text-[var(--keraton-gold)]" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span class="text-xs font-semibold text-slate-300">Menghubungkan kamera...</span>
+                </div>
+
+                <!-- Error State (Izin ditolak atau tidak ada webcam) -->
+                <div x-show="cameraError" x-cloak class="absolute inset-0 bg-slate-900 p-6 flex flex-col items-center justify-center text-center text-white gap-3">
+                    <div class="w-12 h-12 rounded-2xl bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center justify-center">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-sm text-rose-300 mb-1">Akses Kamera Gagal</h4>
+                        <p class="text-xs text-slate-400 max-w-xs" x-text="cameraError"></p>
+                    </div>
+                    <button type="button" @click="stopCamera()" class="mt-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-bold transition cursor-pointer">Tutup</button>
+                </div>
+
+                <!-- Viewfinder Guideline / Focus Ring -->
+                <div x-show="!cameraLoading && !cameraError" class="pointer-events-none absolute inset-6 sm:inset-10 border-2 border-white/30 rounded-2xl flex items-center justify-center">
+                    <div class="w-8 h-8 border border-white/20 rounded-full"></div>
+                </div>
+            </div>
+
+            <!-- Footer Kontrol Jepret -->
+            <div x-show="!cameraError" class="p-4 bg-slate-950 flex items-center justify-center gap-4 shrink-0 border-t border-white/10">
+                <button type="button" @click="stopCamera()" class="px-4 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 text-xs font-bold transition cursor-pointer">
+                    Batal
+                </button>
+                <button type="button" @click="capturePhoto()" 
+                        class="px-6 py-2.5 rounded-2xl bg-gradient-to-r from-[var(--keraton-gold)] to-[var(--keraton-gold-soft)] text-[var(--mm-900)] font-extrabold text-xs sm:text-sm shadow-lg shadow-[var(--keraton-gold)]/20 active:scale-95 transition flex items-center gap-2 cursor-pointer ring-4 ring-white/20">
+                    <svg class="w-4 h-4 text-[var(--mm-900)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                        <circle cx="12" cy="12" r="3" fill="currentColor"/>
+                    </svg>
+                    <span>Jepret Foto</span>
+                </button>
+            </div>
+        </div>
     </div>
 
+    <!-- ================= MODAL KONFIRMASI KELUAR AKUN (MODERN & ELEGAN) ================= -->
+    <div x-show="logoutModalOpen" 
+         x-cloak
+         class="fixed inset-0 z-[80] flex items-center justify-center p-4 sm:p-6"
+         @keydown.escape.window="closeLogoutModal()">
+        
+        <!-- Backdrop Blur Gelap -->
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
+             @click="closeLogoutModal()"
+             x-show="logoutModalOpen"
+             x-transition:enter="ease-out duration-200"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="ease-in duration-150"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"></div>
+
+        <!-- Kartu Modal Konfirmasi -->
+        <div class="relative z-10 w-full max-w-xs sm:max-w-sm bg-white rounded-3xl shadow-2xl p-5 sm:p-6 border border-[#E3DCC8] text-center transform transition-all"
+             x-show="logoutModalOpen"
+             x-transition:enter="ease-out duration-200"
+             x-transition:enter-start="opacity-0 scale-95 translate-y-2"
+             x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+             x-transition:leave="ease-in duration-150"
+             x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+             x-transition:leave-end="opacity-0 scale-95 translate-y-2">
+            
+            <div class="w-14 h-14 rounded-2xl bg-rose-50 border border-rose-100 text-[#7A2331] mx-auto flex items-center justify-center shadow-inner mb-3.5">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                </svg>
+            </div>
+
+            <h3 class="font-display font-extrabold text-sm sm:text-base text-[var(--mm-900)]">
+                Keluar dari Akun?
+            </h3>
+            <p class="text-[11px] text-gray-500 mt-1.5 leading-relaxed">
+                Apakah Anda yakin ingin mengakhiri sesi login akun SIPERKOM di perangkat ini?
+            </p>
+
+            <div class="grid grid-cols-2 gap-2 mt-4 pt-1">
+                <button type="button" 
+                        @click="closeLogoutModal()"
+                        class="w-full py-2.5 px-3 bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-700 rounded-xl text-xs font-bold transition cursor-pointer">
+                    Batal
+                </button>
+                <form method="POST" action="{{ route('logout') }}" class="m-0">
+                    @csrf
+                    <button type="submit" 
+                            class="w-full py-2.5 px-3 bg-[#7A2331] hover:bg-[#6A1D2A] active:scale-95 text-white rounded-xl text-xs font-bold transition shadow-sm cursor-pointer border border-white/10 flex items-center justify-center gap-1.5">
+                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                        </svg>
+                        <span>Ya, Keluar</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
     <script>
-        window.__initialReports = {!! json_encode($defaultReports instanceof \Illuminate\Support\Collection ? $defaultReports->values()->all() : array_values($defaultReports)) !!};
+        window.__initialReports = {!! json_encode($defaultReports instanceof \Illuminate\Support\Collection ? $defaultReports->values()->all() : array_values($defaultReports ?? [])) !!};
         window.__activeReportsCount = {{ $activeReportsCount ?? 0 }};
+        window.__flashSuccess = @json(session('success'));
     </script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
@@ -889,7 +1256,19 @@
                 toast: { show: false, message: '', type: 'success' },
                 reportModalOpen: false,
                 submitting: false,
+                cameraModalOpen: false,
+                cameraLoading: false,
+                cameraError: null,
+                cameraStream: null,
+                capturedFile: null,
                 newReport: emptyReportForm(),
+                logoutModalOpen: false,
+                openLogoutModal() {
+                    this.logoutModalOpen = true;
+                },
+                closeLogoutModal() {
+                    this.logoutModalOpen = false;
+                },
                 get notifReports() {
                     return this.reports.filter(r => {
                         const st = (r.status || '').trim().toLowerCase();
@@ -939,20 +1318,20 @@
                 init() {
                     this.$watch('sidebarOpen', (value) => {
                         if (value) {
-                            document.documentElement.classList.add('overflow-hidden', 'touch-none', 'overscroll-none');
-                            document.body.classList.add('overflow-hidden', 'touch-none', 'overscroll-none');
+                            document.documentElement.classList.add('overflow-hidden');
+                            document.body.classList.add('overflow-hidden');
                         } else if (!this.reportModalOpen) {
-                            document.documentElement.classList.remove('overflow-hidden', 'touch-none', 'overscroll-none');
-                            document.body.classList.remove('overflow-hidden', 'touch-none', 'overscroll-none');
+                            document.documentElement.classList.remove('overflow-hidden');
+                            document.body.classList.remove('overflow-hidden');
                         }
                     });
                     this.$watch('reportModalOpen', (value) => {
                         if (value) {
-                            document.documentElement.classList.add('overflow-hidden', 'touch-none', 'overscroll-none');
-                            document.body.classList.add('overflow-hidden', 'touch-none', 'overscroll-none');
+                            document.documentElement.classList.add('overflow-hidden');
+                            document.body.classList.add('overflow-hidden');
                         } else if (!this.sidebarOpen) {
-                            document.documentElement.classList.remove('overflow-hidden', 'touch-none', 'overscroll-none');
-                            document.body.classList.remove('overflow-hidden', 'touch-none', 'overscroll-none');
+                            document.documentElement.classList.remove('overflow-hidden');
+                            document.body.classList.remove('overflow-hidden');
                         }
                     });
 
@@ -963,6 +1342,14 @@
                             this.openReportModal();
                         });
                         window.history.replaceState({}, document.title, window.location.pathname);
+                    }
+
+                    // Tampilkan toast notif jika ada pesan sukses dari server (misal setelah reset sandi)
+                    if (window.__flashSuccess) {
+                        this.$nextTick(() => {
+                            this.showToast(window.__flashSuccess, 'success');
+                        });
+                        window.__flashSuccess = null;
                     }
 
                     // Real-time Polling Live Sync tanpa refresh setiap 2.5 detik
@@ -1008,12 +1395,71 @@
 
                 closeReportModal() {
                     if (this.submitting) return;
+                    this.stopCamera();
                     this.reportModalOpen = false;
+                },
+
+                async openCamera() {
+                    this.cameraError = null;
+                    this.cameraLoading = true;
+                    this.cameraModalOpen = true;
+                    try {
+                        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                            throw new Error('Browser Anda tidak mendukung akses kamera langsung.');
+                        }
+                        const stream = await navigator.mediaDevices.getUserMedia({
+                            video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } },
+                            audio: false
+                        });
+                        this.cameraStream = stream;
+                        this.$nextTick(() => {
+                            if (this.$refs.videoPreview) {
+                                this.$refs.videoPreview.srcObject = stream;
+                                this.$refs.videoPreview.play().catch(() => {});
+                            }
+                        });
+                    } catch (err) {
+                        console.error('Camera error:', err);
+                        this.cameraError = (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError')
+                            ? 'Izin kamera ditolak. Silakan izinkan akses kamera di pengaturan browser Anda.' 
+                            : (err.message || 'Tidak dapat mengakses kamera.');
+                    } finally {
+                        this.cameraLoading = false;
+                    }
+                },
+
+                stopCamera() {
+                    if (this.cameraStream) {
+                        this.cameraStream.getTracks().forEach(track => track.stop());
+                        this.cameraStream = null;
+                    }
+                    this.cameraModalOpen = false;
+                },
+
+                capturePhoto() {
+                    const video = this.$refs.videoPreview;
+                    if (!video) return;
+                    const canvas = document.createElement('canvas');
+                    canvas.width = video.videoWidth || 640;
+                    canvas.height = video.videoHeight || 480;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    
+                    canvas.toBlob((blob) => {
+                        if (!blob) return;
+                        const file = new File([blob], 'foto-kamera-' + Date.now() + '.jpg', { type: 'image/jpeg' });
+                        this.capturedFile = file;
+                        this.newReport.foto = canvas.toDataURL('image/jpeg', 0.85);
+                        if (this.$refs.fotoInput) this.$refs.fotoInput.value = '';
+                        this.stopCamera();
+                        this.showToast('Foto berhasil diambil dari kamera!', 'success');
+                    }, 'image/jpeg', 0.85);
                 },
 
                 clearFile(target) {
                     if (target === 'foto') {
                         this.newReport.foto = null;
+                        this.capturedFile = null;
                         if (this.$refs.fotoInput) this.$refs.fotoInput.value = '';
                     } else {
                         this.newReport.dokumen = null;
@@ -1065,6 +1511,7 @@
                     const reader = new FileReader();
                     reader.onload = (e) => {
                         if (target === 'foto') {
+                            this.capturedFile = null;
                             this.newReport.foto = e.target.result;
                         } else if (target === 'dokumen') {
                             this.newReport.dokumen = e.target.result;
@@ -1083,7 +1530,7 @@
                         return;
                     }
 
-                    if (!this.newReport.jenis || !this.newReport.perangkat.trim() || !this.newReport.kendala.trim()) {
+                    if (!this.newReport.jenis || !this.newReport.jenis.trim() || !this.newReport.perangkat.trim() || !this.newReport.kendala.trim()) {
                         this.showToast('Mohon lengkapi seluruh data laporan terlebih dahulu.', 'error');
                         return;
                     }
@@ -1097,14 +1544,16 @@
                     this.submitting = true;
 
                     const formData = new FormData();
-                    formData.append('jenis', this.newReport.jenis);
+                    formData.append('jenis', this.newReport.jenis.trim());
                     formData.append('perangkat', this.newReport.perangkat.trim());
                     formData.append('kendala', this.newReport.kendala.trim());
                     formData.append('prioritas', this.newReport.prioritas);
                     formData.append('dokumen', dokumenInput.files[0]);
 
                     const fotoInput = this.$refs.fotoInput;
-                    if (fotoInput && fotoInput.files[0]) {
+                    if (this.capturedFile) {
+                        formData.append('foto', this.capturedFile);
+                    } else if (fotoInput && fotoInput.files[0]) {
                         formData.append('foto', fotoInput.files[0]);
                     }
 
@@ -1143,6 +1592,7 @@
                                 this.activeReportsCount++;
                             }
                             this.newReport = emptyReportForm();
+                            this.capturedFile = null;
                             if (this.$refs.fotoInput) this.$refs.fotoInput.value = '';
                             if (this.$refs.dokumenInput) this.$refs.dokumenInput.value = '';
                             this.syncLiveData();

@@ -62,8 +62,12 @@ class DashboardController extends Controller
         $kecamatan = $alamat;
         $pelapor = $item->pelapor ?: (optional($userObj)->name ?: ($user ? $user->name : 'Pelapor'));
 
-        $tanggalMasuk = $item->created_at ? $item->created_at->format('Y-m-d') : date('Y-m-d');
-        $tanggalKeluar = $item->tanggal_keluar ? (is_string($item->tanggal_keluar) ? substr($item->tanggal_keluar, 0, 10) : $item->tanggal_keluar->format('Y-m-d')) : ($item->updated_at ? $item->updated_at->format('Y-m-d') : '-');
+        $tanggalMasuk = $item->created_at ? $item->created_at->format('Y-m-d H:i') : date('Y-m-d H:i');
+        $tanggalKeluar = $item->tanggal_keluar 
+            ? (is_string($item->tanggal_keluar) 
+                ? (strlen($item->tanggal_keluar) > 10 ? substr($item->tanggal_keluar, 0, 16) : (substr($item->tanggal_keluar, 0, 10) . ($item->updated_at ? ' ' . $item->updated_at->format('H:i') : ''))) 
+                : $item->tanggal_keluar->format('Y-m-d H:i')) 
+            : ($item->updated_at ? $item->updated_at->format('Y-m-d H:i') : '-');
 
         return [
             'id'               => $kode,
@@ -79,7 +83,7 @@ class DashboardController extends Controller
             'tanggal_masuk'    => $tanggalMasuk,
             'tanggal_keluar'   => $tanggalKeluar,
             'updated_at'       => $item->updated_at ? $item->updated_at->format('Y-m-d H:i:s') : null,
-            'teknisi'          => $item->teknisi ?? 'Fahri',
+            'teknisi'          => $item->teknisi ?? 'Fahry Rizky Prayogi',
             'status'           => $item->status ?? 'Dalam Perbaikan',
             'prioritas'        => $item->prioritas ?? 'Sedang',
             'pelapor'          => $pelapor,
@@ -95,9 +99,10 @@ class DashboardController extends Controller
     /**
      * Menampilkan Dashboard utama untuk user/pelapor.
      * 
+     * @param Request $request
      * @return View|RedirectResponse
      */
-    public function index(): View|RedirectResponse
+    public function index(Request $request): View|RedirectResponse
     {
         try {
             $user = Auth::user();
@@ -106,8 +111,19 @@ class DashboardController extends Controller
                 return redirect()->route('login');
             }
 
-            // Ambil seluruh laporan milik user yang sedang login agar banner & antrean akurat
-            $laporans = Laporan::query()->with('user')
+            $bulanPilih = str_pad((string) $request->input('bulan', Carbon::now('Asia/Jakarta')->format('m')), 2, '0', STR_PAD_LEFT);
+            $tahunPilih = (string) $request->input('tahun', Carbon::now('Asia/Jakarta')->format('Y'));
+
+            $monthsIndonesian = [
+                '01' => 'Januari', '02' => 'Februari', '03' => 'Maret',
+                '04' => 'April',   '05' => 'Mei',      '06' => 'Juni',
+                '07' => 'Juli',    '08' => 'Agustus',  '09' => 'September',
+                '10' => 'Oktober', '11' => 'November', '12' => 'Desember'
+            ];
+            $namaBulanPilih = $monthsIndonesian[$bulanPilih] ?? ('Bulan ' . $bulanPilih);
+
+            // Ambil seluruh laporan milik user yang sedang login agar banner, antrean & notifikasi akurat
+            $allUserLaporans = Laporan::query()->with('user')
                 ->where(function($q) use ($user) {
                     $q->where('user_id', $user->id)
                       ->orWhere('pelapor', $user->name);
@@ -115,16 +131,35 @@ class DashboardController extends Controller
                 ->latest()
                 ->get();
 
-            // Hitung laporan aktif untuk anti-spam (Maksimal 2 laporan aktif)
-            $activeReportsCount = $laporans
+            // Hitung laporan aktif untuk anti-spam (Maksimal 2 laporan aktif) sepanjang waktu
+            $activeReportsCount = $allUserLaporans
                 ->whereNotIn('status', ['Selesai', 'Ditolak'])
                 ->count();
 
+            // Hitung statistik seluruh laporan milik pelapor
+            $totalLaporan   = $allUserLaporans->count();
+            $dalamPerbaikan = $allUserLaporans->where('status', 'Dalam Perbaikan')->count();
+            $menungguPart   = $allUserLaporans->where('status', 'Menunggu Part')->count();
+            $selesai        = $allUserLaporans->where('status', 'Selesai')->count();
+            $ditolak        = $allUserLaporans->where('status', 'Ditolak')->count();
+            $laporans       = $allUserLaporans;
+
             // Format data laporan untuk frontend dan notifikasi pelapor
-            $defaultReports = $laporans->map(fn($item) => $this->formatReportItem($item, $user))->toArray();
+            $defaultReports = $allUserLaporans->map(fn($item) => $this->formatReportItem($item, $user))->toArray();
             $reportsData = $defaultReports;
 
-            return view('pelapor.dashboard', compact('laporans', 'defaultReports', 'reportsData', 'activeReportsCount'));
+            return view('pelapor.dashboard', compact(
+                'laporans', 
+                'allUserLaporans',
+                'defaultReports', 
+                'reportsData', 
+                'activeReportsCount',
+                'totalLaporan',
+                'dalamPerbaikan',
+                'menungguPart',
+                'selesai',
+                'ditolak'
+            ));
 
         } catch (Exception $e) {
             Log::error('Kesalahan pada DashboardController index: ' . $e->getMessage(), [
@@ -187,9 +222,10 @@ class DashboardController extends Controller
     /**
      * Menampilkan halaman rekap laporan milik pelapor (yang sudah Selesai / Ditolak).
      * 
+     * @param Request $request
      * @return View|RedirectResponse
      */
-    public function rekap(): View|RedirectResponse
+    public function rekap(Request $request): View|RedirectResponse
     {
         try {
             $user = Auth::user();
@@ -198,7 +234,7 @@ class DashboardController extends Controller
                 return redirect()->route('login');
             }
 
-            // Ambil data laporan final milik pelapor (Selesai & Ditolak)
+            // Ambil seluruh data laporan final milik pelapor (Selesai & Ditolak)
             $laporans = Laporan::query()->with('user')
                 ->where(function($q) use ($user) {
                     $q->where('user_id', $user->id)
@@ -220,7 +256,12 @@ class DashboardController extends Controller
             $reportsData = $allReports->map(fn($item) => $this->formatReportItem($item, $user))->values()->toArray();
             $defaultReports = $reportsData;
 
-            return view('pelapor.rekap', compact('laporans', 'allReports', 'reportsData', 'defaultReports'));
+            return view('pelapor.rekap', compact(
+                'laporans', 
+                'allReports', 
+                'reportsData', 
+                'defaultReports'
+            ));
 
         } catch (Exception $e) {
             Log::error('Kesalahan pada DashboardController rekap: ' . $e->getMessage(), [

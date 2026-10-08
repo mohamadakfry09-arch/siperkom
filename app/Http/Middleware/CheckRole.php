@@ -11,9 +11,12 @@ class CheckRole
 {
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
-        // Jika belum login, lempar ke halaman login
+        // Jika belum login, lempar ke halaman login yang sesuai
         if (!Auth::check()) {
-            return redirect('/login');
+            if ($request->is('admin') || $request->is('admin/*')) {
+                return redirect()->route('admin.login');
+            }
+            return redirect()->route('pelapor.login');
         }
 
         $user = Auth::user();
@@ -22,11 +25,11 @@ class CheckRole
         if (!in_array($user->role, $roles)) {
             // Jika seorang pelapor (user) mencoba masuk ke area admin, kembalikan ke dashboard pelapor
             if ($user->role === 'user' || $user->role === 'pelapor') {
-                return redirect('/pelapor/dashboard')->with('error', 'Akses ditolak! Anda harus logout terlebih dahulu untuk masuk sebagai admin.');
+                return redirect()->route('pelapor.dashboard')->with('error', 'Akses ditolak! Anda masuk sebagai Pelapor.');
             }
             
-            // Jika admin/teknisi mencoba masuk ke area pelapor atau sebaliknya
-            return redirect('/admin/dashboard')->with('error', 'Akses ditolak! Sesi anda terkunci.');
+            // Jika admin/teknisi mencoba masuk ke area pelapor
+            return redirect()->route('admin.dashboard')->with('error', 'Akses ditolak! Sesi Anda adalah Administrator/Teknisi.');
         }
 
         return $next($request);

@@ -161,7 +161,7 @@ class PelaporController extends Controller
                 'perangkat'    => $request->perangkat,
                 'kendala'      => $request->kendala,
                 'prioritas'    => $request->prioritas ?? 'Sedang',
-                'teknisi'      => 'Fahri',
+                'teknisi'      => 'Fahry Rizky Prayogi',
                 'foto'         => $fotoPath,
                 'dokumen'      => $dokumenPath,
                 'status'       => 'Dalam Perbaikan',

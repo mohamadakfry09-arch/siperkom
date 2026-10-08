@@ -3,9 +3,7 @@
 namespace Tests\Feature\Auth;
 
 use App\Models\User;
-use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 class PasswordResetTest extends TestCase
@@ -21,6 +19,8 @@ class PasswordResetTest extends TestCase
 
     public function test_reset_password_link_can_be_requested(): void
     {
+        // The /forgot-password endpoint accepts username + new password (no email token),
+        // immediately updates the password and auto-logs the user in.
         $user = User::factory()->create();
 
         $response = $this->post('/forgot-password', [
@@ -30,7 +30,8 @@ class PasswordResetTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('pelapor.dashboard'));
+        // Pelapor users are redirected to their dashboard with auth_init flag
+        $response->assertRedirect(route('pelapor.dashboard', ['auth_init' => 1]));
         $this->assertTrue($user->fresh()->password === 'new-password' || \Illuminate\Support\Facades\Hash::check('new-password', $user->fresh()->password));
     }
 
@@ -53,9 +54,10 @@ class PasswordResetTest extends TestCase
             'password_confirmation' => 'new-password',
         ]);
 
+        // After reset the user is auto-logged-in and redirected to their dashboard
         $response
             ->assertSessionHasNoErrors()
-            ->assertRedirect(route('login'));
+            ->assertRedirect(route('pelapor.dashboard', ['auth_init' => 1]));
 
         $this->assertTrue($user->fresh()->password === 'new-password' || \Illuminate\Support\Facades\Hash::check('new-password', $user->fresh()->password));
     }

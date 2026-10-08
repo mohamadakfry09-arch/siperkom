@@ -74,7 +74,7 @@ class LaporanAdminController extends Controller
                         ?: (optional($item->user)->desa
                         ?: ($item->desa ?? 'Kantor')),
                     'pelapor'           => $namaPelapor,
-                    'pelapor_avatar'    => optional($item->user)->avatar ? (filter_var($item->user->avatar, FILTER_VALIDATE_URL) ? $item->user->avatar : asset('storage/' . $item->user->avatar)) : null,
+                    'pelapor_avatar'    => optional($item->user)->avatar_url ?: (optional($item->user)->avatar ? (filter_var($item->user->avatar, FILTER_VALIDATE_URL) ? $item->user->avatar : asset('storage/' . $item->user->avatar)) : asset('images/pelapor-avatar.svg')),
                     'alamat'            => $alamatUser !== '' ? $alamatUser : 'Belum diatur',
                     'kecamatan'         => $alamatUser !== '' ? $alamatUser : 'Belum diatur',
                     'perangkat'         => $formatPerangkat,
@@ -108,21 +108,29 @@ class LaporanAdminController extends Controller
                 ->toArray();
 
             if (empty($teknisi)) {
-                return ['Fahri Ramadhan', 'Dedi Kurniawan', 'Agus Setiawan', 'Siti Marlina'];
+                return ['Fahry Rizky Prayogi', 'Dedi Kurniawan', 'Agus Setiawan', 'Siti Marlina'];
             }
 
             return $teknisi;
         } catch (Exception $e) {
             Log::error('Gagal mengambil daftar teknisi: ' . $e->getMessage());
-            return ['Fahri Ramadhan', 'Dedi Kurniawan', 'Agus Setiawan', 'Siti Marlina'];
+            return ['Fahry Rizky Prayogi', 'Dedi Kurniawan', 'Agus Setiawan', 'Siti Marlina'];
         }
     }
 
     public function dashboardOverview(Request $request)
     {
         try {
-            $bulanPilih = $request->input('bulan', Carbon::now('Asia/Jakarta')->format('m'));
-            $tahunPilih = $request->input('tahun', Carbon::now('Asia/Jakarta')->format('Y'));
+            $bulanPilih = str_pad((string) $request->input('bulan', Carbon::now('Asia/Jakarta')->format('m')), 2, '0', STR_PAD_LEFT);
+            $tahunPilih = (string) $request->input('tahun', Carbon::now('Asia/Jakarta')->format('Y'));
+
+            $monthsIndonesian = [
+                '01' => 'Januari', '02' => 'Februari', '03' => 'Maret',
+                '04' => 'April',   '05' => 'Mei',      '06' => 'Juni',
+                '07' => 'Juli',    '08' => 'Agustus',  '09' => 'September',
+                '10' => 'Oktober', '11' => 'November', '12' => 'Desember'
+            ];
+            $namaBulanPilih = $monthsIndonesian[$bulanPilih] ?? ('Bulan ' . $bulanPilih);
 
             $baseQuery = Laporan::query()->with('user')
                 ->whereMonth('created_at', '=', $bulanPilih)
@@ -138,7 +146,8 @@ class LaporanAdminController extends Controller
             $menungguPart   = (clone $baseQuery)->where('status', '=', 'Menunggu Part')->count();
             $ditolak        = (clone $baseQuery)->where('status', '=', 'Ditolak')->count();
 
-            $notifikasiLaporan = (clone $baseQuery)
+            // Notifikasi Laporan Masuk untuk Admin: Menampilkan tiket aktif yang membutuhkan tindakan teknisi
+            $notifikasiLaporan = Laporan::with('user')
                 ->whereNotIn('status', ['Selesai', 'Ditolak'])
                 ->orderBy('created_at', 'desc')
                 ->get();
@@ -153,7 +162,7 @@ class LaporanAdminController extends Controller
                     'id'            => $item->kode_laporan ?? '#REP-' . $item->id,
                     'db_id'         => $item->id,
                     'pelapor'       => $item->user->name ?? $item->nama_pelapor ?? 'Staf Pelapor',
-                    'pelapor_avatar'=> optional($item->user)->avatar ? (filter_var($item->user->avatar, FILTER_VALIDATE_URL) ? $item->user->avatar : asset('storage/' . $item->user->avatar)) : null,
+                    'pelapor_avatar'=> optional($item->user)->avatar_url ?: (optional($item->user)->avatar ? (filter_var($item->user->avatar, FILTER_VALIDATE_URL) ? $item->user->avatar : asset('storage/' . $item->user->avatar)) : asset('images/pelapor-avatar.svg')),
                     'alamat'        => $alamatVal,
                     'desa'          => optional($item->user)->nama_desa ?: (optional($item->user)->desa ?: ($item->desa ?? '-')),
                     'kecamatan'     => optional($item->user)->kecamatan ?? $item->kecamatan ?? 'Belum diatur',
@@ -161,7 +170,7 @@ class LaporanAdminController extends Controller
                     'kendala'       => $item->kendala ?? '-',
                     'status'        => $item->status ?? 'Dalam Perbaikan',
                     'prioritas'     => $item->prioritas ?? 'Sedang',
-                    'teknisi'       => $item->teknisi ?? 'Fahri',
+                    'teknisi'       => $item->teknisi ?? 'Fahry Rizky Prayogi',
                     'tanggal_masuk' => $item->created_at ? $item->created_at->format('d/m/Y') : '-',
                 ];
             })->values()->toArray();
@@ -176,6 +185,8 @@ class LaporanAdminController extends Controller
                 'ditolak',
                 'bulanPilih',
                 'tahunPilih',
+                'monthsIndonesian',
+                'namaBulanPilih',
                 'notifikasiLaporan',
                 'notifReports'
             ));
@@ -248,8 +259,16 @@ class LaporanAdminController extends Controller
     public function persentase(Request $request)
     {
         try {
-            $bulanPilih = $request->input('bulan', Carbon::now('Asia/Jakarta')->format('m'));
-            $tahunPilih = $request->input('tahun', Carbon::now('Asia/Jakarta')->format('Y'));
+            $bulanPilih = str_pad((string) $request->input('bulan', Carbon::now('Asia/Jakarta')->format('m')), 2, '0', STR_PAD_LEFT);
+            $tahunPilih = (string) $request->input('tahun', Carbon::now('Asia/Jakarta')->format('Y'));
+
+            $monthsIndonesian = [
+                '01' => 'Januari', '02' => 'Februari', '03' => 'Maret',
+                '04' => 'April',   '05' => 'Mei',      '06' => 'Juni',
+                '07' => 'Juli',    '08' => 'Agustus',  '09' => 'September',
+                '10' => 'Oktober', '11' => 'November', '12' => 'Desember'
+            ];
+            $namaBulanPilih = $monthsIndonesian[$bulanPilih] ?? ('Bulan ' . $bulanPilih);
 
             $baseQuery = Laporan::query()->with('user')
                 ->whereMonth('created_at', '=', $bulanPilih)
@@ -293,7 +312,7 @@ class LaporanAdminController extends Controller
                         'kendala'       => $item->kendala ?? '-',
                         'status'        => $item->status ?? 'Dalam Perbaikan',
                         'prioritas'     => $item->prioritas ?? 'Sedang',
-                        'teknisi'       => $item->teknisi ?? 'Fahri',
+                        'teknisi'       => $item->teknisi ?? 'Fahry Rizky Prayogi',
                         'tanggal_masuk' => $item->created_at ? $item->created_at->format('d/m/Y') : '-',
                     ];
                 })->values()->toArray();
@@ -313,6 +332,8 @@ class LaporanAdminController extends Controller
                 'persentaseDitolak',
                 'bulanPilih',
                 'tahunPilih',
+                'monthsIndonesian',
+                'namaBulanPilih',
                 'notifReports'
             ));
         } catch (Exception $e) {
@@ -324,8 +345,16 @@ class LaporanAdminController extends Controller
     public function rekap(Request $request)
     {
         try {
-            $bulanPilih = $request->input('bulan', Carbon::now('Asia/Jakarta')->format('m'));
-            $tahunPilih = $request->input('tahun', Carbon::now('Asia/Jakarta')->format('Y'));
+            $bulanPilih = str_pad((string) $request->input('bulan', Carbon::now('Asia/Jakarta')->format('m')), 2, '0', STR_PAD_LEFT);
+            $tahunPilih = (string) $request->input('tahun', Carbon::now('Asia/Jakarta')->format('Y'));
+
+            $monthsIndonesian = [
+                '01' => 'Januari', '02' => 'Februari', '03' => 'Maret',
+                '04' => 'April',   '05' => 'Mei',      '06' => 'Juni',
+                '07' => 'Juli',    '08' => 'Agustus',  '09' => 'September',
+                '10' => 'Oktober', '11' => 'November', '12' => 'Desember'
+            ];
+            $namaBulanPilih = $monthsIndonesian[$bulanPilih] ?? ('Bulan ' . $bulanPilih);
 
             $query = Laporan::query()->with('user')
                 ->whereMonth('created_at', '=', $bulanPilih)
@@ -354,14 +383,14 @@ class LaporanAdminController extends Controller
                         'id'            => $item->kode_laporan ?? '#REP-' . $item->id,
                         'db_id'         => $item->id,
                         'pelapor'       => $item->user->name ?? $item->nama_pelapor ?? 'Staf Pelapor',
-                        'pelapor_avatar'=> optional($item->user)->avatar ? (filter_var($item->user->avatar, FILTER_VALIDATE_URL) ? $item->user->avatar : asset('storage/' . $item->user->avatar)) : null,
+                        'pelapor_avatar'=> optional($item->user)->avatar_url ?: (optional($item->user)->avatar ? (filter_var($item->user->avatar, FILTER_VALIDATE_URL) ? $item->user->avatar : asset('storage/' . $item->user->avatar)) : asset('images/pelapor-avatar.svg')),
                         'desa'          => optional($item->user)->nama_desa ?: (optional($item->user)->desa ?: ($item->desa ?? '-')),
                         'kecamatan'     => optional($item->user)->kecamatan ?? $item->kecamatan ?? 'Belum diatur',
                         'perangkat'     => ($item->jenis_perangkat ?? 'Lainnya') . ' - ' . ($item->perangkat ?? '-'),
                         'kendala'       => $item->kendala ?? '-',
                         'status'        => $item->status ?? 'Dalam Perbaikan',
                         'prioritas'     => $item->prioritas ?? 'Sedang',
-                        'teknisi'       => $item->teknisi ?? 'Fahri',
+                        'teknisi'       => $item->teknisi ?? 'Fahry Rizky Prayogi',
                         'tanggal_masuk' => $item->created_at ? $item->created_at->format('d/m/Y') : '-',
                     ];
                 })->values()->toArray();
@@ -376,6 +405,8 @@ class LaporanAdminController extends Controller
                 'ditolak',
                 'bulanPilih',
                 'tahunPilih',
+                'monthsIndonesian',
+                'namaBulanPilih',
                 'notifReports'
             ));
         } catch (Exception $e) {
@@ -510,8 +541,8 @@ class LaporanAdminController extends Controller
     public function exportPdf(Request $request)
     {
         try {
-            $bulanPilih = $request->input('bulan', Carbon::now('Asia/Jakarta')->format('m'));
-            $tahunPilih = $request->input('tahun', Carbon::now('Asia/Jakarta')->format('Y'));
+            $bulanPilih = str_pad((string) $request->input('bulan', Carbon::now('Asia/Jakarta')->format('m')), 2, '0', STR_PAD_LEFT);
+            $tahunPilih = (string) $request->input('tahun', Carbon::now('Asia/Jakarta')->format('Y'));
 
             $startDate = Carbon::createFromFormat('Y-m', $tahunPilih . '-' . $bulanPilih)->startOfMonth()->toDateTimeString();
             $endDate = Carbon::createFromFormat('Y-m', $tahunPilih . '-' . $bulanPilih)->endOfMonth()->toDateTimeString();
@@ -921,8 +952,8 @@ class LaporanAdminController extends Controller
     public function exportExcel(Request $request)
     {
         try {
-            $bulanPilih = $request->input('bulan', Carbon::now('Asia/Jakarta')->format('m'));
-            $tahunPilih = $request->input('tahun', Carbon::now('Asia/Jakarta')->format('Y'));
+            $bulanPilih = str_pad((string) $request->input('bulan', Carbon::now('Asia/Jakarta')->format('m')), 2, '0', STR_PAD_LEFT);
+            $tahunPilih = (string) $request->input('tahun', Carbon::now('Asia/Jakarta')->format('Y'));
 
             $startDate = Carbon::createFromFormat('Y-m', $tahunPilih . '-' . $bulanPilih)->startOfMonth()->toDateTimeString();
             $endDate = Carbon::createFromFormat('Y-m', $tahunPilih . '-' . $bulanPilih)->endOfMonth()->toDateTimeString();

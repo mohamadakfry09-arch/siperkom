@@ -72,7 +72,7 @@ class RekapController extends Controller
                     'perangkat'        => $item->perangkat ?? '-',
                     'kendala'          => $item->kendala ?? '-',
                     'status'           => trim($item->status ?? 'Dalam Perbaikan'),
-                    'teknisi'          => $item->teknisi ?? 'Fahri',
+                    'teknisi'          => $item->teknisi ?? 'Fahry Rizky Prayogi',
                     'keterangan'       => $keteranganFinal,
                     'keterangan_rekap' => $keteranganFinal,
                     'foto'             => $item->foto ? (filter_var($item->foto, FILTER_VALIDATE_URL) ? $item->foto : asset('storage/' . $item->foto)) : null,

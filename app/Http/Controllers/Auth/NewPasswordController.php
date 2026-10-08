@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
@@ -52,18 +53,44 @@ class NewPasswordController extends Controller
                 $user->forceFill([
                     'password' => $request->password,
                     'remember_token' => Str::random(60),
+                    'must_change_password' => 0,
                 ])->save();
+
+                // Sinkronisasi otomatis ke DatabaseSeeder
+                \App\Services\SeederSyncService::syncUserToSeeder($user, $request->password);
 
                 event(new PasswordReset($user));
             }
         );
 
-        // If the password was successfully reset, we will redirect the user back to
-        // the application's home authenticated view. If there is an error we can
-        // redirect them back to where they came from with their error message.
-        return $status == Password::PASSWORD_RESET
-                    ? redirect()->route('login')->with('status', __($status))
-                    : back()->withInput($request->only('email'))
-                        ->withErrors(['email' => __($status)]);
+        // Jika berhasil reset sandi, langsung login otomatis dan arahkan ke dashboard
+        // agar tidak mental/terlempar kembali ke halaman login.
+        if ($status == Password::PASSWORD_RESET) {
+            $user = User::where('email', $request->email)->first();
+
+            if ($user) {
+                Auth::login($user, false);
+                $request->session()->regenerate();
+                session()->flash('just_logged_in', $user->id);
+
+                $successMsg = 'Kata sandi berhasil diperbarui! Anda telah masuk secara otomatis.';
+
+                if ($user->role === 'admin' || $user->role === 'teknisi') {
+                    return redirect()->route('admin.dashboard', ['auth_init' => 1])
+                        ->with('success', $successMsg)
+                        ->with('status', $successMsg);
+                }
+
+                return redirect()->route('pelapor.dashboard', ['auth_init' => 1])
+                    ->with('success', $successMsg)
+                    ->with('status', $successMsg);
+            }
+
+            return redirect()->route('login')->with('status', __($status));
+        }
+
+        return back()->withInput($request->only('email'))
+            ->withErrors(['email' => __($status)]);
     }
 }
+

@@ -38,9 +38,20 @@ class PasswordResetLinkController extends Controller
         ]);
 
         $username = trim($request->username);
-        $user = \App\Models\User::where('name', $username)
-            ->orWhere('email', $username)
-            ->first();
+        $lower = strtolower($username);
+        $user = \App\Models\User::where(function ($query) use ($username, $lower) {
+            $query->where('name', $username)
+                ->orWhere('email', $username)
+                ->orWhereRaw('LOWER(name) = ?', [$lower])
+                ->orWhereRaw('LOWER(email) = ?', [$lower]);
+
+            if (!str_contains($username, '@')) {
+                $query->orWhere('email', $username . '@gmail.com')
+                    ->orWhereRaw('LOWER(email) = ?', [$lower . '@gmail.com'])
+                    ->orWhereRaw("SUBSTRING_INDEX(email, '@', 1) = ?", [$username])
+                    ->orWhereRaw("LOWER(SUBSTRING_INDEX(email, '@', 1)) = ?", [$lower]);
+            }
+        })->first();
 
         if (!$user) {
             throw ValidationException::withMessages([
@@ -53,15 +64,25 @@ class PasswordResetLinkController extends Controller
         $user->must_change_password = 0;
         $user->save();
 
-        // Langsung login otomatis ke sesi pengguna
-        Auth::login($user);
-        $request->session()->regenerate();
+        // Sinkronisasi otomatis ke DatabaseSeeder
+        \App\Services\SeederSyncService::syncUserToSeeder($user, $request->password);
 
-        // Redirect sesuai role dengan pemberitahuan sukses
+        // Langsung login otomatis ke sesi pengguna
+        Auth::login($user, false);
+        $request->session()->regenerate();
+        session()->flash('just_logged_in', $user->id);
+
+        $successMsg = 'Kata sandi berhasil diperbarui! Anda telah masuk secara otomatis.';
+
+        // Redirect sesuai role dengan pemberitahuan sukses & auth_init agar tidak terlempar ke login
         if ($user->role === 'admin' || $user->role === 'teknisi') {
-            return redirect()->route('admin.dashboard')->with('success', 'Kata sandi berhasil diperbarui! Anda telah masuk secara otomatis.');
+            return redirect()->route('admin.dashboard', ['auth_init' => 1])
+                ->with('success', $successMsg)
+                ->with('status', $successMsg);
         }
 
-        return redirect()->route('pelapor.dashboard')->with('success', 'Kata sandi berhasil diperbarui! Anda telah masuk secara otomatis.');
+        return redirect()->route('pelapor.dashboard', ['auth_init' => 1])
+            ->with('success', $successMsg)
+            ->with('status', $successMsg);
     }
 }

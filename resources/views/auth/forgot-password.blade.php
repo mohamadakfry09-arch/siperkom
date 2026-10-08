@@ -273,10 +273,10 @@
                 <form method="POST" action="{{ route('password.email') }}" @submit="if ($el.checkValidity()) { formLoading = true; } else { formLoading = false; }" class="space-y-2.5 sm:space-y-3">
                     @csrf
 
-                    <!-- 1. Username / Nama Pengguna / Email -->
+                    <!-- 1. Username / Nama Pengguna / Gmail -->
                     <div>
                         <label for="username" class="block text-xs sm:text-xs lg:text-sm font-bold text-[var(--mm-900)] mb-1">
-                            Username / Email
+                            Username / Gmail
                         </label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -285,7 +285,7 @@
                                 </svg>
                             </div>
                             <input type="text" id="username" name="username" value="{{ old('username') }}" required autofocus
-                                   placeholder="Contoh: nama atau nama@gmail.com"
+                                   placeholder="Contoh: pelapor atau pelapor@gmail.com"
                                    class="input-field w-full rounded-xl pl-10 pr-4 py-2 sm:py-2.5 text-xs sm:text-sm bg-slate-50/70 border border-slate-200 text-slate-800 font-medium placeholder:text-slate-400 focus:bg-white focus:border-[var(--mm-600)] focus:ring-4 focus:ring-[var(--mm-600)]/15 transition-all">
                         </div>
                         @error('username')
@@ -369,7 +369,7 @@
                             </span>
                         </button>
 
-                        <a href="{{ route('login') }}"
+                        <a href="{{ route('pelapor.login') }}"
                            class="btn-touch flex justify-center w-full rounded-xl py-2 sm:py-2.5 text-[11px] sm:text-xs font-bold text-[var(--mm-800)]
                                   bg-white border border-[var(--mm-600)]/30 hover:bg-[var(--mm-200)]/30 active:scale-[0.97] smooth-all shadow-sm
                                   items-center gap-2">

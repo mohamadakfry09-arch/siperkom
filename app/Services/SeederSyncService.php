@@ -176,7 +176,7 @@ class SeederSyncService
                 $kendala = addslashes((string)($l->kendala ?? '-'));
                 $prioritas = addslashes((string)($l->prioritas ?? 'Sedang'));
                 $status = addslashes((string)($l->status ?? 'Dalam Perbaikan'));
-                $teknisi = addslashes((string)($l->teknisi ?? 'Fahri'));
+                $teknisi = addslashes((string)($l->teknisi ?? 'Fahry Rizky Prayogi'));
 
                 $keteranganRekap = ($l->keterangan_rekap !== null && $l->keterangan_rekap !== '') 
                     ? "'" . addslashes((string)$l->keterangan_rekap) . "'" 
@@ -271,6 +271,37 @@ class SeederSyncService
     public static function removeReportFromSeeder(): bool
     {
         return self::syncAllReportsFromDatabase();
+    }
+
+    /**
+     * Menyinkronkan perubahan akun admin ke AdminUserSeeder.php
+     */
+    public static function syncAdminToSeeder(User $admin): bool
+    {
+        try {
+            $seederPath = database_path('seeders/AdminUserSeeder.php');
+            if (!file_exists($seederPath)) {
+                return false;
+            }
+
+            $name = addslashes($admin->name ?? 'Administrator SIPERKOM');
+            $alamat = addslashes($admin->alamat ?? 'Jl. Sunan Kalijaga No. 7, Sumber');
+            $pwd = (string)($admin->password ?? 'cirebon2');
+            if (str_starts_with($pwd, '$2y$')) {
+                $pwd = 'cirebon2';
+            }
+            $pwdEscaped = addslashes($pwd);
+            $avatar = (!empty($admin->avatar)) ? "'" . addslashes((string)$admin->avatar) . "'" : "'avatars/admin-avatar.svg'";
+            $email = addslashes($admin->email ?? 'admin@cirebonkab.go.id');
+
+            $newContent = "<?php\n\nnamespace Database\\Seeders;\n\nuse Illuminate\\Database\\Seeder;\nuse App\\Models\\User;\n\nclass AdminUserSeeder extends Seeder\n{\n    public function run(): void\n    {\n        // 1. Akun Administrator Sistem (Admin & Teknisi Menyatu)\n        User::updateOrCreate(\n            ['email' => '{$email}'],\n            [\n                'name' => '{$name}',\n                'password' => '{$pwdEscaped}',\n                'role' => 'admin',\n                'alamat' => '{$alamat}',\n                'avatar' => {$avatar},\n                'must_change_password' => false,\n            ]\n        );\n    }\n}\n";
+
+            file_put_contents($seederPath, $newContent);
+            return true;
+        } catch (\Throwable $e) {
+            Log::warning('Gagal syncAdminToSeeder: ' . $e->getMessage());
+            return false;
+        }
     }
 }
 

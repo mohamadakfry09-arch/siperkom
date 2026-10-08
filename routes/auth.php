@@ -11,16 +11,35 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
+// Rute Portal Masuk Terpisah: Admin/Teknisi dan Pelapor
+Route::get('admin/login', [AuthenticatedSessionController::class, 'createAdmin'])
+    ->name('admin.login');
+
+Route::get('pelapor/login', [AuthenticatedSessionController::class, 'createPelapor'])
+    ->name('pelapor.login');
+
 Route::get('login', [AuthenticatedSessionController::class, 'create'])
     ->name('login');
 
 Route::middleware('guest')->group(function () {
+    Route::post('admin/login', [AuthenticatedSessionController::class, 'storeAdmin'])
+        ->name('admin.login.store');
+
+    Route::post('pelapor/login', [AuthenticatedSessionController::class, 'storePelapor'])
+        ->name('pelapor.login.store');
+
+    Route::post('login', [AuthenticatedSessionController::class, 'storePelapor']);
+
     Route::get('register', [RegisteredUserController::class, 'create'])
         ->name('register');
 
     Route::post('register', [RegisteredUserController::class, 'store']);
 
-    Route::post('login', [AuthenticatedSessionController::class, 'store']);
+    Route::get('admin/register', [RegisteredUserController::class, 'createAdmin'])
+        ->name('admin.register');
+
+    Route::post('admin/register', [RegisteredUserController::class, 'storeAdmin'])
+        ->name('admin.register.store');
 
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');

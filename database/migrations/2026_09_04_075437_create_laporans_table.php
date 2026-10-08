@@ -25,7 +25,7 @@ return new class extends Migration
                 $table->text('kendala')->nullable();
                 $table->string('prioritas')->default('Rendah');
                 $table->string('status')->default('Dalam Perbaikan');
-                $table->string('teknisi')->default('Fahri');
+                $table->string('teknisi')->default('Fahry Rizky Prayogi');
                 $table->text('keterangan_rekap')->nullable();
                 $table->string('foto')->nullable();
                 $table->timestamp('tanggal_keluar')->nullable();

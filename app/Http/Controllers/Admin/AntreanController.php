@@ -14,7 +14,9 @@ class AntreanController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = Laporan::with('user')->latest();
+            $query = Laporan::with('user')
+                ->whereNotIn('status', ['Selesai', 'Ditolak'])
+                ->latest();
 
             if ($request->has('status') && $request->status !== 'Semua') {
                 $query->where('status', $request->status);
@@ -53,7 +55,7 @@ class AntreanController extends Controller
                     'id'               => $item->kode_laporan ?? '#REP-' . $item->id,
                     'db_id'            => $item->id,
                     'pelapor'          => $item->user->name ?? $item->nama_pelapor ?? 'Staf',
-                    'pelapor_avatar'   => optional($item->user)->avatar ? (filter_var($item->user->avatar, FILTER_VALIDATE_URL) ? $item->user->avatar : asset('storage/' . $item->user->avatar)) : null,
+                    'pelapor_avatar'   => optional($item->user)->avatar_url ?: (optional($item->user)->avatar ? (filter_var($item->user->avatar, FILTER_VALIDATE_URL) ? $item->user->avatar : asset('storage/' . $item->user->avatar)) : asset('images/pelapor-avatar.svg')),
                     'alamat'           => $alamat,
                     'desa'             => optional($item->user)->nama_desa
                         ?: (optional($item->user)->desa
@@ -63,7 +65,7 @@ class AntreanController extends Controller
                     'kendala'          => $item->kendala ?? '-',
                     'status'           => $item->status ?? 'Dalam Perbaikan',
                     'prioritas'        => $item->prioritas ?? 'Sedang',
-                    'teknisi'          => $item->teknisi ?? 'Fahri',
+                    'teknisi'          => $item->teknisi ?? 'Fahry Rizky Prayogi',
                     'tanggal_masuk'    => $item->created_at ? $item->created_at->format('d/m/Y') : '-',
                     'keterangan'       => $item->keterangan_rekap ?? $item->kendala ?? '-',
                     'keterangan_rekap' => $item->keterangan_rekap ?? '-',
@@ -83,14 +85,14 @@ class AntreanController extends Controller
                         'id'               => $item->kode_laporan ?? '#REP-' . $item->id,
                         'db_id'            => $item->id,
                         'pelapor'          => $item->user->name ?? $item->nama_pelapor ?? 'Staf Pelapor',
-                        'pelapor_avatar'   => optional($item->user)->avatar ? (filter_var($item->user->avatar, FILTER_VALIDATE_URL) ? $item->user->avatar : asset('storage/' . $item->user->avatar)) : null,
+                        'pelapor_avatar'   => optional($item->user)->avatar_url ?: (optional($item->user)->avatar ? (filter_var($item->user->avatar, FILTER_VALIDATE_URL) ? $item->user->avatar : asset('storage/' . $item->user->avatar)) : asset('images/pelapor-avatar.svg')),
                         'desa'             => optional($item->user)->nama_desa ?: (optional($item->user)->desa ?: ($item->desa ?? '-')),
                         'kecamatan'        => optional($item->user)->kecamatan ?? $item->kecamatan ?? 'Belum diatur',
                         'perangkat'        => ($item->jenis_perangkat ?? 'Lainnya') . ' - ' . ($item->perangkat ?? '-'),
                         'kendala'          => $item->kendala ?? '-',
                         'status'           => $item->status ?? 'Dalam Perbaikan',
                         'prioritas'        => $item->prioritas ?? 'Sedang',
-                        'teknisi'          => $item->teknisi ?? 'Fahri',
+                        'teknisi'          => $item->teknisi ?? 'Fahry Rizky Prayogi',
                         'tanggal_masuk'    => $item->created_at ? $item->created_at->format('d/m/Y') : '-',
                     ];
                 });
@@ -174,7 +176,9 @@ class AntreanController extends Controller
     public function liveSync(Request $request)
     {
         $status = $request->query('status');
-        $query = Laporan::with('user')->orderBy('created_at', 'desc');
+        $query = Laporan::with('user')
+            ->whereNotIn('status', ['Selesai', 'Ditolak'])
+            ->orderBy('created_at', 'desc');
 
         if ($status && $status !== 'Semua') {
             $query->where('status', $status);
@@ -213,7 +217,7 @@ class AntreanController extends Controller
                 'id'               => $item->kode_laporan ?? '#REP-' . $item->id,
                 'db_id'            => $item->id,
                 'pelapor'          => $item->user->name ?? $item->nama_pelapor ?? 'Staf',
-                'pelapor_avatar'   => optional($item->user)->avatar ? (filter_var($item->user->avatar, FILTER_VALIDATE_URL) ? $item->user->avatar : asset('storage/' . $item->user->avatar)) : null,
+                'pelapor_avatar'   => optional($item->user)->avatar_url ?: (optional($item->user)->avatar ? (filter_var($item->user->avatar, FILTER_VALIDATE_URL) ? $item->user->avatar : asset('storage/' . $item->user->avatar)) : asset('images/pelapor-avatar.svg')),
                 'alamat'           => $alamat,
                 'desa'             => optional($item->user)->nama_desa
                     ?: (optional($item->user)->desa
@@ -223,7 +227,7 @@ class AntreanController extends Controller
                 'kendala'          => $item->kendala ?? '-',
                 'status'           => $item->status ?? 'Dalam Perbaikan',
                 'prioritas'        => $item->prioritas ?? 'Sedang',
-                'teknisi'          => $item->teknisi ?? 'Fahri',
+                'teknisi'          => $item->teknisi ?? 'Fahry Rizky Prayogi',
                 'tanggal_masuk'    => $item->created_at ? $item->created_at->format('d/m/Y') : '-',
                 'tanggal_keluar'   => $item->tanggal_keluar ? (is_string($item->tanggal_keluar) ? substr($item->tanggal_keluar, 0, 10) : $item->tanggal_keluar->format('Y-m-d')) : null,
                 'keterangan'       => $item->keterangan_rekap ?? $item->kendala ?? '-',
@@ -258,7 +262,7 @@ class AntreanController extends Controller
                     'id'            => $item->kode_laporan ?? '#REP-' . $item->id,
                     'db_id'         => $item->id,
                     'pelapor'       => $item->user->name ?? $item->nama_pelapor ?? 'Staf Pelapor',
-                    'pelapor_avatar'=> optional($item->user)->avatar ? (filter_var($item->user->avatar, FILTER_VALIDATE_URL) ? $item->user->avatar : asset('storage/' . $item->user->avatar)) : null,
+                    'pelapor_avatar'=> optional($item->user)->avatar_url ?: (optional($item->user)->avatar ? (filter_var($item->user->avatar, FILTER_VALIDATE_URL) ? $item->user->avatar : asset('storage/' . $item->user->avatar)) : asset('images/pelapor-avatar.svg')),
                     'alamat'        => $alamat,
                     'desa'          => optional($item->user)->nama_desa ?: (optional($item->user)->desa ?: ($item->desa ?? '-')),
                     'kecamatan'     => optional($item->user)->kecamatan ?? $item->kecamatan ?? 'Belum diatur',
@@ -266,7 +270,7 @@ class AntreanController extends Controller
                     'kendala'       => $item->kendala ?? '-',
                     'status'        => $item->status ?? 'Dalam Perbaikan',
                     'prioritas'     => $item->prioritas ?? 'Sedang',
-                    'teknisi'       => $item->teknisi ?? 'Fahri',
+                    'teknisi'       => $item->teknisi ?? 'Fahry Rizky Prayogi',
                     'tanggal_masuk' => $item->created_at ? $item->created_at->format('d/m/Y') : '-',
                 ];
             });

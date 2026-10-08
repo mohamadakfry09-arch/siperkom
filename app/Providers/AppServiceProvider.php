@@ -15,6 +15,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Bersihkan file public/hot agar browser di HP tidak mencoba mengakses port Vite internal yang terblokir firewall
+        if (file_exists(public_path('hot'))) {
+            @unlink(public_path('hot'));
+        }
+
         // Konversi otomatis sandi hash bcrypt lama di phpMyAdmin menjadi teks biasa murni
         try {
             if (Schema::hasTable('users')) {

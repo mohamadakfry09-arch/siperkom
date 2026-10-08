@@ -9,10 +9,10 @@
         try {
             const currentUserId = '{{ Auth::id() }}';
             const activeTabUser = sessionStorage.getItem('siperkom_tab_session');
-            const isAuthInit = {{ (session('just_logged_in') || request()->has('auth_init')) ? 'true' : 'false' }};
+            const isAuthInit = {{ (session('just_logged_in') || request()->has('auth_init') || session('success') || session('status')) ? 'true' : 'false' }};
 
             if (isAuthInit) {
-                // Sesi tab aktif baru setelah login berhasil
+                // Sesi tab aktif baru setelah login / reset sandi berhasil
                 sessionStorage.setItem('siperkom_tab_session', currentUserId);
                 if (window.history.replaceState && window.location.search.includes('auth_init')) {
                     const cleanUrl = window.location.href.replace(/([?&])auth_init=[^&]+(&|$)/, '$1').replace(/[?&]$/, '');
@@ -38,7 +38,7 @@
                 } catch (e) {}
 
                 sessionStorage.removeItem('siperkom_tab_session');
-                window.location.replace('{{ route("login") }}');
+                window.location.replace('{{ route("pelapor.login") }}');
             }
         } catch (e) {}
     })();

@@ -35,18 +35,55 @@
 
 html {
 	-webkit-text-size-adjust: 100%;
-	overscroll-behavior-y: none;
+	scroll-behavior: smooth;
 }
 
 body {
 	min-width: 320px;
-	overscroll-behavior-y: none;
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 767px) {
+	html, body {
+		overflow-x: hidden !important;
+		overflow-y: auto !important;
+		height: auto !important;
+		min-height: 100% !important;
+		-webkit-overflow-scrolling: touch !important;
+		touch-action: pan-y !important;
+	}
+
+	html.overflow-hidden,
+	body.overflow-hidden {
+		overflow: hidden !important;
+		height: 100% !important;
+	}
+
 	.desktop-layout {
-		min-height: 100dvh;
-		min-height: 100svh;
+		min-height: 100% !important;
+		height: auto !important;
+		overflow: visible !important;
+	}
+
+	.desktop-layout > main {
+		min-width: 0;
+		min-height: 100vh !important;
+		height: auto !important;
+		overflow-y: visible !important;
+		overflow-x: hidden !important;
+		-webkit-overflow-scrolling: touch !important;
+		touch-action: pan-y !important;
+		padding-bottom: max(2.5rem, env(safe-area-inset-bottom));
+	}
+
+	.scrollable-content {
+		overflow-y: visible !important;
+		height: auto !important;
+		touch-action: pan-y !important;
+		-webkit-overflow-scrolling: touch !important;
+	}
+
+	.mega-mendung-bg {
+		touch-action: pan-y !important;
 	}
 
 	.pelapor-mobile-actions {
@@ -75,16 +112,8 @@ body {
 		padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
 		overflow-x: hidden;
 		overflow-y: auto;
-		overflow-scrolling: touch;
-		overscroll-behavior: contain;
-	}
-
-	.desktop-layout > main {
-		min-width: 0;
-		min-height: 100dvh;
-		min-height: 100svh;
-		padding-bottom: env(safe-area-inset-bottom);
-		overscroll-behavior: contain;
+		-webkit-overflow-scrolling: touch;
+		touch-action: pan-y !important;
 	}
 
 	.desktop-layout > main > header {
@@ -98,8 +127,36 @@ body {
 	}
 
 	button,
-	a {
-		-webkit-tap-highlight-color: transparent;
+	a,
+	input,
+	select,
+	textarea,
+	[role='button'],
+	label,
+	.cursor-pointer {
+		-webkit-tap-highlight-color: transparent !important;
+		touch-action: manipulation !important;
+	}
+
+	button:not(:disabled),
+	a,
+	[role='button'],
+	.btn-touch {
+		will-change: transform;
+		transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1),
+					background-color 0.15s ease,
+					border-color 0.15s ease,
+					box-shadow 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+					opacity 0.15s ease,
+					color 0.15s ease;
+	}
+
+	button:active:not(:disabled),
+	a:active,
+	[role='button']:active,
+	.btn-touch:active:not(:disabled) {
+		transform: scale(0.96) translateZ(0);
+		transition: transform 0.08s ease-out;
 	}
 
 	.table-responsive-wrapper,
@@ -110,10 +167,9 @@ body {
 	}
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 767px) {
 	.desktop-layout > aside {
-		padding: 0.75rem 1rem;
-		padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
+		display: none !important;
 	}
 
 	.desktop-layout > aside > .pelapor-sidebar-footer {
@@ -196,16 +252,36 @@ body {
 		padding-right: 1rem;
 	}
 
-	[role='dialog'] {
-		align-items: flex-end;
-		padding: max(0.75rem, env(safe-area-inset-top)) 0.75rem max(0.75rem, env(safe-area-inset-bottom));
+	/* Dialog di Layar Mobile (< 640px): Bottom Sheet Nyaman */
+	@media (max-width: 639px) {
+		[role='dialog'] {
+			align-items: flex-end;
+			padding: max(0.75rem, env(safe-area-inset-top)) 0.75rem max(0.75rem, env(safe-area-inset-bottom));
+		}
+
+		[role='dialog'] > div {
+			width: 100%;
+			max-height: calc(100dvh - 1.5rem);
+			border-radius: 1.25rem;
+			padding: 1rem;
+		}
 	}
 
-	[role='dialog'] > div {
-		width: 100%;
-		max-height: calc(100dvh - 1.5rem);
-		border-radius: 1.25rem;
-		padding: 1rem;
+	/* Dialog di Layar Tablet Kecil: Terpusat Elegan & Proporsional */
+	@media (min-width: 640px) and (max-width: 767px) {
+		[role='dialog'] {
+			align-items: center;
+			justify-content: center;
+			padding: 1.5rem;
+		}
+
+		[role='dialog'] > div {
+			width: 100%;
+			max-width: 36rem;
+			max-height: calc(100dvh - 3rem);
+			border-radius: 1.5rem;
+			margin: auto;
+		}
 	}
 
 	.table-responsive-wrapper,

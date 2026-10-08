@@ -1,9 +1,9 @@
 @php
     // Data laporan default jika belum terhubung database secara penuh
     $defaultReports = $defaultReports ?? [
-        ['id' => '#REP-2026-001', 'desa' => 'Weru Lor', 'pelapor' => 'Bpk. Ahmad', 'perangkat' => 'PC Admin Desa', 'jenis_perangkat' => 'PC / Komputer', 'kendala' => 'Blue Screen & Tidak Booting', 'status' => 'Dalam Perbaikan', 'prioritas' => 'Tinggi', 'teknisi' => 'Fahri Ramadhan', 'tanggal' => '2026-07-28'],
+        ['id' => '#REP-2026-001', 'desa' => 'Weru Lor', 'pelapor' => 'Bpk. Ahmad', 'perangkat' => 'PC Admin Desa', 'jenis_perangkat' => 'PC / Komputer', 'kendala' => 'Blue Screen & Tidak Booting', 'status' => 'Dalam Perbaikan', 'prioritas' => 'Tinggi', 'teknisi' => 'Fahry Rizky Prayogi', 'tanggal' => '2026-07-28'],
         ['id' => '#REP-2026-002', 'desa' => 'Palimanan Barat', 'pelapor' => 'Ibu Siti', 'perangkat' => 'Printer Epson L3110', 'jenis_perangkat' => 'Printer / Scanner', 'kendala' => 'Tinta Macet & Bergaris', 'status' => 'Menunggu Part', 'prioritas' => 'Sedang', 'teknisi' => 'Dedi Kurniawan', 'tanggal' => '2026-07-27'],
-        ['id' => '#REP-2026-003', 'desa' => 'Gegesik Kulon', 'pelapor' => 'Bpk. Rudi', 'perangkat' => 'Router Mikrotik', 'jenis_perangkat' => 'Jaringan / Router', 'kendala' => 'Jaringan Internet Sering Putus', 'status' => 'Selesai', 'prioritas' => 'Rendah', 'teknisi' => 'Fahri Ramadhan', 'tanggal' => '2026-07-25'],
+        ['id' => '#REP-2026-003', 'desa' => 'Gegesik Kulon', 'pelapor' => 'Bpk. Rudi', 'perangkat' => 'Router Mikrotik', 'jenis_perangkat' => 'Jaringan / Router', 'kendala' => 'Jaringan Internet Sering Putus', 'status' => 'Selesai', 'prioritas' => 'Rendah', 'teknisi' => 'Fahry Rizky Prayogi', 'tanggal' => '2026-07-25'],
         ['id' => '#REP-2026-004', 'desa' => 'Sindanglaut', 'pelapor' => 'Ibu Wulan', 'perangkat' => 'Laptop Kaur Keuangan', 'jenis_perangkat' => 'Laptop', 'kendala' => 'Baterai Cepat Habis', 'status' => 'Selesai', 'prioritas' => 'Sedang', 'teknisi' => 'Siti Marlina', 'tanggal' => '2026-06-18'],
         ['id' => '#REP-2026-005', 'desa' => 'Beber', 'pelapor' => 'Bpk. Yanto', 'perangkat' => 'PC Operator SIPADES', 'jenis_perangkat' => 'PC / Komputer', 'kendala' => 'Mati Total', 'status' => 'Selesai', 'prioritas' => 'Tinggi', 'teknisi' => 'Agus Setiawan', 'tanggal' => '2026-06-05'],
     ];
@@ -15,8 +15,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rekap Bulanan & Ekspor | SIPERKOM</title>
     
-    <link rel="icon" href="{{ asset('images/cirebon.png') }}" type="image/png">
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @include('partials.assets')
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
@@ -72,12 +71,12 @@
                 <div class="gold-divider w-full opacity-40"></div>
 
                 <!-- Info Pengelola Terpadu (Admin & Teknisi) -->
-                <div class="bg-[var(--mm-800)]/70 border border-[var(--mm-600)]/50 p-3.5 rounded-2xl backdrop-blur-md flex items-center gap-3 shadow-inner">
-                    <div class="w-10 h-10 rounded-xl bg-[var(--keraton-gold)] text-[var(--mm-900)] font-bold font-display flex items-center justify-center text-sm shadow shrink-0">
+                <a href="{{ route('admin.profil.edit') }}" class="bg-[var(--mm-800)]/70 hover:bg-[var(--mm-800)] border border-[var(--mm-600)]/50 hover:border-[var(--keraton-gold)]/50 p-3.5 rounded-2xl backdrop-blur-md flex items-center gap-3 shadow-inner transition block cursor-pointer group">
+                    <div class="w-10 h-10 rounded-xl bg-[var(--keraton-gold)] text-[var(--mm-900)] font-bold font-display flex items-center justify-center text-sm shadow shrink-0 group-hover:scale-105 transition">
                         {{ strtoupper(substr(Auth::user()->name ?? 'AD', 0, 2)) }}
                     </div>
                     <div class="overflow-hidden flex-1">
-                        <p class="font-display font-bold text-sm truncate text-white" title="{{ Auth::user()->name ?? 'Administrator' }}">
+                        <p class="font-display font-bold text-sm break-words text-white group-hover:text-[var(--keraton-gold-soft)] transition" title="{{ Auth::user()->name ?? 'Administrator' }}">
                             {{ Auth::user()->name ?? 'Administrator' }}
                         </p>
                         <p class="text-[11px] text-[var(--mm-200)] truncate font-medium">
@@ -93,7 +92,7 @@
                             @endif
                         </p>
                     </div>
-                </div>
+                </a>
 
                 <!-- Navigasi -->
                 <nav class="space-y-1.5 pt-2">
@@ -243,7 +242,7 @@
     </div>
 
     <!-- ============ TOAST NOTIFIKASI ============ -->
-    <div x-show="toast.show" x-cloak x-transition
+    <div x-show="toast.show && toast.message" x-cloak x-transition
          class="fixed bottom-5 right-5 z-[60] bg-[var(--mm-900)] text-white px-4 py-3 rounded-xl shadow-2xl text-xs font-semibold flex items-center gap-2 border border-white/10 max-w-xs">
         <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
         <span x-text="toast.message"></span>

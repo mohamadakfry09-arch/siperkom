@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <defs>
+    <linearGradient id="pelaporBgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b335c"/>
+      <stop offset="50%" stop-color="#072544"/>
+      <stop offset="100%" stop-color="#04172c"/>
+    </linearGradient>
+    <linearGradient id="pelaporGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F5D77F"/>
+      <stop offset="50%" stop-color="#C9A227"/>
+      <stop offset="100%" stop-color="#997514"/>
+    </linearGradient>
+    <linearGradient id="pelaporSuitGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <filter id="pelaporShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- Background Circle with Gold Ring -->
+  <circle cx="60" cy="60" r="58" fill="url(#pelaporBgGrad)" stroke="url(#pelaporGoldGrad)" stroke-width="3"/>
+  <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(201, 162, 39, 0.25)" stroke-width="1" stroke-dasharray="3 3"/>
+
+  <!-- User Head / Silhouette -->
+  <g filter="url(#pelaporShadow)">
+    <!-- Head -->
+    <circle cx="60" cy="42" r="17" fill="#f8fafc"/>
+    
+    <!-- Hair / Clean Cut -->
+    <path d="M43 40 C43 27 50 23 60 23 C70 23 77 27 77 40 C75 32 70 28 60 28 C50 28 45 32 43 40 Z" fill="#334155"/>
+
+    <!-- Ears -->
+    <circle cx="43" cy="43" r="3" fill="#f8fafc"/>
+    <circle cx="77" cy="43" r="3" fill="#f8fafc"/>
+
+    <!-- Neck & Shirt Collar -->
+    <path d="M53 54 L53 66 L67 66 L67 54 Z" fill="#f8fafc"/>
+    
+    <!-- White Shirt V-shape -->
+    <polygon points="50,65 60,78 70,65" fill="#ffffff"/>
+
+    <!-- Tie (Gold Keraton Cirebon) -->
+    <polygon points="58,66 62,66 63,85 60,90 57,85" fill="url(#pelaporGoldGrad)"/>
+    <polygon points="57,64 63,64 62,67 58,67" fill="#b38a1b"/>
+
+    <!-- Shoulders / Batik Suit -->
+    <path d="M30 102 C30 80 43 68 53 66 L59 78 L61 78 L67 66 C77 68 90 80 90 102 C85 106 73 108 60 108 C47 108 35 106 30 102 Z" fill="url(#pelaporSuitGrad)"/>
+
+    <!-- Jacket Lapels -->
+    <path d="M42 69 L53 88 L55 88 L48 67 Z" fill="#334155"/>
+    <path d="M78 69 L67 88 L65 88 L72 67 Z" fill="#334155"/>
+
+    <!-- Mini Gold Badge on Lapel -->
+    <circle cx="46" cy="80" r="2.5" fill="url(#pelaporGoldGrad)"/>
+  </g>
+
+  <!-- Pelapor Badge at bottom center -->
+  <g transform="translate(45, 93)">
+    <rect width="30" height="15" rx="7.5" fill="#072544" stroke="url(#pelaporGoldGrad)" stroke-width="1.5"/>
+    <text x="15" y="11" font-family="'Plus Jakarta Sans', -apple-system, sans-serif" font-size="7" font-weight="900" fill="url(#pelaporGoldGrad)" text-anchor="middle" letter-spacing="0.5">USER</text>
+  </g>
+</svg>

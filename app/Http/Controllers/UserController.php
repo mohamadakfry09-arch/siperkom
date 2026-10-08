@@ -41,12 +41,44 @@ class UserController extends Controller
                     'kendala'       => $item->kendala ?? '-',
                     'status'        => $item->status ?? 'Dalam Perbaikan',
                     'prioritas'     => $item->prioritas ?? 'Sedang',
-                    'teknisi'       => $item->teknisi ?? 'Fahri',
-                    'tanggal_masuk' => $item->created_at ? $item->created_at->format('d/m/Y') : '-',
+                    'teknisi'       => $item->teknisi ?? 'Fahry Rizky Prayogi',
                 ];
             })->values()->toArray();
 
-        return view('admin.manajemen', compact('users', 'notifReports'));
+        $initialUsers = $users->map(fn($u) => [
+            'id'       => $u->id,
+            'name'     => $u->name,
+            'email'    => $u->email,
+            'password' => $u->password,
+            'alamat'   => $u->alamat ?? '-',
+            'avatar'   => $u->avatar ? asset('storage/' . $u->avatar) : null,
+            'role'     => $u->role,
+        ])->values()->all();
+
+        return view('admin.manajemen', compact('users', 'notifReports', 'initialUsers'));
+    }
+
+    /**
+     * Live-sync: mengembalikan daftar user pelapor terbaru dalam JSON untuk polling real-time.
+     */
+    public function liveSync()
+    {
+        $users = User::whereNotIn('role', ['admin', 'administrator', 'teknisi'])
+            ->latest()
+            ->get()
+            ->map(fn($u) => [
+                'id'       => $u->id,
+                'name'     => $u->name,
+                'email'    => $u->email,
+                'password' => $u->password,
+                'alamat'   => $u->alamat ?? '-',
+                'avatar'   => $u->avatar ? asset('storage/' . $u->avatar) : null,
+                'role'     => $u->role,
+            ])
+            ->values()
+            ->all();
+
+        return response()->json(['users' => $users, 'total' => count($users)]);
     }
 
     /**

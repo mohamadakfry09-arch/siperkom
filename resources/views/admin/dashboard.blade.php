@@ -1,5 +1,15 @@
 @php
     $defaultReports = $defaultReports ?? [];
+    $bulanPilih = $bulanPilih ?? request('bulan', date('m'));
+    $tahunPilih = $tahunPilih ?? request('tahun', date('Y'));
+
+    $monthsIndonesian = $monthsIndonesian ?? [
+        '01' => 'Januari', '02' => 'Februari', '03' => 'Maret', 
+        '04' => 'April',   '05' => 'Mei',      '06' => 'Juni', 
+        '07' => 'Juli',    '08' => 'Agustus',  '09' => 'September', 
+        '10' => 'Oktober', '11' => 'November', '12' => 'Desember'
+    ];
+    $namaBulanPilih = $namaBulanPilih ?? ($monthsIndonesian[$bulanPilih] ?? ('Bulan ' . $bulanPilih));
 @endphp
 <!DOCTYPE html>
 <html lang="id">
@@ -10,7 +20,7 @@
     
     <link rel="icon" href="{{ asset('images/cirebon.png') }}" type="image/png">
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @include('partials.assets')
     @include('partials.session-guard')
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -74,6 +84,10 @@
         }
 
         @media (min-width: 1024px) {
+            html, body {
+                height: 100% !important;
+                overflow: hidden !important;
+            }
             .mobile-rounded-sidebar {
                 border-top-right-radius: 1.5rem !important;
                 border-bottom-right-radius: 1.5rem !important;
@@ -81,8 +95,34 @@
                 border-bottom-left-radius: 1.5rem !important;
             }
             .desktop-layout {
-                height: 100vh;
-                overflow: hidden;
+                height: 100vh !important;
+                max-height: 100vh !important;
+                height: 100dvh !important;
+                max-height: 100dvh !important;
+                overflow: hidden !important;
+            }
+            .desktop-layout > aside {
+                width: min(19rem, calc(100vw - 1rem)) !important;
+                min-width: min(19rem, calc(100vw - 1rem)) !important;
+                max-width: min(19rem, calc(100vw - 1rem)) !important;
+                flex-shrink: 0 !important;
+                height: 100% !important;
+                max-height: 100% !important;
+                min-height: 0 !important;
+            }
+            .desktop-layout > aside .pelapor-mobile-actions {
+                position: relative !important;
+                bottom: auto !important;
+                left: auto !important;
+                right: auto !important;
+                margin-top: auto !important;
+            }
+            .desktop-layout > main {
+                min-width: 0 !important;
+                flex: 1 1 0% !important;
+                height: 100% !important;
+                max-height: 100% !important;
+                min-height: 0 !important;
             }
         }
 
@@ -113,7 +153,7 @@
     </style>
 </head>
 <body class="antialiased bg-[var(--batik-cream)] text-[var(--ink)]"
-     x-data="adminDashboard(window.__initialReports)" x-init="init()"
+     x-data="adminDashboard(window.__initialReports)"
      :class="{ 'overflow-hidden touch-none overscroll-none': sidebarOpen }">
 
     <div class="desktop-layout flex flex-row relative min-h-screen lg:min-h-0 lg:p-3 lg:gap-3 bg-[var(--batik-cream)]">
@@ -130,36 +170,54 @@
 
         <!-- ============ SIDEBAR ADMIN (IDENTIK DENGAN PELAPOR) ============ -->
         <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
-            @touchmove.stop.prevent="if (window.innerWidth < 1024) $event.preventDefault()"
-            class="fixed lg:static top-3.5 left-0 z-[9999] lg:z-auto w-[76vw] max-w-[275px] lg:w-[min(18rem,calc(100vw-1rem))] lg:max-w-none mega-mendung-bg flex flex-col justify-between p-4 sm:p-5 lg:p-6 text-white shrink-0 shadow-2xl transition-transform duration-300 ease-out h-[78vh] max-h-[580px] lg:h-full lg:max-h-none overflow-hidden lg:overflow-y-auto no-scrollbar touch-none lg:touch-auto overscroll-none select-none mobile-rounded-sidebar border-0 outline-none">
+            class="fixed lg:static top-3.5 left-0 z-[9999] lg:z-auto w-[82vw] max-w-[290px] lg:w-[min(19rem,calc(100vw-1rem))] lg:max-w-none mega-mendung-bg flex flex-col justify-between p-3.5 sm:p-4 lg:p-4.5 text-white shrink-0 shadow-2xl transition-transform duration-300 ease-out h-[78vh] max-h-[580px] lg:h-full lg:max-h-none overflow-hidden lg:overflow-y-auto no-scrollbar touch-pan-y overscroll-none select-none mobile-rounded-sidebar border-0 outline-none">
 
             <!-- BAGIAN ATAS: USER BADGE, MENU -->
             <div class="space-y-3.5 lg:space-y-4">
 
-                <!-- Admin Profile Card -->
-                <div class="bg-gradient-to-r from-[#0b335c]/85 via-[#0c3966]/80 to-[#072544]/90 border border-blue-300/30 hover:border-[var(--keraton-gold)]/40 p-3 rounded-2xl flex items-center gap-3 shadow-lg backdrop-blur-sm transition-all duration-200">
+                <!-- Admin Profile Card (Modern Glassmorphic Style & Interactive) -->
+                <a href="{{ route('admin.profil.edit') }}" 
+                   @click="sidebarOpen = false"
+                   class="group relative overflow-hidden bg-gradient-to-r from-white/[0.12] via-[#0c3966]/60 to-white/[0.04] hover:from-white/[0.18] hover:via-[#0c3966]/80 hover:to-white/[0.08] active:scale-[0.98] border border-white/15 hover:border-[var(--keraton-gold)]/70 active:border-[var(--keraton-gold)] p-2.5 sm:p-3 rounded-2xl flex items-center gap-2.5 sm:gap-3 shadow-lg shadow-black/20 backdrop-blur-md transition-all duration-200 cursor-pointer select-none touch-manipulation">
+                    
+                    <!-- Ambient Top Highlight & Soft Glow -->
+                    <div class="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+                    <div class="absolute -right-6 -bottom-6 w-16 h-16 bg-[var(--keraton-gold)]/10 rounded-full blur-xl group-hover:bg-[var(--keraton-gold)]/20 transition-all pointer-events-none"></div>
+
+                    <!-- Avatar with Ring and Live Status Dot -->
                     <div class="relative shrink-0">
                         @if(!empty(Auth::user()->avatar))
-                            <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="w-10 h-10 rounded-xl object-cover ring-2 ring-[var(--keraton-gold)]/80 shadow-md" alt="Foto Profil">
+                            <img src="{{ asset('storage/' . Auth::user()->avatar) }}" 
+                                 class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl object-cover ring-2 ring-[var(--keraton-gold)]/80 ring-offset-2 ring-offset-[#072544] shadow-md group-hover:scale-105 group-hover:ring-[var(--keraton-gold)] transition-all duration-200" 
+                                 alt="Foto Profil">
                         @else
-                            <img src="{{ asset('images/admin-avatar.svg') }}" class="w-10 h-10 rounded-xl object-cover ring-2 ring-[var(--keraton-gold)]/80 shadow-md bg-[#072544]" alt="Icon Administrator">
+                            <img src="{{ asset('images/admin-avatar.svg') }}" 
+                                 class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl object-cover ring-2 ring-[var(--keraton-gold)]/80 ring-offset-2 ring-offset-[#072544] shadow-md bg-[#072544] group-hover:scale-105 transition-all duration-200" 
+                                 alt="Icon Administrator">
                         @endif
                     </div>
+
+                    <!-- User Name & Role Badge -->
                     <div class="min-w-0 flex-1">
-                        <p class="font-bold text-xs lg:text-[13px] text-white leading-snug break-words line-clamp-2" title="{{ Auth::user()->name ?? 'Administrator' }}">
+                        <p class="font-bold text-xs sm:text-[13px] text-white leading-tight tracking-tight truncate group-hover:text-[var(--keraton-gold-soft)] transition-colors" 
+                           title="{{ Auth::user()->name ?? 'Administrator' }}">
                             {{ Auth::user()->name ?? 'Administrator' }}
                         </p>
                         <div class="flex items-center gap-1.5 mt-1">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-400/30 text-emerald-200 text-[10px] font-semibold tracking-wide shadow-xs">
-                                <span class="relative flex h-1.5 w-1.5 shrink-0">
-                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                    <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400"></span>
-                                </span>
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/10 border border-white/20 text-white/70 text-[10px] font-semibold tracking-wide">
+                                <svg class="w-2.5 h-2.5 shrink-0 text-[var(--keraton-gold-soft)]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
                                 <span>Admin &amp; Teknisi</span>
                             </span>
                         </div>
                     </div>
-                </div>
+
+                    <!-- Right Chevron / Action Hint -->
+                    <div class="shrink-0 w-6 h-6 rounded-lg bg-white/5 border border-white/10 group-hover:bg-white/15 group-hover:border-[var(--keraton-gold)]/40 flex items-center justify-center text-white/40 group-hover:text-[var(--keraton-gold-soft)] group-hover:translate-x-0.5 transition-all duration-200">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </a>
 
                 <!-- Navigasi Menu Admin -->
                 <nav class="space-y-1 pt-1" aria-label="Menu Admin">
@@ -224,8 +282,8 @@
             <!-- Top Header -->
             <header class="bg-white border-b border-[#E3DCC8] px-3 sm:px-6 py-2.5 sm:py-3.5 sticky top-0 z-30 flex items-center justify-between shadow-2xs gap-2 sm:gap-3 shrink-0 lg:rounded-t-3xl">
                 <div class="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
-                    <button type="button" @click="sidebarOpen = true" aria-label="Buka menu" class="lg:hidden w-9 h-9 rounded-xl bg-[var(--batik-cream)] border border-[#E3DCC8] text-[var(--mm-900)] shrink-0 hover:bg-[#F3EBD8] active:scale-95 transition flex items-center justify-center shadow-2xs">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    <button type="button" @click="sidebarOpen = true" aria-label="Buka menu" class="lg:hidden w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[var(--batik-cream)] border border-[#E3DCC8] text-[var(--mm-900)] shrink-0 hover:bg-[#F3EBD8] active:scale-95 transition flex items-center justify-center shadow-2xs">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                     </button>
                     <div class="min-w-0">
                         <h2 class="font-display font-bold text-xs sm:text-sm text-[var(--mm-900)] truncate">Dashboard Ringkasan Admin</h2>
@@ -236,8 +294,18 @@
                 <div class="flex items-center gap-2 sm:gap-3 shrink-0">
                     <!-- Notifikasi Lonceng Admin: Khusus Laporan Masuk Baru dari Pelapor -->
                     <div class="relative" x-data="{ notifOpen: false }">
+                        <!-- Backdrop Mobile -->
+                        <div x-show="notifOpen" x-cloak @click="notifOpen = false" 
+                             class="fixed inset-0 bg-black/25 z-40 sm:hidden backdrop-blur-xs"
+                             x-transition:enter="transition ease-out duration-150"
+                             x-transition:enter-start="opacity-0"
+                             x-transition:enter-end="opacity-100"
+                             x-transition:leave="transition ease-in duration-100"
+                             x-transition:leave-start="opacity-100"
+                             x-transition:leave-end="opacity-0"></div>
+
                         <button type="button" @click="notifOpen = !notifOpen" 
-                                class="relative w-9 h-9 rounded-xl bg-[var(--batik-cream)] border border-[#E3DCC8] hover:bg-[#F3EBD8] active:scale-95 transition cursor-pointer text-[var(--mm-900)] flex items-center justify-center shadow-2xs" 
+                                class="relative w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[var(--batik-cream)] border border-[#E3DCC8] hover:bg-[#F3EBD8] active:scale-95 transition cursor-pointer text-[var(--mm-900)] flex items-center justify-center shadow-2xs shrink-0" 
                                 aria-label="Notifikasi Laporan Masuk" title="Notifikasi Laporan Masuk">
                             <svg class="w-4 h-4 sm:w-5 sm:h-5 text-[var(--mm-800)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
@@ -257,7 +325,7 @@
                              x-transition:leave="transition ease-in duration-100" 
                              x-transition:leave-start="opacity-100 translate-y-0 scale-100" 
                              x-transition:leave-end="opacity-0 translate-y-1 scale-95" 
-                             class="absolute right-[-15px] sm:right-0 top-full mt-2 w-[290px] max-w-[calc(100vw-2rem)] sm:w-[350px] bg-white border border-[#E3DCC8] rounded-2xl shadow-xl z-50 overflow-hidden text-left flex flex-col max-h-[75vh] sm:max-h-[460px]">
+                             class="fixed inset-x-3 top-[54px] max-w-sm mx-auto sm:max-w-none sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:w-[350px] bg-white border border-[#E3DCC8] rounded-2xl shadow-xl z-50 overflow-hidden text-left flex flex-col max-h-[75vh] sm:max-h-[460px]">
                             
                             <div class="px-3.5 py-2.5 border-b border-[#E3DCC8] bg-[var(--batik-cream)] flex justify-between items-center shrink-0">
                                 <div class="flex items-center gap-2 min-w-0">
@@ -295,19 +363,17 @@
                                        class="flex items-start gap-2.5 w-full text-left p-2.5 rounded-xl hover:bg-amber-50/60 transition cursor-pointer group"
                                        :class="{ 'bg-amber-50/40': !seenAdminReportIds.includes(String(r.db_id || r.id)) }">
                                         <div class="shrink-0 mt-0.5">
-                                            <template x-if="r.pelapor_avatar">
-                                                <img :src="r.pelapor_avatar" class="w-8 h-8 rounded-full object-cover shadow-2xs border border-[#E3DCC8] ring-1 ring-white">
-                                            </template>
-                                            <template x-if="!r.pelapor_avatar">
-                                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 via-indigo-600 to-[#0b335c] text-white font-black flex items-center justify-center text-[10px] shadow-2xs border border-blue-300 ring-1 ring-white" x-text="getInitials(r.pelapor)"></div>
-                                            </template>
+                                            <img :src="r.pelapor_avatar || '{{ asset('images/pelapor-avatar.svg') }}'" 
+                                                 :alt="r.pelapor"
+                                                 class="w-8 h-8 rounded-full object-cover shadow-2xs border border-[#E3DCC8] ring-1 ring-white"
+                                                 onerror="this.src='{{ asset('images/pelapor-avatar.svg') }}'">
                                         </div>
                                         <div class="min-w-0 flex-1">
                                             <div class="flex items-center justify-between gap-1 mb-0.5">
                                                 <p class="text-[10px] font-bold text-[var(--mm-800)] truncate group-hover:text-blue-700" x-text="(r.id || 'REP') + ' — ' + (r.alamat || r.kecamatan || 'Alamat')"></p>
                                                 <span class="text-[8px] font-bold px-1.5 py-0.2 rounded shrink-0 shadow-2xs"
-                                                      :class="r.status === 'Menunggu Part' ? 'bg-blue-100 text-blue-800 border border-blue-200' : 'bg-amber-100 text-amber-900 border border-amber-300'"
-                                                      x-text="r.status === 'Menunggu Part' ? 'Menunggu Part' : 'Laporan Baru'">
+                                                    :class="r.status === 'Menunggu Part' ? 'bg-blue-100 text-blue-800 border border-blue-200' : 'bg-amber-100 text-amber-900 border border-amber-300'"
+                                                    x-text="r.status === 'Menunggu Part' ? 'Menunggu Part' : 'Laporan Baru'">
                                                 </span>
                                             </div>
                                             <p class="text-[9.5px] text-gray-700 font-medium truncate" x-text="(r.perangkat || '-') + ' • ' + (r.pelapor || 'Staf')"></p>
@@ -426,6 +492,21 @@
                         </div>
                     </div>
                 </div>
+
+                @if(($totalLaporan ?? 0) == 0)
+                    <!-- KETERANGAN JIKA BELUM ADA DATA DI BULAN INI -->
+                    <div class="bg-amber-50/70 border border-amber-200/90 rounded-2xl p-3.5 sm:p-4 flex items-center gap-3 shadow-2xs">
+                        <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-xs font-bold text-amber-950">Belum Ada Laporan Masuk di Periode {{ $namaBulanPilih }} {{ $tahunPilih }}</p>
+                            <p class="text-[10px] sm:text-[11px] text-amber-800 mt-0.5 leading-relaxed">
+                                Statistik untuk periode ini masih kosong dan sistem siap mencatat laporan baru. Data histori laporan bulan lalu atau tahun lalu tetap tersimpan aman di sistem dan dapat dibuka kapan saja melalui filter periode di atas.
+                            </p>
+                        </div>
+                    </div>
+                @endif
 
                 <!-- MENU PINTASAN CEPAT OPERASIONAL ADMIN (IDENTIK ALUR PELAPOR) -->
                 <div class="bg-white rounded-2xl shadow-xs border border-[#E3DCC8] p-3 sm:p-5 space-y-3">
@@ -547,8 +628,8 @@
                                             <span class="font-mono font-bold text-[9px] px-1.5 py-0.2 rounded bg-[var(--mm-900)] text-white" x-text="r.id"></span>
                                             <span class="font-bold text-[11px] text-[var(--mm-900)] truncate" x-text="r.pelapor + ' (' + (r.alamat || r.desa || r.kecamatan || 'Cirebon') + ')'"></span>
                                             <span class="text-[8px] font-bold px-1.5 py-0.2 rounded-full shadow-2xs"
-                                                  :class="r.status === 'Menunggu Part' ? 'bg-blue-100 text-blue-800 border border-blue-200' : 'bg-amber-100 text-amber-900 border border-amber-300'"
-                                                  x-text="r.status || 'Dalam Perbaikan'"></span>
+                                                :class="r.status === 'Menunggu Part' ? 'bg-blue-100 text-blue-800 border border-blue-200' : 'bg-amber-100 text-amber-900 border border-amber-300'"
+                                                x-text="r.status || 'Dalam Perbaikan'"></span>
                                         </div>
                                         <p class="text-[9.5px] text-gray-600 truncate mt-0.5" x-text="(r.perangkat || '-') + ' • Kendala: ' + (r.kendala || '-')"></p>
                                     </div>
@@ -585,34 +666,12 @@
                     </div>
                 </div>
 
-                <!-- BANNER HUBUNGI TEKNISI WHATSAPP -->
-                <div class="flex items-center justify-between gap-2.5 mega-mendung-bg text-white p-3 sm:p-4 rounded-xl relative overflow-hidden shadow-xs">
-                    <div class="relative z-10 space-y-0.5 min-w-0">
-                        <div class="flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
-                            <p class="text-xs sm:text-sm font-bold truncate">Koordinasi Cepat Teknisi &amp; Lapangan</p>
-                        </div>
-                        <p class="text-[10px] sm:text-[11px] text-[var(--mm-200)] leading-tight truncate sm:whitespace-normal">Gunakan kanal WhatsApp resmi untuk koordinasi cepat antar personil teknisi daerah.</p>
-                    </div>
-                    <div class="relative z-10 shrink-0">
-                        <a href="https://wa.me/6285321812643?text=Halo%20Admin%20Teknisi%20SIPERKOM,%20saya%20ingin%20koordinasi." 
-                           target="_blank" 
-                           rel="noopener noreferrer" 
-                           class="flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 bg-[#008f53] hover:bg-[#007b47] text-white rounded-lg text-[11px] sm:text-xs font-bold transition shadow-xs cursor-pointer active:scale-98">
-                            <svg class="w-3.5 h-3.5 shrink-0 fill-current" viewBox="0 0 24 24">
-                                <path d="M12.012 2c-5.506 0-9.989 4.478-9.99 9.984 0 1.764.459 3.487 1.333 5.006l-1.417 5.176 5.297-1.389c1.474.802 3.136 1.224 4.773 1.225h.004c5.505 0 9.988-4.478 9.989-9.985 0-2.668-1.037-5.176-2.922-7.062a9.923 9.923 0 0 0-7.067-2.955zm5.834 14.161c-.246.692-1.424 1.326-1.964 1.383-.496.052-1.127.078-1.821-.144-.429-.138-.981-.322-1.688-.629-2.978-1.291-4.919-4.321-5.069-4.52-.149-.199-1.218-1.621-1.218-3.092 0-1.471.769-2.195 1.042-2.493.273-.298.595-.372.794-.372.198 0 .397.001.571.01.184.009.432-.07.675.515.248.595.843 2.059.917 2.208.075.149.124.322.025.521-.099.198-.149.322-.298.496-.149.174-.313.388-.447.521-.149.149-.304.312-.131.608.174.298.772 1.274 1.657 2.062 1.139 1.014 2.1 1.327 2.398 1.476.298.149.471.124.645-.075.174-.198.745-.868.943-1.166.198-.298.397-.248.67-.149.273.099 1.737.819 2.035.968.298.149.496.223.57.347.074.124.074.719-.172 1.411z"/>
-                            </svg>
-                            <span>WhatsApp</span>
-                        </a>
-                    </div>
-                </div>
-
             </div>
         </main>
     </div>
 
     <!-- ============ TOAST NOTIFIKASI ============ -->
-    <div x-show="toast.show" x-cloak x-transition
+    <div x-show="toast.show && toast.message" x-cloak x-transition
          class="fixed bottom-5 right-5 z-[60] bg-[var(--mm-900)] text-white px-4 py-3 rounded-xl shadow-2xl text-xs font-semibold flex items-center gap-2 border border-white/10">
         <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
         <span x-text="toast.message"></span>
@@ -620,8 +679,9 @@
 
     <!-- INJEKSI DATA -->
     <script>
-        window.__initialReports = {!! json_encode($defaultReports instanceof \Illuminate\Support\Collection ? $defaultReports->values()->all() : array_values($defaultReports)) !!};
+        window.__initialReports = {!! json_encode($defaultReports instanceof \Illuminate\Support\Collection ? $defaultReports->values()->all() : array_values($defaultReports ?? [])) !!};
         window.__notifReports = {!! json_encode($notifReports instanceof \Illuminate\Support\Collection ? $notifReports->values()->all() : array_values($notifReports ?? [])) !!};
+        window.__flashSuccess = @json(session('success'));
     </script>
     
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -635,7 +695,13 @@
                 toast: { show: false, message: '' },
 
                 init() {
-                    // Polling notifikasi real-time setiap 2.5 detik tanpa restart / refresh
+                    if (window.__flashSuccess) {
+                        this.$nextTick(() => {
+                            this.showToast(window.__flashSuccess);
+                        });
+                        window.__flashSuccess = null;
+                    }
+
                     setInterval(() => this.syncLiveNotifications(), 2500);
                 },
 

@@ -22,21 +22,87 @@ class DatabaseSeeder extends Seeder
         Laporan::updateOrCreate(
             ['kode_laporan' => '#CRB-2026-09-001'],
             [
-                'user_id' => optional(User::where('email', 'nifary@gmail.com')->first())->id ?? 7,
+                'user_id' => optional(User::where('email', 'nifary@gmail.com')->first())->id ?? 19,
                 'pelapor' => 'nifary',
-                'alamat' => 'cirebon',
+                'alamat' => 'kuningan',
                 'kecamatan' => 'Cirebon',
                 'desa' => 'Cirebon',
-                'jenis_perangkat' => 'Laptop',
-                'perangkat' => 'lenovo',
-                'kendala' => 'matot',
+                'jenis_perangkat' => 'laptop',
+                'perangkat' => 'asus',
+                'kendala' => 'mati',
                 'prioritas' => 'Sedang',
                 'status' => 'Selesai',
-                'teknisi' => 'Fahri',
-                'keterangan_rekap' => 'selesai',
-                'foto' => 'laporan/foto/OTymO67az8zfw9HwgWs5ItymF2IpiWRe5DqTE99T.jpg',
-                'dokumen' => 'laporan/dokumen/HNX5D5Hl0R9ECbHf0pzpSADG8nWz6XbFf0CPd7wb.pdf',
-                'tanggal_keluar' => '2026-09-18',
+                'teknisi' => 'Fahry Rizky Prayogi',
+                'keterangan_rekap' => 'di ambil',
+                'foto' => 'laporan/foto/TzevaASGw8eiUAEyvsrQSbzcv60OGW6haizCyw1g.jpg',
+                'dokumen' => 'laporan/dokumen/kMIixMWB8CCXj2eJu809FucNgqRv5SKXkcFHy4vb.pdf',
+                'tanggal_keluar' => '2026-09-25',
+            ]
+        );
+
+        // Laporan: #CRB-2026-09-002 - Ajis
+        Laporan::updateOrCreate(
+            ['kode_laporan' => '#CRB-2026-09-002'],
+            [
+                'user_id' => optional(User::where('email', 'ajis@gmail.com')->first())->id ?? 20,
+                'pelapor' => 'Ajis',
+                'alamat' => 'Cirebon',
+                'kecamatan' => 'Cirebon',
+                'desa' => 'Cirebon',
+                'jenis_perangkat' => 'Printer',
+                'perangkat' => 'Epson',
+                'kendala' => 'Tinta enggak keluar',
+                'prioritas' => 'Rendah',
+                'status' => 'Selesai',
+                'teknisi' => 'Fahry Rizky Prayogi',
+                'keterangan_rekap' => 'udah selesai',
+                'foto' => 'laporan/foto/mMkkgA3R7Ptqi8BzTYHZjF51xVbFJu6Hyq2mDMr1.jpg',
+                'dokumen' => 'laporan/dokumen/RmMvtK0vbBmxMmF6hFoaYKJbnGFOCwTynQxWWMBP.pdf',
+                'tanggal_keluar' => '2026-09-26',
+            ]
+        );
+
+        // Laporan: #CRB-2026-09-003 - Ajis
+        Laporan::updateOrCreate(
+            ['kode_laporan' => '#CRB-2026-09-003'],
+            [
+                'user_id' => optional(User::where('email', 'ajis@gmail.com')->first())->id ?? 20,
+                'pelapor' => 'Ajis',
+                'alamat' => 'Cirebon',
+                'kecamatan' => 'Cirebon',
+                'desa' => 'Cirebon',
+                'jenis_perangkat' => 'Router',
+                'perangkat' => 'Engga tau',
+                'kendala' => 'Engga nyala',
+                'prioritas' => 'Sedang',
+                'status' => 'Ditolak',
+                'teknisi' => 'Fahry Rizky Prayogi',
+                'keterangan_rekap' => 'Status diperbarui menjadi Menunggu Part',
+                'foto' => 'laporan/foto/ZwULNFwZbhb1ysePsJsmjAylm0WBtOkMulT0ysSR.jpg',
+                'dokumen' => 'laporan/dokumen/BOmgCkX33AjD2eFMNU8Yzv3Gvs7KtWegQM4dsq1Z.pdf',
+                'tanggal_keluar' => '2026-10-02',
+            ]
+        );
+
+        // Laporan: #CRB-2026-10-001 - nifary
+        Laporan::updateOrCreate(
+            ['kode_laporan' => '#CRB-2026-10-001'],
+            [
+                'user_id' => optional(User::where('email', 'nifary@gmail.com')->first())->id ?? 19,
+                'pelapor' => 'nifary',
+                'alamat' => 'kuningan',
+                'kecamatan' => 'Cirebon',
+                'desa' => 'Cirebon',
+                'jenis_perangkat' => 'hahaha',
+                'perangkat' => 'ajis',
+                'kendala' => 'lapar',
+                'prioritas' => 'Sedang',
+                'status' => 'Selesai',
+                'teknisi' => 'Fahry Rizky Prayogi',
+                'keterangan_rekap' => 'Status diperbarui menjadi Dalam Perbaikan',
+                'foto' => 'laporan/foto/R69IvFOeuxopOJpZhweQgPqEBscmDN2JocBfP50q.jpg',
+                'dokumen' => 'laporan/dokumen/gtFw07mDXgID68NN0Dj00MaUttoj0RsO8VYcSX3m.pdf',
+                'tanggal_keluar' => '2026-10-02',
             ]
         );
         // [END_LAPORAN_SEEDERS]

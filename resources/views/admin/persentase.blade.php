@@ -11,7 +11,7 @@
     <title>Persentase Kerusakan & Analisis Data | SIPERKOM Kabupaten Cirebon</title>
 
     <link rel="icon" href="{{ asset('images/cirebon.png') }}" type="image/png">
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @include('partials.assets')
     @include('partials.session-guard')
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -97,8 +97,34 @@
                 border-bottom-left-radius: 1.5rem !important;
             }
             .desktop-layout {
-                height: 100vh;
-                overflow: hidden;
+                height: 100vh !important;
+                max-height: 100vh !important;
+                height: 100dvh !important;
+                max-height: 100dvh !important;
+                overflow: hidden !important;
+            }
+            .desktop-layout > aside {
+                width: min(19rem, calc(100vw - 1rem)) !important;
+                min-width: min(19rem, calc(100vw - 1rem)) !important;
+                max-width: min(19rem, calc(100vw - 1rem)) !important;
+                flex-shrink: 0 !important;
+                height: 100% !important;
+                max-height: 100% !important;
+                min-height: 0 !important;
+            }
+            .desktop-layout > aside .pelapor-mobile-actions {
+                position: relative !important;
+                bottom: auto !important;
+                left: auto !important;
+                right: auto !important;
+                margin-top: auto !important;
+            }
+            .desktop-layout > main {
+                min-width: 0 !important;
+                flex: 1 1 0% !important;
+                height: 100% !important;
+                max-height: 100% !important;
+                min-height: 0 !important;
             }
         }
 
@@ -107,7 +133,43 @@
         ::-webkit-scrollbar-thumb { background: var(--mm-600); border-radius: 10px; }
         
         [x-cloak] { display: none !important; }
-        .donut-chart { background: conic-gradient(var(--slices)); transition: background 0.6s ease; }
+        .donut-container {
+            width: 120px;
+            height: 120px;
+            min-width: 120px;
+            min-height: 120px;
+            position: relative;
+            flex-shrink: 0;
+        }
+        @media (min-width: 640px) {
+            .donut-container {
+                width: 136px;
+                height: 136px;
+                min-width: 136px;
+                min-height: 136px;
+            }
+        }
+        .donut-chart-circle {
+            width: 100%;
+            height: 100%;
+            border-radius: 9999px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            transition: background 0.6s ease;
+        }
+        .donut-hole {
+            position: absolute;
+            top: 20%;
+            left: 20%;
+            right: 20%;
+            bottom: 20%;
+            background: #ffffff;
+            border-radius: 9999px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+        }
         .fade-up { animation: fadeUp 0.45s ease both; }
         .grow-bar { animation: growBar 1s ease-out; }
         .chip { transition: all .18s ease; }
@@ -302,79 +364,69 @@
                 font-weight: 600;
             }
 
-            /* Status Cards Grid untuk Cetak PDF */
-            .print-status-grid {
+            /* Ringkasan Eksekutif Hasil Analisis untuk Cetak */
+            .print-summary-box {
+                background-color: #f8fafc;
+                border: 1px solid #cbd5e1;
+                border-left: 3.5px solid #0B3D6E;
+                border-radius: 4px;
+                padding: 5px 8px;
+                margin-bottom: 7px;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            .print-summary-title {
+                font-size: 6.8pt;
+                font-weight: 800;
+                color: #0B3D6E;
+                text-transform: uppercase;
+                letter-spacing: 0.4px;
+                display: block;
+                margin-bottom: 2px;
+            }
+            .print-summary-text {
+                font-size: 7.5pt;
+                color: #1e293b;
+                margin: 0;
+                line-height: 1.35;
+            }
+
+            /* 4 Indikator Utama Analisis untuk Cetak (Sesuai Layar) */
+            .print-kpi-grid {
                 display: flex;
                 gap: 8px;
                 margin-bottom: 8px;
                 page-break-inside: avoid;
                 break-inside: avoid;
             }
-            .print-status-card {
+            .print-kpi-card {
                 flex: 1;
-                border-radius: 5px;
-                padding: 5px 8px;
+                background-color: #ffffff;
+                border: 1px solid #cbd5e1;
+                border-radius: 4px;
+                padding: 4px 7px;
                 display: flex;
-                justify-content: space-between;
-                align-items: center;
+                flex-direction: column;
+                justify-content: center;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
-            .print-status-card-selesai {
-                background-color: #f0fdf4 !important;
-                border: 1px solid #86efac;
-            }
-            .print-status-card-perbaikan {
-                background-color: #eff6ff !important;
-                border: 1px solid #93c5fd;
-            }
-            .print-status-card-menunggu {
-                background-color: #fffbeb !important;
-                border: 1px solid #fde68a;
-            }
-            .print-status-card-ditolak {
-                background-color: #fef2f2 !important;
-                border: 1px solid #fca5a5;
-            }
-            .print-status-info {
-                display: flex;
-                flex-direction: column;
-            }
-            .print-status-tag {
-                font-size: 7.2pt;
-                font-weight: 800;
+            .print-kpi-lbl {
+                font-size: 6pt;
+                font-weight: 700;
+                color: #64748b;
                 text-transform: uppercase;
                 letter-spacing: 0.3px;
             }
-            .print-status-card-selesai .print-status-tag { color: #15803d; }
-            .print-status-card-perbaikan .print-status-tag { color: #1d4ed8; }
-            .print-status-card-menunggu .print-status-tag { color: #b45309; }
-            .print-status-card-ditolak .print-status-tag { color: #b91c1c; }
-            .print-status-desc {
-                font-size: 5.8pt;
-                color: #64748b;
-                margin-top: 0.5px;
-            }
-            .print-status-metric {
-                display: flex;
-                align-items: baseline;
-                gap: 5px;
-            }
-            .print-status-count {
-                font-size: 7.5pt;
+            .print-kpi-val {
+                font-size: 8.5pt;
                 font-weight: 800;
-                color: #0f172a;
+                color: #072544;
+                margin-top: 1px;
             }
-            .print-status-pct {
-                font-size: 6.8pt;
-                font-weight: 800;
-                padding: 1px 4px;
-                border-radius: 3px;
-            }
-            .print-status-card-selesai .print-status-pct { background-color: #bbf7d0; color: #14532d; }
-            .print-status-card-perbaikan .print-status-pct { background-color: #bfdbfe; color: #1e3a8a; }
-            .print-status-card-menunggu .print-status-pct { background-color: #fde68a; color: #78350f; }
-            .print-status-card-ditolak .print-status-pct { background-color: #fecaca; color: #7f1d1d; }
+            .text-gold { color: #b45309 !important; }
+            .text-blue { color: #1d4ed8 !important; }
+            .text-emerald { color: #15803d !important; }
 
             /* Grid Analisis Persentase & Tren untuk Cetak PDF */
             .print-analytics-grid {
@@ -542,89 +594,11 @@
             .text-navy { color: #0B3D6E; font-weight: 800; }
             .text-gray { color: #94a3b8; }
             .print-empty-note { font-size: 7pt; color: #94a3b8; text-align: center; padding: 12px 0; }
-
-            /* Tabel Laporan Resmi */
-            .report-table {
-                width: 100%;
-                border-collapse: collapse;
-                margin-bottom: 12px;
-                font-size: 7.5pt;
-            }
-            .report-table thead {
-                display: table-header-group;
-            }
-            .report-table tr {
-                page-break-inside: avoid;
-                break-inside: avoid;
-            }
-            .report-table th {
-                background-color: #0B3D6E !important;
-                color: #ffffff !important;
-                font-weight: 700;
-                text-align: center;
-                padding: 5px 4px;
-                border: 1px solid #072544;
-                text-transform: uppercase;
-                font-size: 7pt;
-                letter-spacing: 0.3px;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-            .report-table td {
-                padding: 4.5px 4px;
-                border: 1px solid #cbd5e1;
-                vertical-align: top;
-                color: #1e293b;
-            }
-            .report-table tbody tr:nth-child(even) {
-                background-color: #f8fafc !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-
-            .text-center { text-align: center; }
-            .font-bold { font-weight: 700; }
-            .font-semibold { font-weight: 600; }
-            .font-mono { font-family: monospace; }
-            .text-muted { font-size: 6.8pt; color: #64748b; }
-
-            /* Status Pill */
-            .status-pill {
-                display: inline-block;
-                padding: 1.5px 5px;
-                border-radius: 4px;
-                font-size: 6.5pt;
-                font-weight: 700;
-                text-transform: uppercase;
-                border: 1px solid transparent;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-            .status-selesai {
-                background-color: #dcfce7 !important;
-                color: #15803d !important;
-                border-color: #86efac !important;
-            }
-            .status-dalam-perbaikan {
-                background-color: #dbeafe !important;
-                color: #1d4ed8 !important;
-                border-color: #93c5fd !important;
-            }
-            .status-menunggu-part {
-                background-color: #fef3c7 !important;
-                color: #b45309 !important;
-                border-color: #fde68a !important;
-            }
-            .status-ditolak {
-                background-color: #fee2e2 !important;
-                color: #b91c1c !important;
-                border-color: #fca5a5 !important;
-            }
         }
     </style>
 </head>
 <body class="antialiased bg-[var(--batik-cream)] text-[var(--ink)]"
-    x-data="persentaseApp(window.__initialReports)" x-init="init()"
+    x-data="persentaseApp(window.__initialReports)"
     :class="{ 'overflow-hidden touch-none overscroll-none': sidebarOpen }">
 
     <div class="desktop-layout flex flex-row relative min-h-screen lg:min-h-0 lg:p-3 lg:gap-3 bg-[var(--batik-cream)]">
@@ -642,35 +616,53 @@
         <!-- ============ SIDEBAR ADMIN (IDENTIK DENGAN PELAPOR) ============ -->
         <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
             @touchmove.stop.prevent="if (window.innerWidth < 1024) $event.preventDefault()"
-            class="fixed lg:static top-3.5 left-0 z-[9999] lg:z-auto w-[76vw] max-w-[275px] lg:w-[min(18rem,calc(100vw-1rem))] lg:max-w-none mega-mendung-bg flex flex-col justify-between p-4 sm:p-5 lg:p-6 text-white shrink-0 shadow-2xl transition-transform duration-300 ease-out h-[78vh] max-h-[580px] lg:h-full lg:max-h-none overflow-hidden lg:overflow-y-auto no-scrollbar touch-none lg:touch-auto overscroll-none select-none mobile-rounded-sidebar border-0 outline-none">
+            class="fixed lg:static top-3.5 left-0 z-[9999] lg:z-auto w-[82vw] max-w-[290px] lg:w-[min(19rem,calc(100vw-1rem))] lg:max-w-none mega-mendung-bg flex flex-col justify-between p-3.5 sm:p-4 lg:p-4.5 text-white shrink-0 shadow-2xl transition-transform duration-300 ease-out h-[78vh] max-h-[580px] lg:h-full lg:max-h-none overflow-hidden lg:overflow-y-auto no-scrollbar touch-none lg:touch-auto overscroll-none select-none mobile-rounded-sidebar border-0 outline-none">
 
             <!-- BAGIAN ATAS: USER BADGE, MENU -->
             <div class="space-y-3.5 lg:space-y-4">
 
-                <!-- Admin Profile Card -->
-                <div class="bg-gradient-to-r from-[#0b335c]/85 via-[#0c3966]/80 to-[#072544]/90 border border-blue-300/30 hover:border-[var(--keraton-gold)]/40 p-3 rounded-2xl flex items-center gap-3 shadow-lg backdrop-blur-sm transition-all duration-200">
+                <!-- Admin Profile Card (Modern Glassmorphic Style & Interactive) -->
+                <a href="{{ route('admin.profil.edit') }}" 
+                   class="group relative overflow-hidden bg-gradient-to-r from-white/[0.12] via-[#0c3966]/60 to-white/[0.04] hover:from-white/[0.18] hover:via-[#0c3966]/80 hover:to-white/[0.08] active:scale-[0.98] border border-white/15 hover:border-[var(--keraton-gold)]/70 active:border-[var(--keraton-gold)] p-2.5 sm:p-3 rounded-2xl flex items-center gap-2.5 sm:gap-3 shadow-lg shadow-black/20 backdrop-blur-md transition-all duration-200 cursor-pointer select-none touch-manipulation">
+                    
+                    <!-- Ambient Top Highlight & Soft Glow -->
+                    <div class="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+                    <div class="absolute -right-6 -bottom-6 w-16 h-16 bg-[var(--keraton-gold)]/10 rounded-full blur-xl group-hover:bg-[var(--keraton-gold)]/20 transition-all pointer-events-none"></div>
+
+                    <!-- Avatar with Ring and Live Status Dot -->
                     <div class="relative shrink-0">
                         @if(!empty(Auth::user()->avatar))
-                            <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="w-10 h-10 rounded-xl object-cover ring-2 ring-[var(--keraton-gold)]/80 shadow-md" alt="Foto Profil">
+                            <img src="{{ asset('storage/' . Auth::user()->avatar) }}" 
+                                 class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl object-cover ring-2 ring-[var(--keraton-gold)]/80 ring-offset-2 ring-offset-[#072544] shadow-md group-hover:scale-105 group-hover:ring-[var(--keraton-gold)] transition-all duration-200" 
+                                 alt="Foto Profil">
                         @else
-                            <img src="{{ asset('images/admin-avatar.svg') }}" class="w-10 h-10 rounded-xl object-cover ring-2 ring-[var(--keraton-gold)]/80 shadow-md bg-[#072544]" alt="Icon Administrator">
+                            <img src="{{ asset('images/admin-avatar.svg') }}" 
+                                 class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl object-cover ring-2 ring-[var(--keraton-gold)]/80 ring-offset-2 ring-offset-[#072544] shadow-md bg-[#072544] group-hover:scale-105 transition-all duration-200" 
+                                 alt="Icon Administrator">
                         @endif
                     </div>
+
+                    <!-- User Name & Role Badge -->
                     <div class="min-w-0 flex-1">
-                        <p class="font-bold text-xs lg:text-[13px] text-white leading-snug break-words line-clamp-2" title="{{ Auth::user()->name ?? 'Administrator' }}">
+                        <p class="font-bold text-xs sm:text-[13px] text-white leading-tight tracking-tight truncate group-hover:text-[var(--keraton-gold-soft)] transition-colors" 
+                           title="{{ Auth::user()->name ?? 'Administrator' }}">
                             {{ Auth::user()->name ?? 'Administrator' }}
                         </p>
                         <div class="flex items-center gap-1.5 mt-1">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-400/30 text-emerald-200 text-[10px] font-semibold tracking-wide shadow-xs">
-                                <span class="relative flex h-1.5 w-1.5 shrink-0">
-                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                    <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400"></span>
-                                </span>
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/10 border border-white/20 text-white/70 text-[10px] font-semibold tracking-wide">
+                                <svg class="w-2.5 h-2.5 shrink-0 text-[var(--keraton-gold-soft)]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
                                 <span>Admin &amp; Teknisi</span>
                             </span>
                         </div>
                     </div>
-                </div>
+
+                    <!-- Right Chevron / Action Hint -->
+                    <div class="shrink-0 w-6 h-6 rounded-lg bg-white/5 border border-white/10 group-hover:bg-white/15 group-hover:border-[var(--keraton-gold)]/40 flex items-center justify-center text-white/40 group-hover:text-[var(--keraton-gold-soft)] group-hover:translate-x-0.5 transition-all duration-200">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </a>
 
                 <!-- Navigasi Menu Admin -->
                 <nav class="space-y-1 pt-1" aria-label="Menu Admin">
@@ -733,10 +725,10 @@
               :class="sidebarOpen ? 'overflow-hidden pointer-events-none touch-none select-none' : 'overflow-y-auto scrollable-content'">
 
             <!-- Top Header -->
-            <header class="bg-white border-b border-[#E3DCC8] px-3 sm:px-6 py-3 sm:py-4 sticky top-0 z-30 flex items-center justify-between shadow-sm gap-2 sm:gap-3 shrink-0 lg:rounded-t-3xl">
+            <header class="bg-white border-b border-[#E3DCC8] px-3 sm:px-6 py-2.5 sm:py-3.5 sticky top-0 z-30 flex items-center justify-between shadow-2xs gap-2 sm:gap-3 shrink-0 lg:rounded-t-3xl">
                 <div class="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
-                    <button type="button" @click="sidebarOpen = true" aria-label="Buka menu" class="lg:hidden p-2 rounded-xl bg-[var(--batik-cream)] border border-[#E3DCC8] text-[var(--mm-900)] shrink-0 hover:bg-[#F3EBD8] transition">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    <button type="button" @click="sidebarOpen = true" aria-label="Buka menu" class="lg:hidden w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[var(--batik-cream)] border border-[#E3DCC8] text-[var(--mm-900)] shrink-0 hover:bg-[#F3EBD8] active:scale-95 transition flex items-center justify-center shadow-2xs">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                     </button>
                     <div>
                         <h2 class="font-display font-bold text-[11px] leading-tight sm:text-sm text-[var(--mm-900)]">Analisis Data & Persentase Kerusakan</h2>
@@ -746,13 +738,17 @@
                 <div class="flex items-center gap-2 sm:gap-3 shrink-0">
                     <!-- Notifikasi Lonceng Admin: Khusus Laporan Masuk Baru dari Pelapor -->
                     <div class="relative" x-data="{ notifOpen: false }">
-                        <button type="button" @click="notifOpen = !notifOpen" class="relative p-2 rounded-xl bg-[var(--batik-cream)] border border-[#E3DCC8] hover:bg-[#F3EBD8] transition cursor-pointer" aria-label="Notifikasi Laporan Masuk">
-                            <svg class="w-4 h-4 text-[var(--mm-800)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button type="button" @click="notifOpen = !notifOpen" 
+                                class="relative w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[var(--batik-cream)] border border-[#E3DCC8] hover:bg-[#F3EBD8] active:scale-95 transition cursor-pointer text-[var(--mm-900)] flex items-center justify-center shadow-2xs shrink-0" 
+                                aria-label="Notifikasi Laporan Masuk" title="Notifikasi Laporan Masuk">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-[var(--mm-800)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                             </svg>
                             
                             <!-- Counter Badge: Jumlah Laporan Masuk Baru Belum Dibaca Admin -->
-                            <span x-show="unreadAdminReports.length > 0" x-cloak class="absolute -top-1 -right-1 bg-[var(--keraton-maroon)] text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center animate-pulse" x-text="unreadAdminReports.length"></span>
+                            <span x-show="unreadAdminReports.length > 0" x-cloak 
+                                  class="absolute -top-1 -right-1 bg-[var(--keraton-maroon)] text-white text-[9px] font-bold min-w-[16px] h-[16px] px-0.5 rounded-full flex items-center justify-center shadow-sm animate-pulse border border-white" 
+                                  x-text="unreadAdminReports.length"></span>
                         </button>
                         
                         <!-- Dropdown Notifikasi Laporan Masuk Admin -->
@@ -814,301 +810,262 @@
             <div class="screen-only p-3.5 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 flex-1 pb-16">
 
                 <!-- FORM FILTER BULAN & TAHUN -->
-                <div class="bg-white p-3.5 sm:p-5 rounded-2xl shadow-sm border border-[#E3DCC8]">
-                    <form method="GET" action="{{ route('admin.persentase') }}" class="grid grid-cols-2 sm:flex sm:items-end gap-2.5 sm:gap-4">
-                        <div class="col-span-1">
+                <div class="bg-white p-3.5 sm:p-5 rounded-2xl shadow-sm border border-[#E3DCC8] relative z-20">
+                    @php
+                        $monthsIndonesian = [
+                            '01' => 'Januari', '02' => 'Februari', '03' => 'Maret', 
+                            '04' => 'April',   '05' => 'Mei',      '06' => 'Juni', 
+                            '07' => 'Juli',    '08' => 'Agustus',  '09' => 'September', 
+                            '10' => 'Oktober', '11' => 'November', '12' => 'Desember'
+                        ];
+                        $bulanPilih = request('bulan', date('m'));
+                        $tahunPilih = (string) request('tahun', date('Y'));
+                    @endphp
+                    <form method="GET" action="{{ route('admin.persentase') }}" 
+                          class="grid grid-cols-2 sm:flex sm:items-end gap-2.5 sm:gap-4"
+                          x-data="{
+                              bulanOpen: false,
+                              tahunOpen: false,
+                              selectedBulan: '{{ $bulanPilih }}',
+                              selectedBulanName: '{{ $monthsIndonesian[$bulanPilih] ?? 'September' }}',
+                              selectedTahun: '{{ $tahunPilih }}',
+                              selectBulan(val, name) {
+                                  this.selectedBulan = val;
+                                  this.selectedBulanName = name;
+                                  this.bulanOpen = false;
+                              },
+                              selectTahun(val) {
+                                  this.selectedTahun = val;
+                                  this.tahunOpen = false;
+                              }
+                          }">
+                        <input type="hidden" name="bulan" :value="selectedBulan">
+                        <input type="hidden" name="tahun" :value="selectedTahun">
+
+                        <!-- Dropdown Kustom: Pilih Bulan -->
+                        <div class="col-span-1 relative sm:w-44" @click.outside="bulanOpen = false">
                             <label class="block text-xs font-semibold text-gray-600 mb-1">Pilih Bulan:</label>
-                            <select name="bulan" class="w-full px-3 py-2 rounded-xl border border-[#E3DCC8] bg-[var(--batik-cream)]/60 text-xs font-semibold text-[var(--mm-900)] focus:outline-none focus:border-[var(--mm-600)] transition cursor-pointer">
-                                @php
-                                    $monthsIndonesian = [
-                                        '01' => 'Januari', '02' => 'Februari', '03' => 'Maret', 
-                                        '04' => 'April', '05' => 'Mei', '06' => 'Juni', 
-                                        '07' => 'Juli', '08' => 'Agustus', '09' => 'September', 
-                                        '10' => 'Oktober', '11' => 'November', '12' => 'Desember'
-                                    ];
-                                    $bulanPilih = request('bulan', date('m'));
-                                    $tahunPilih = request('tahun', date('Y'));
-                                @endphp
+                            <button type="button" 
+                                    @click="bulanOpen = !bulanOpen; tahunOpen = false" 
+                                    :class="bulanOpen ? 'border-[var(--keraton-gold)] ring-2 ring-[var(--keraton-gold)]/20 bg-amber-50/50' : 'border-[#E3DCC8] bg-[var(--batik-cream)]/60 hover:bg-[var(--batik-cream)]'"
+                                    class="w-full px-3 py-2 rounded-xl border text-xs font-semibold text-[var(--mm-900)] flex items-center justify-between gap-1.5 focus:outline-none transition cursor-pointer select-none">
+                                <span x-text="selectedBulanName" class="truncate font-semibold"></span>
+                                <svg class="w-3.5 h-3.5 text-gray-500 transition-transform duration-200 shrink-0" 
+                                     :class="bulanOpen ? 'rotate-180 text-[var(--keraton-gold)]' : ''" 
+                                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </button>
+
+                            <!-- Menu Popup Bulan -->
+                            <div x-show="bulanOpen"
+                                 x-transition:enter="transition ease-out duration-150"
+                                 x-transition:enter-start="opacity-0 translate-y-1 scale-98"
+                                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                 x-transition:leave="transition ease-in duration-100"
+                                 x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                 x-transition:leave-end="opacity-0 translate-y-1 scale-98"
+                                 x-cloak
+                                 class="absolute left-0 mt-1.5 w-52 sm:w-56 bg-white rounded-2xl shadow-xl border border-[#E3DCC8] p-1.5 z-50 ring-1 ring-black/5 max-h-64 overflow-y-auto no-scrollbar">
                                 @foreach ($monthsIndonesian as $num => $name)
-                                    <option value="{{ $num }}" {{ $bulanPilih == $num ? 'selected' : '' }}>
-                                        {{ $name }}
-                                    </option>
+                                    <button type="button"
+                                            @click="selectBulan('{{ $num }}', '{{ $name }}')"
+                                            :class="selectedBulan === '{{ $num }}' ? 'bg-[var(--mm-800)] text-white font-bold' : 'text-gray-700 hover:bg-[var(--batik-cream)] hover:text-[var(--mm-900)] font-medium'"
+                                            class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer text-left">
+                                        <span>{{ $name }}</span>
+                                        <span class="text-[10px] font-mono" :class="selectedBulan === '{{ $num }}' ? 'text-[var(--keraton-gold-soft)] font-bold' : 'text-gray-400'">{{ $num }}</span>
+                                    </button>
                                 @endforeach
-                            </select>
+                            </div>
                         </div>
 
-                        <div class="col-span-1">
+                        <!-- Dropdown Kustom: Pilih Tahun -->
+                        <div class="col-span-1 relative sm:w-28" @click.outside="tahunOpen = false">
                             <label class="block text-xs font-semibold text-gray-600 mb-1">Pilih Tahun:</label>
-                            <select name="tahun" class="w-full px-3 py-2 rounded-xl border border-[#E3DCC8] bg-[var(--batik-cream)]/60 text-xs font-semibold text-[var(--mm-900)] focus:outline-none focus:border-[var(--mm-600)] transition cursor-pointer">
-                                @php
-                                    $startYear = 2026;
-                                    $endYear = 2031;
-                                @endphp
-                                @for ($y = $startYear; $y <= $endYear; $y++)
-                                    <option value="{{ $y }}" {{ $tahunPilih == $y ? 'selected' : '' }}>
-                                        {{ $y }}
-                                    </option>
+                            <button type="button" 
+                                    @click="tahunOpen = !tahunOpen; bulanOpen = false" 
+                                    :class="tahunOpen ? 'border-[var(--keraton-gold)] ring-2 ring-[var(--keraton-gold)]/20 bg-amber-50/50' : 'border-[#E3DCC8] bg-[var(--batik-cream)]/60 hover:bg-[var(--batik-cream)]'"
+                                    class="w-full px-3 py-2 rounded-xl border text-xs font-semibold text-[var(--mm-900)] flex items-center justify-between gap-1.5 focus:outline-none transition cursor-pointer select-none">
+                                <span x-text="selectedTahun" class="truncate font-semibold"></span>
+                                <svg class="w-3.5 h-3.5 text-gray-500 transition-transform duration-200 shrink-0" 
+                                     :class="tahunOpen ? 'rotate-180 text-[var(--keraton-gold)]' : ''" 
+                                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </button>
+
+                            <!-- Menu Popup Tahun -->
+                            <div x-show="tahunOpen"
+                                 x-transition:enter="transition ease-out duration-150"
+                                 x-transition:enter-start="opacity-0 translate-y-1 scale-98"
+                                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                 x-transition:leave="transition ease-in duration-100"
+                                 x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                 x-transition:leave-end="opacity-0 translate-y-1 scale-98"
+                                 x-cloak
+                                 class="absolute left-0 mt-1.5 w-32 bg-white rounded-2xl shadow-xl border border-[#E3DCC8] p-1.5 z-50 ring-1 ring-black/5 max-h-56 overflow-y-auto no-scrollbar">
+                                @for ($y = 2024; $y <= 2030; $y++)
+                                    <button type="button"
+                                            @click="selectTahun('{{ $y }}')"
+                                            :class="selectedTahun === '{{ $y }}' ? 'bg-[var(--mm-800)] text-white font-bold' : 'text-gray-700 hover:bg-[var(--batik-cream)] hover:text-[var(--mm-900)] font-medium'"
+                                            class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer text-left">
+                                        <span>{{ $y }}</span>
+                                        @if ($y == date('Y'))
+                                            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded" :class="selectedTahun === '{{ $y }}' ? 'bg-amber-400/20 text-[var(--keraton-gold-soft)]' : 'bg-amber-100 text-amber-800'">Kini</span>
+                                        @endif
+                                    </button>
                                 @endfor
-                            </select>
+                            </div>
                         </div>
 
-                        <div class="col-span-2 sm:col-span-1">
+                        <div class="col-span-2 sm:col-span-1 flex items-center gap-2">
                             <button type="submit" class="w-full sm:w-auto px-4 py-2 bg-[var(--mm-800)] hover:bg-[var(--mm-900)] text-white text-xs font-bold rounded-xl transition shadow cursor-pointer">
                                 Tampilkan Histori
                             </button>
+                            @if($bulanPilih != date('m') || $tahunPilih != date('Y'))
+                                <a href="{{ route('admin.persentase') }}" title="Kembali ke Bulan Berjalan" class="px-3 py-2 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 text-xs font-bold rounded-xl transition shadow-xs whitespace-nowrap">
+                                    Bulan Ini
+                                </a>
+                            @endif
                         </div>
                     </form>
                 </div>
 
-                <!-- RINGKASAN EKSEKUTIF OTOMATIS DENGAN BATIK MEGA MENDUNG -->
-                <div class="fade-up mega-mendung-card text-white p-5 sm:p-6 rounded-2xl shadow-md flex items-start gap-4 border border-[var(--mm-600)]">
-                    <div class="w-11 h-11 shrink-0 rounded-xl bg-white/15 border border-white/20 flex items-center justify-center backdrop-blur-sm">
-                        <svg class="w-5 h-5 text-[var(--keraton-gold-soft)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                <!-- ================= STATE KOSONG (JIKA BELUM ADA LAPORAN PADA PERIODE INI) ================= -->
+                <div x-show="filteredReports.length === 0" x-cloak class="bg-white p-8 sm:p-14 rounded-3xl border border-[#E3DCC8] text-center shadow-sm space-y-3">
+                    <div class="relative w-20 h-20 mx-auto mb-3">
+                        <div class="w-20 h-20 bg-gradient-to-br from-amber-50 to-orange-50 rounded-3xl flex items-center justify-center text-amber-600 border border-amber-200/80 shadow-lg ring-4 ring-amber-50/60">
+                            <svg class="w-9 h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/>
+                            </svg>
+                        </div>
                     </div>
-                    <div class="min-w-0">
-                        <p class="text-[10px] font-bold uppercase tracking-wider text-[var(--mm-200)]">Ringkasan Eksekutif</p>
-                        <p class="text-xs sm:text-sm leading-relaxed mt-1" x-text="executiveSummary"></p>
-                    </div>
+                    <h4 class="font-display font-bold text-base text-[var(--mm-900)]">Belum Ada Analisis Persentase</h4>
+                    <p class="text-xs text-gray-500 max-w-md mx-auto">
+                        Data analisis dan persentase kerusakan akan otomatis muncul di halaman ini setelah ada tiket laporan yang tercatat pada periode bulan dan tahun yang dipilih.
+                    </p>
                 </div>
 
-                <!-- KARTU INSIGHT OTOMATIS -->
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
-                    <div class="fade-up bg-white p-3.5 sm:p-5 rounded-2xl shadow-sm border border-[#E3DCC8] flex items-center gap-2.5 sm:gap-3.5">
-                        <div class="w-9 h-9 sm:w-11 sm:h-11 shrink-0 rounded-xl bg-[var(--mm-800)]/10 flex items-center justify-center">
-                            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-[var(--mm-800)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/></svg>
+                <!-- ================= KONTEN ANALISIS & GRAFIK (HANYA TAMPIL JIKA ADA LAPORAN) ================= -->
+                <div x-show="filteredReports.length > 0" x-cloak class="space-y-4 sm:space-y-6">
+                    <!-- RINGKASAN EKSEKUTIF OTOMATIS DENGAN BATIK MEGA MENDUNG -->
+                    <div class="fade-up mega-mendung-card text-white p-5 sm:p-6 rounded-2xl shadow-md flex items-start gap-4 border border-[var(--mm-600)]">
+                        <div class="w-11 h-11 shrink-0 rounded-xl bg-white/15 border border-white/20 flex items-center justify-center backdrop-blur-sm">
+                            <svg class="w-5 h-5 text-[var(--keraton-gold-soft)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                         </div>
                         <div class="min-w-0">
-                            <p class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-gray-400">Total Laporan</p>
-                            <p class="text-base sm:text-lg font-extrabold font-display text-[var(--mm-900)]" x-text="filteredReports.length"></p>
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-[var(--mm-200)]">Ringkasan Eksekutif</p>
+                            <p class="text-xs sm:text-sm leading-relaxed mt-1" x-text="executiveSummary"></p>
                         </div>
                     </div>
 
-                    <div class="fade-up bg-white p-3.5 sm:p-5 rounded-2xl shadow-sm border border-[#E3DCC8] flex items-center gap-2.5 sm:gap-3.5" style="animation-delay:.05s">
-                        <div class="w-9 h-9 sm:w-11 sm:h-11 shrink-0 rounded-xl bg-[var(--keraton-gold)]/15 flex items-center justify-center">
-                            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-[var(--keraton-gold)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                        </div>
-                        <div class="min-w-0">
-                            <p class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-gray-400">Terbanyak</p>
-                            <p class="text-xs sm:text-sm font-extrabold font-display text-[var(--mm-900)] truncate" x-text="topDevice"></p>
-                        </div>
-                    </div>
-
-                    <div class="fade-up bg-white p-3.5 sm:p-5 rounded-2xl shadow-sm border border-[#E3DCC8] flex items-center gap-2.5 sm:gap-3.5" style="animation-delay:.1s">
-                        <div class="w-9 h-9 sm:w-11 sm:h-11 shrink-0 rounded-xl bg-blue-500/10 flex items-center justify-center">
-                            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                        </div>
-                        <div class="min-w-0">
-                            <p class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-gray-400">Status Top</p>
-                            <p class="text-xs sm:text-sm font-extrabold font-display text-[var(--mm-900)] truncate" x-text="topStatus"></p>
-                        </div>
-                    </div>
-
-                    <div class="fade-up bg-white p-3.5 sm:p-5 rounded-2xl shadow-sm border border-[#E3DCC8] flex items-center gap-2.5 sm:gap-3.5" style="animation-delay:.15s">
-                        <div class="w-9 h-9 sm:w-11 sm:h-11 shrink-0 rounded-xl bg-emerald-500/10 flex items-center justify-center">
-                            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        </div>
-                        <div class="min-w-0">
-                            <p class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-gray-400">Selesai</p>
-                            <p class="text-base sm:text-lg font-extrabold font-display text-[var(--mm-900)]" x-text="completionRate + '%'"></p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Grafik Persentase Jenis Perangkat -->
-                <div class="bg-white p-5 sm:p-6 lg:p-8 rounded-2xl shadow-sm border border-[#E3DCC8] space-y-6">
-                    <div>
-                        <div class="flex items-center gap-2 flex-wrap">
-                            <h3 class="font-display text-lg sm:text-xl font-bold text-[var(--mm-900)]">Persentase Kerusakan Perangkat</h3>
-                            <span x-show="activeStatus !== 'all'" class="text-[10px] font-bold uppercase tracking-wider text-[var(--mm-800)] bg-[var(--mm-800)]/10 border border-[var(--mm-800)]/20 px-2.5 py-1 rounded-full" x-text="'Terfilter: ' + activeStatus"></span>
-                        </div>
-                        <p class="text-xs text-gray-500 mt-1">
-                            Grafik ini menunjukkan sebaran jenis perangkat yang paling sering dilaporkan mengalami kerusakan.
-                        </p>
-                    </div>
-
-                    <div class="flex flex-col md:flex-row items-center gap-10 lg:gap-16 pt-4">
-                        <div class="shrink-0 relative w-48 h-48 sm:w-56 sm:h-56">
-                            <div class="donut-chart w-full h-full rounded-full shadow-md" :style="'--slices: ' + deviceChartGradient"></div>
-
-                            <div class="absolute inset-[18%] sm:inset-[20%] bg-white rounded-full flex flex-col items-center justify-center shadow-inner">
-                                <p class="text-2xl sm:text-3xl font-extrabold font-display text-[var(--mm-900)] leading-none" x-text="stats.total"></p>
-                                <p class="text-[10px] sm:text-xs text-gray-500 font-semibold mt-1">Total Laporan</p>
+                    <!-- KARTU INSIGHT OTOMATIS -->
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+                        <div class="fade-up bg-white p-3.5 sm:p-5 rounded-2xl shadow-sm border border-[#E3DCC8] flex items-center gap-2.5 sm:gap-3.5">
+                            <div class="w-9 h-9 sm:w-11 sm:h-11 shrink-0 rounded-xl bg-[var(--mm-800)]/10 flex items-center justify-center">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-[var(--mm-800)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/></svg>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-gray-400">Total Laporan</p>
+                                <p class="text-base sm:text-lg font-extrabold font-display text-[var(--mm-900)]" x-text="filteredReports.length"></p>
                             </div>
                         </div>
 
-                        <div class="flex-1 w-full space-y-3 lg:space-y-4">
-                            <template x-for="cat in deviceStats" :key="cat.label">
-                                <div>
-                                    <div class="flex items-center justify-between mb-1.5">
-                                        <div class="flex items-center gap-2">
-                                            <span class="w-7 h-7 rounded-lg shrink-0 shadow-sm flex items-center justify-center text-white" :style="'background:' + cat.color" x-html="cat.icon"></span>
-                                            <span class="text-xs sm:text-sm font-bold text-[var(--ink)]" x-text="cat.label"></span>
+                        <div class="fade-up bg-white p-3.5 sm:p-5 rounded-2xl shadow-sm border border-[#E3DCC8] flex items-center gap-2.5 sm:gap-3.5" style="animation-delay:.05s">
+                            <div class="w-9 h-9 sm:w-11 sm:h-11 shrink-0 rounded-xl bg-[var(--keraton-gold)]/15 flex items-center justify-center">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-[var(--keraton-gold)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-gray-400">Terbanyak</p>
+                                <p class="text-xs sm:text-sm font-extrabold font-display text-[var(--mm-900)] truncate" x-text="topDevice"></p>
+                            </div>
+                        </div>
+
+                        <div class="fade-up bg-white p-3.5 sm:p-5 rounded-2xl shadow-sm border border-[#E3DCC8] flex items-center gap-2.5 sm:gap-3.5" style="animation-delay:.1s">
+                            <div class="w-9 h-9 sm:w-11 sm:h-11 shrink-0 rounded-xl bg-blue-500/10 flex items-center justify-center">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-gray-400">Status Top</p>
+                                <p class="text-xs sm:text-sm font-extrabold font-display text-[var(--mm-900)] truncate" x-text="topStatus"></p>
+                            </div>
+                        </div>
+
+                        <div class="fade-up bg-white p-3.5 sm:p-5 rounded-2xl shadow-sm border border-[#E3DCC8] flex items-center gap-2.5 sm:gap-3.5" style="animation-delay:.15s">
+                            <div class="w-9 h-9 sm:w-11 sm:h-11 shrink-0 rounded-xl bg-emerald-500/10 flex items-center justify-center">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-gray-400">Selesai</p>
+                                <p class="text-base sm:text-lg font-extrabold font-display text-[var(--mm-900)]" x-text="completionRate + '%'"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grafik Persentase Jenis Perangkat (Kompak & Elegan) -->
+                    <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-[#E3DCC8] space-y-3.5">
+                        <div>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <h3 class="font-display text-sm sm:text-base font-bold text-[var(--mm-900)]">Persentase Kerusakan Perangkat</h3>
+                                <span x-show="activeStatus !== 'all'" class="text-[9px] font-bold uppercase tracking-wider text-[var(--mm-800)] bg-[var(--mm-800)]/10 border border-[var(--mm-800)]/20 px-2 py-0.5 rounded-full" x-text="'Terfilter: ' + activeStatus"></span>
+                            </div>
+                            <p class="text-[11px] text-gray-500 mt-0.5">
+                                Grafik ini menunjukkan sebaran jenis perangkat yang paling sering dilaporkan mengalami kerusakan.
+                            </p>
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row items-center gap-4 sm:gap-7 pt-1">
+                            <div class="donut-container mx-auto sm:mx-0">
+                                <div class="donut-chart-circle" :style="'background: conic-gradient(' + deviceChartGradient + ')'"></div>
+
+                                <div class="donut-hole">
+                                    <p class="text-xl sm:text-2xl font-extrabold font-display text-[var(--mm-900)] leading-none" x-text="stats.total"></p>
+                                    <p class="text-[9px] sm:text-[10px] text-gray-400 font-semibold mt-0.5">Total Laporan</p>
+                                </div>
+                            </div>
+
+                            <div class="flex-1 w-full min-w-0 space-y-2 sm:space-y-2.5">
+                                <template x-for="cat in deviceStats" :key="cat.label">
+                                    <div>
+                                        <div class="flex items-center justify-between mb-1">
+                                            <div class="flex items-center gap-1.5 min-w-0">
+                                                <span class="w-5 h-5 rounded-md shrink-0 flex items-center justify-center text-white text-[10px]" :style="'background:' + cat.color" x-html="cat.icon"></span>
+                                                <span class="text-[11.5px] sm:text-xs font-bold text-[var(--ink)] truncate" x-text="cat.label"></span>
+                                            </div>
+                                            <span class="text-[11px] font-bold text-[var(--mm-800)] shrink-0 ml-2" x-text="cat.percent + '% (' + cat.count + ' Laporan)'"></span>
                                         </div>
-                                        <span class="text-xs font-bold text-[var(--mm-800)]" x-text="cat.percent + '% (' + cat.count + ' Laporan)'"></span>
+                                        <div class="w-full h-1.5 sm:h-2 bg-[var(--batik-cream)] rounded-full overflow-hidden border border-[#E3DCC8]/80">
+                                            <div class="h-full rounded-full grow-bar" :style="'width:' + cat.percent + '%; background:' + cat.color"></div>
+                                        </div>
                                     </div>
-                                    <div class="w-full h-2.5 bg-[var(--batik-cream)] rounded-full overflow-hidden border border-[#E3DCC8]">
-                                        <div class="h-full rounded-full grow-bar" :style="'width:' + cat.percent + '%; background:' + cat.color"></div>
-                                    </div>
-                                </div>
-                            </template>
-                            <div x-show="deviceStats.length === 0" class="text-gray-400 text-xs py-4 text-center">
-                                Belum ada data laporan untuk dianalisis pada bulan/tahun ini.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- TREN BULANAN & ANALYTICS MENGGUNAKAN CHART.JS -->
-                <div class="bg-white p-5 sm:p-6 lg:p-8 rounded-2xl shadow-sm border border-[#E3DCC8] space-y-6">
-                    <div class="flex items-center justify-between flex-wrap gap-2">
-                        <div>
-                            <h3 class="font-display text-lg sm:text-xl font-bold text-[var(--mm-900)]">Tren Laporan &amp; Analytics Bulanan</h3>
-                            <p class="text-xs text-gray-500 mt-1 max-w-xl">
-                                Perbandingan jumlah laporan kerusakan yang masuk setiap bulannya secara visual profesional.
-                            </p>
-                        </div>
-                        <span class="text-xs font-bold text-[var(--mm-800)] bg-[var(--batik-cream)] border border-[#E3DCC8] px-3 py-1.5 rounded-xl" x-text="'Tahun: ' + selectedTahun"></span>
-                    </div>
-
-                    <div class="relative w-full h-72 pt-2">
-                        <canvas id="trenBulananChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- PERSENTASE BERDASARKAN STATUS -->
-                <div class="bg-white p-5 sm:p-6 lg:p-8 rounded-2xl shadow-sm border border-[#E3DCC8] space-y-6">
-                    <div class="flex items-start justify-between gap-3 flex-wrap">
-                        <div>
-                            <h3 class="font-display text-lg sm:text-xl font-bold text-[var(--mm-900)]">Persentase Berdasarkan Status Laporan</h3>
-                            <p class="text-xs text-gray-500 mt-1">
-                                Rincian jumlah dan persentase laporan berdasarkan status pengerjaan.
-                                <span class="text-[var(--mm-800)] font-semibold">Klik salah satu kartu untuk memfilter.</span>
-                            </p>
-                        </div>
-                        <button type="button" @click="activeStatus = 'all'" x-show="activeStatus !== 'all'"
-                                class="no-print flex items-center gap-1.5 text-xs font-semibold text-[var(--mm-800)] bg-[var(--batik-cream)] border border-[#E3DCC8] px-3 py-2 rounded-xl hover:bg-[#F3EBD8] transition">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                            Filter: <span x-text="activeStatus"></span>
-                        </button>
-                    </div>
-
-                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 pt-2">
-                        <button type="button" @click="toggleStatusFilter('Selesai')"
-                                class="chip text-left p-3 sm:p-4 rounded-xl bg-emerald-50 border transition cursor-pointer hover:shadow-md"
-                                :class="activeStatus === 'Selesai' ? 'border-emerald-500 ring-2 ring-emerald-400 shadow-md' : 'border-emerald-200'">
-                            <p class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-emerald-700">Selesai</p>
-                            <div class="flex items-baseline justify-between mt-2 sm:mt-3">
-                                <span class="text-lg sm:text-2xl font-extrabold font-display text-emerald-900" x-text="statusStats.selesai.count"></span>
-                                <span class="text-[10px] sm:text-xs font-bold text-emerald-800 bg-emerald-200/80 px-2 py-0.5 rounded-lg" x-text="statusStats.selesai.percent + '%'"></span>
-                            </div>
-                        </button>
-
-                        <button type="button" @click="toggleStatusFilter('Dalam Perbaikan')"
-                                class="chip text-left p-3 sm:p-4 rounded-xl bg-blue-50 border transition cursor-pointer hover:shadow-md"
-                                :class="activeStatus === 'Dalam Perbaikan' ? 'border-blue-500 ring-2 ring-blue-400 shadow-md' : 'border-blue-200'">
-                            <p class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-blue-700">Dalam Perbaikan</p>
-                            <div class="flex items-baseline justify-between mt-2 sm:mt-3">
-                                <span class="text-lg sm:text-2xl font-extrabold font-display text-blue-900" x-text="statusStats.dalamPerbaikan.count"></span>
-                                <span class="text-[10px] sm:text-xs font-bold text-blue-800 bg-blue-200/80 px-2 py-0.5 rounded-lg" x-text="statusStats.dalamPerbaikan.percent + '%'"></span>
-                            </div>
-                        </button>
-
-                        <button type="button" @click="toggleStatusFilter('Menunggu Part')"
-                                class="chip text-left p-3 sm:p-4 rounded-xl bg-amber-50 border transition cursor-pointer hover:shadow-md"
-                                :class="activeStatus === 'Menunggu Part' ? 'border-amber-500 ring-2 ring-amber-400 shadow-md' : 'border-amber-200'">
-                            <p class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-amber-700">Menunggu Part</p>
-                            <div class="flex items-baseline justify-between mt-2 sm:mt-3">
-                                <span class="text-lg sm:text-2xl font-extrabold font-display text-amber-900" x-text="statusStats.menungguPart.count"></span>
-                                <span class="text-[10px] sm:text-xs font-bold text-amber-800 bg-amber-200/80 px-2 py-0.5 rounded-lg" x-text="statusStats.menungguPart.percent + '%'"></span>
-                            </div>
-                        </button>
-
-                        <button type="button" @click="toggleStatusFilter('Ditolak')"
-                                class="chip text-left p-3 sm:p-4 rounded-xl bg-red-50 border transition cursor-pointer hover:shadow-md"
-                                :class="activeStatus === 'Ditolak' ? 'border-red-500 ring-2 ring-red-400 shadow-md' : 'border-red-200'">
-                            <p class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-red-700">Ditolak</p>
-                            <div class="flex items-baseline justify-between mt-2 sm:mt-3">
-                                <span class="text-lg sm:text-2xl font-extrabold font-display text-red-900" x-text="statusStats.ditolak.count"></span>
-                                <span class="text-[10px] sm:text-xs font-bold text-red-800 bg-red-200/80 px-2 py-0.5 rounded-lg" x-text="statusStats.ditolak.percent + '%'"></span>
-                            </div>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- TABEL RINCIAN -->
-                <div class="bg-white p-5 sm:p-6 lg:p-8 rounded-2xl shadow-sm border border-[#E3DCC8] space-y-5">
-                    <div>
-                        <h3 class="font-display text-lg sm:text-xl font-bold text-[var(--mm-900)]">Tabel Rincian Laporan</h3>
-                        <p class="text-xs text-gray-500 mt-1">Daftar lengkap laporan sesuai bulan & tahun terpilih.</p>
-                    </div>
-
-                    <!-- Tampilan Mobile Rincian Laporan (block md:hidden) -->
-                    <div class="block md:hidden space-y-2.5">
-                        <template x-for="(row, idx) in filteredReports" :key="row.id || idx">
-                            <div class="bg-white rounded-xl border border-[#E3DCC8] shadow-2xs p-3 space-y-2 relative overflow-hidden">
-                                <!-- Status Line -->
-                                <div class="absolute left-0 top-0 bottom-0 w-1"
-                                     :class="{
-                                         'bg-emerald-500': (row.status || '').trim().toLowerCase() === 'selesai',
-                                         'bg-blue-500': (row.status || '').trim().toLowerCase() === 'dalam perbaikan',
-                                         'bg-amber-500': (row.status || '').trim().toLowerCase() === 'menunggu part',
-                                         'bg-red-500': (row.status || '').trim().toLowerCase() === 'ditolak',
-                                     }"></div>
-
-                                <div class="flex items-center justify-between gap-1 pl-1 border-b border-slate-100 pb-1">
-                                    <div class="flex items-center gap-1.5 min-w-0">
-                                        <span class="font-mono font-bold text-[10px] px-1.5 py-0.5 rounded bg-[var(--mm-900)] text-white" x-text="row.id || ('#' + (idx + 1))"></span>
-                                        <span class="text-[9.5px] text-gray-500 font-medium" x-text="row.tanggal || '-'"></span>
-                                    </div>
-                                    <span class="text-[9px] font-bold px-2 py-0.5 rounded-full shadow-2xs" :class="statusBadgeClass(row.status)" x-text="row.status || '-'"></span>
-                                </div>
-
-                                <div class="pl-1">
-                                    <p class="font-bold text-xs text-[var(--mm-900)]" x-text="row.perangkat || '-'"></p>
-                                    <div class="bg-[var(--batik-cream)]/40 rounded-lg p-2 border border-[#E3DCC8]/70 text-[10px] mt-1 space-y-0.5" x-show="row.kendala || row.keterangan">
-                                        <span class="text-[8px] uppercase font-bold text-amber-800 bg-amber-100 px-1 py-0.2 rounded">Kendala</span>
-                                        <p class="text-gray-700 text-[9.5px] mt-0.5" x-text="row.kendala || row.keterangan || '-'"></p>
-                                    </div>
-                                </div>
-                            </div>
-                        </template>
-
-                        <div x-show="filteredReports.length === 0" class="p-8 text-center text-xs text-gray-400 bg-white rounded-xl border border-[#E3DCC8]">
-                            Tidak ada data laporan untuk bulan dan tahun ini.
-                        </div>
-                    </div>
-
-                    <!-- Tampilan Desktop Rincian Laporan (hidden md:block) -->
-                    <div class="hidden md:block overflow-x-auto rounded-xl border border-[#E3DCC8]">
-                        <table class="w-full text-xs text-left border-collapse whitespace-nowrap">
-                            <thead>
-                                <tr class="bg-[var(--batik-cream)] text-[var(--mm-900)] font-bold border-b border-[#E3DCC8]">
-                                    <th class="p-3 w-10">No</th>
-                                    <th class="p-3">Perangkat</th>
-                                    <th class="p-3">Tanggal</th>
-                                    <th class="p-3">Status</th>
-                                    <th class="p-3">Keterangan</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-[#E3DCC8]">
-                                <template x-for="(row, idx) in filteredReports" :key="row.id || idx">
-                                    <tr class="hover:bg-amber-50/40 transition">
-                                        <td class="p-3 text-gray-400 font-semibold" x-text="idx + 1"></td>
-                                        <td class="p-3 font-semibold text-[var(--mm-900)]" x-text="row.perangkat || '-'"></td>
-                                        <td class="p-3 text-gray-600" x-text="row.tanggal || '-'"></td>
-                                        <td class="p-3">
-                                            <span class="text-[10px] font-bold px-2 py-0.5 rounded" :class="statusBadgeClass(row.status)" x-text="row.status || '-'"></span>
-                                        </td>
-                                        <td class="p-3 text-gray-600 max-w-[200px] truncate" x-text="row.kendala || row.keterangan || '-'"></td>
-                                    </tr>
                                 </template>
-                                <tr x-show="filteredReports.length === 0">
-                                    <td colspan="5" class="p-8 text-center text-xs text-gray-400">Tidak ada data laporan untuk bulan dan tahun ini.</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                                <div x-show="deviceStats.length === 0" class="text-gray-400 text-xs py-3 text-center">
+                                    Belum ada data laporan untuk dianalisis pada bulan/tahun ini.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TREN BULANAN & ANALYTICS MENGGUNAKAN CHART.JS (Kompak & Rapi) -->
+                    <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-xs border border-[#E3DCC8] space-y-3.5">
+                        <div class="flex items-center justify-between flex-wrap gap-2">
+                            <div>
+                                <h3 class="font-display text-sm sm:text-base font-bold text-[var(--mm-900)]">Tren Laporan &amp; Analytics Bulanan</h3>
+                                <p class="text-[11px] text-gray-500 mt-0.5 max-w-xl">
+                                    Perbandingan jumlah laporan kerusakan yang masuk setiap bulannya secara visual profesional.
+                                </p>
+                            </div>
+                            <span class="text-[10.5px] font-bold text-[var(--mm-800)] bg-[var(--batik-cream)] border border-[#E3DCC8] px-2.5 py-1 rounded-lg" x-text="'Tahun: ' + selectedTahun"></span>
+                        </div>
+
+                        <div class="relative w-full h-44 sm:h-52 pt-1">
+                            <canvas id="trenBulananChart"></canvas>
+                        </div>
                     </div>
                 </div>
+
+
 
             </div>
 
@@ -1137,10 +1094,9 @@
 
                 <!-- 2. JUDUL DOKUMEN & PERIODE -->
                 <div class="doc-header">
-                    <h2 class="doc-title">REKAPITULASI LAPORAN LAYANAN PERBAIKAN PERANGKAT IT</h2>
+                    <h2 class="doc-title">LAPORAN PERSENTASE &amp; ANALITIK KERUSAKAN PERANGKAT IT</h2>
                     <p class="doc-period">
                         Periode: <span x-text="namaBulanIndo + ' ' + selectedTahun"></span>
-                        <span x-show="activeStatus !== 'all'" x-text="' (Status: ' + activeStatus + ')'"></span>
                     </p>
                 </div>
 
@@ -1151,65 +1107,44 @@
                             <td class="meta-label">Tanggal / Jam Cetak:</td>
                             <td class="meta-val">{{ Carbon\Carbon::now('Asia/Jakarta')->translatedFormat('d F Y, H:i') }} WIB</td>
                             <td class="meta-label">Total Tiket Laporan:</td>
-                            <td class="meta-val"><b x-text="filteredReports.length + ' Berkas'"></b></td>
+                            <td class="meta-val"><b x-text="filteredReports.length + ' Laporan'"></b></td>
                         </tr>
                         <tr>
                             <td class="meta-label">Petugas Administrasi:</td>
                             <td class="meta-val">{{ Auth::user()->name ?? 'Administrator SIPERKOM' }} ({{ ucfirst(Auth::user()->role ?? 'Admin') }})</td>
-                            <td class="meta-label">Kategori Filter:</td>
-                            <td class="meta-val"><span x-text="activeStatus === 'all' ? 'Seluruh Status Perbaikan' : activeStatus"></span></td>
+                            <td class="meta-label">Lingkup Data:</td>
+                            <td class="meta-val"><span>Sebaran Kerusakan &amp; Tren Bulanan</span></td>
                         </tr>
                     </table>
                 </div>
 
-                <!-- 4. PERSENTASE BERDASARKAN STATUS LAPORAN -->
-                <div class="print-status-grid">
-                    <div class="print-status-card print-status-card-selesai">
-                        <div class="print-status-info">
-                            <span class="print-status-tag">Selesai</span>
-                            <span class="print-status-desc">Perbaikan tuntas</span>
-                        </div>
-                        <div class="print-status-metric">
-                            <span class="print-status-count" x-text="statusStats.selesai.count + ' Laporan'"></span>
-                            <span class="print-status-pct" x-text="statusStats.selesai.percent + '%'"></span>
-                        </div>
-                    </div>
+                <!-- 4. RINGKASAN EKSEKUTIF ANALISIS (SESUAI LAYAR) -->
+                <div class="print-summary-box">
+                    <span class="print-summary-title">Ringkasan Eksekutif Analisis</span>
+                    <p class="print-summary-text" x-text="executiveSummary"></p>
+                </div>
 
-                    <div class="print-status-card print-status-card-perbaikan">
-                        <div class="print-status-info">
-                            <span class="print-status-tag">Dalam Perbaikan</span>
-                            <span class="print-status-desc">Sedang proses</span>
-                        </div>
-                        <div class="print-status-metric">
-                            <span class="print-status-count" x-text="statusStats.dalamPerbaikan.count + ' Laporan'"></span>
-                            <span class="print-status-pct" x-text="statusStats.dalamPerbaikan.percent + '%'"></span>
-                        </div>
+                <!-- 5. 4 INDIKATOR UTAMA ANALISIS (SESUAI KARTU LAYAR) -->
+                <div class="print-kpi-grid">
+                    <div class="print-kpi-card">
+                        <span class="print-kpi-lbl">Total Laporan</span>
+                        <span class="print-kpi-val" x-text="filteredReports.length + ' Laporan'"></span>
                     </div>
-
-                    <div class="print-status-card print-status-card-menunggu">
-                        <div class="print-status-info">
-                            <span class="print-status-tag">Menunggu Part</span>
-                            <span class="print-status-desc">Suku cadang / part</span>
-                        </div>
-                        <div class="print-status-metric">
-                            <span class="print-status-count" x-text="statusStats.menungguPart.count + ' Laporan'"></span>
-                            <span class="print-status-pct" x-text="statusStats.menungguPart.percent + '%'"></span>
-                        </div>
+                    <div class="print-kpi-card">
+                        <span class="print-kpi-lbl">Perangkat Terbanyak</span>
+                        <span class="print-kpi-val text-gold" x-text="topDevice"></span>
                     </div>
-
-                    <div class="print-status-card print-status-card-ditolak">
-                        <div class="print-status-info">
-                            <span class="print-status-tag">Ditolak</span>
-                            <span class="print-status-desc">Tidak memenuhi syarat</span>
-                        </div>
-                        <div class="print-status-metric">
-                            <span class="print-status-count" x-text="statusStats.ditolak.count + ' Laporan'"></span>
-                            <span class="print-status-pct" x-text="statusStats.ditolak.percent + '%'"></span>
-                        </div>
+                    <div class="print-kpi-card">
+                        <span class="print-kpi-lbl">Status Top</span>
+                        <span class="print-kpi-val text-blue" x-text="topStatus"></span>
+                    </div>
+                    <div class="print-kpi-card">
+                        <span class="print-kpi-lbl">Tingkat Selesai</span>
+                        <span class="print-kpi-val text-emerald" x-text="completionRate + '%'"></span>
                     </div>
                 </div>
 
-                <!-- 5. RINGKASAN PERSENTASE KERUSAKAN PERANGKAT & TREN ANALYTICS BULANAN -->
+                <!-- 6. RINCIAN PERSENTASE KERUSAKAN PERANGKAT & TREN ANALYTICS BULANAN -->
                 <div class="print-analytics-grid">
                     <!-- Kolom 1: Persentase Kerusakan Perangkat -->
                     <div class="print-analytics-card">
@@ -1219,8 +1154,8 @@
                                 <p class="print-card-subtitle">Sebaran jenis unit yang dilaporkan mengalami kerusakan</p>
                             </div>
                             <div class="print-badge-total">
-                                <span class="print-badge-label">Total Laporan:</span>
-                                <b class="print-badge-val" x-text="stats.total"></b>
+                                <span class="print-badge-label">Total:</span>
+                                <b class="print-badge-val" x-text="stats.total + ' Laporan'"></b>
                             </div>
                         </div>
 
@@ -1294,7 +1229,7 @@
     </div>
 
     <!-- ============ TOAST NOTIFIKASI ============ -->
-    <div x-show="toast.show" x-cloak x-transition
+    <div x-show="toast.show && toast.message" x-cloak x-transition
          class="fixed bottom-5 right-5 z-[60] bg-[var(--mm-900)] text-white px-4 py-3 rounded-xl shadow-2xl text-xs font-semibold flex items-center gap-2 border border-white/10">
         <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
         <span x-text="toast.message"></span>
@@ -1368,7 +1303,10 @@
                 },
 
                 initChart() {
-                    const ctx = document.getElementById('trenBulananChart').getContext('2d');
+                    const canvas = document.getElementById('trenBulananChart');
+                    if (!canvas) return;
+                    const ctx = canvas.getContext('2d');
+                    if (!ctx) return;
                     const monthsData = this.calculateMonthlyTrend();
 
                     new Chart(ctx, {
@@ -1427,8 +1365,15 @@
 
                     const counts = months.map(m => {
                         return withDate.filter(r => {
+                            const raw = r.tanggal || r.created_at || '';
+                            if (typeof raw === 'string' && raw.length >= 7) {
+                                const [y, mo] = raw.substring(0, 7).split('-');
+                                if (parseInt(y, 10) === m.year && (parseInt(mo, 10) - 1) === m.month) {
+                                    return true;
+                                }
+                            }
                             const d = this.getReportDate(r);
-                            return d.getFullYear() === m.year && d.getMonth() === m.month;
+                            return d && d.getFullYear() === m.year && d.getMonth() === m.month;
                         }).length;
                     });
 
@@ -1460,6 +1405,11 @@
 
                 get rangeFilteredReports() {
                     return this.reports.filter(r => {
+                        const raw = r.tanggal || r.created_at || '';
+                        if (typeof raw === 'string' && raw.length >= 7) {
+                            const [y, m] = raw.substring(0, 7).split('-');
+                            return m === this.selectedBulan && y === this.selectedTahun;
+                        }
                         const d = this.getReportDate(r);
                         if (!d) return false;
                         const m = String(d.getMonth() + 1).padStart(2, '0');

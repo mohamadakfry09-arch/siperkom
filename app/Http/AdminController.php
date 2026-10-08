@@ -39,7 +39,7 @@ class AdminController extends Controller
                         'kendala'       => $item->kendala ?? '-',
                         'status'        => $item->status ?? 'Dalam Perbaikan',
                         'prioritas'     => $item->prioritas ?? 'Sedang',
-                        'teknisi'       => $item->teknisi ?? 'Fahri',
+                        'teknisi'       => $item->teknisi ?? 'Fahry Rizky Prayogi',
                         'tanggal_masuk' => $item->created_at ? $item->created_at->format('d/m/Y') : '-',
                     ];
                 });
@@ -127,7 +127,7 @@ class AdminController extends Controller
                     'perangkat'        => $item->perangkat ?? '-',
                     'kendala'          => $item->kendala ?? '-',
                     'foto'             => $item->foto ?? null,
-                    'teknisi'          => $item->teknisi ?? 'Fahri',
+                    'teknisi'          => $item->teknisi ?? 'Fahry Rizky Prayogi',
                     'status'           => $item->status ?? 'Dalam Perbaikan',
                     'keterangan_rekap' => $item->keterangan_rekap ?? $item->keterangan ?? '-'
                 ];

@@ -89,4 +89,20 @@ class User extends Authenticatable
     {
         return $this->hasMany(Laporan::class, 'user_id');
     }
+
+    /**
+     * URL Avatar pengguna, menggunakan default SVG jika belum ada foto profil.
+     */
+    public function getAvatarUrlAttribute(): string
+    {
+        if (!empty($this->avatar)) {
+            return asset('storage/' . $this->avatar);
+        }
+
+        if (in_array(strtolower($this->role ?? ''), ['admin', 'teknisi'])) {
+            return asset('images/admin-avatar.svg');
+        }
+
+        return asset('images/pelapor-avatar.svg');
+    }
 }

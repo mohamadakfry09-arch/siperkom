@@ -13,8 +13,11 @@ class AuthenticationTest extends TestCase
     public function test_login_screen_can_be_rendered(): void
     {
         $response = $this->get('/login');
+        $response->assertStatus(302);
+        $response->assertRedirect(route('pelapor.login'));
 
-        $response->assertStatus(200);
+        $pelaporResponse = $this->get('/pelapor/login');
+        $pelaporResponse->assertStatus(200);
     }
 
     public function test_users_can_authenticate_using_the_login_screen(): void
@@ -27,7 +30,8 @@ class AuthenticationTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('pelapor.dashboard', absolute: false));
+        // Login redirects to pelapor dashboard with auth_init query parameter
+        $response->assertRedirect(route('pelapor.dashboard', ['auth_init' => 1]));
     }
 
     public function test_users_can_not_authenticate_with_invalid_password(): void
@@ -49,6 +53,22 @@ class AuthenticationTest extends TestCase
         $response = $this->actingAs($user)->post('/logout');
 
         $this->assertGuest();
-        $response->assertRedirect('/');
+        // Logout redirects pelapor users to pelapor login page
+        $response->assertRedirect(route('pelapor.login'));
+    }
+
+    public function test_admin_cannot_authenticate_using_pelapor_login_screen(): void
+    {
+        $admin = User::factory()->create([
+            'role' => 'admin',
+        ]);
+
+        $response = $this->post('/login', [
+            'email' => $admin->email,
+            'password' => 'password',
+        ]);
+
+        $this->assertGuest();
+        $response->assertSessionHasErrors('email');
     }
 }

@@ -216,13 +216,13 @@ class LaporanAdminController extends Controller
                 ->toArray();
 
             if (empty($teknisi)) {
-                return ['Fahri Ramadhan', 'Dedi Kurniawan', 'Agus Setiawan', 'Siti Marlina'];
+                return ['Fahry Rizky Prayogi', 'Dedi Kurniawan', 'Agus Setiawan', 'Siti Marlina'];
             }
 
             return $teknisi;
         } catch (Exception $e) {
             Log::error('Gagal mengambil daftar teknisi terpadu dari basis data: ' . $e->getMessage());
-            return ['Fahri Ramadhan', 'Dedi Kurniawan', 'Agus Setiawan', 'Siti Marlina'];
+            return ['Fahry Rizky Prayogi', 'Dedi Kurniawan', 'Agus Setiawan', 'Siti Marlina'];
         }
     }
 

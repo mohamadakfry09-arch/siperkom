@@ -105,16 +105,14 @@ class ProfilePelaporController extends Controller
                 'alamat'    => ['nullable', 'string', 'max:255'],
                 'nama_desa' => ['nullable', 'string', 'max:255'],
                 'kecamatan' => ['nullable', 'string', 'max:255'],
-                'avatar'    => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
-                'password'  => ['nullable', 'string', 'min:8', 'confirmed'],
+                'avatar'        => ['nullable'],
+                'avatar_base64' => ['nullable', 'string'],
+                'password'      => ['nullable', 'string', 'min:8', 'confirmed'],
             ], [
                 'name.required'      => 'Nama lengkap wajib diisi.',
                 'email.required'     => 'Alamat email wajib diisi.',
                 'email.email'        => 'Format alamat email tidak valid.',
                 'email.unique'       => 'Alamat email ini sudah digunakan oleh akun lain.',
-                'avatar.image'       => 'Berkas yang diunggah harus berupa berkas gambar.',
-                'avatar.mimes'       => 'Format gambar avatar harus berformat JPG, JPEG, PNG, atau WEBP.',
-                'avatar.max'         => 'Ukuran foto profil (PP) maksimal adalah 2 Megabita (2 MB).',
                 'password.min'       => 'Kata sandi baru minimal harus terdiri dari 8 karakter.',
                 'password.confirmed' => 'Konfirmasi kata sandi baru tidak cocok.',
             ]);
@@ -183,15 +181,31 @@ class ProfilePelaporController extends Controller
                     Log::info('Avatar untuk user ID: ' . $user->id . ' berhasil dihapus dari storage.');
                 }
                 $user->avatar = null;
-            } elseif (isset($validatedData['avatar'])) {
+            } elseif ($request->hasFile('avatar') && $request->file('avatar')->isValid()) {
                 if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
                     Storage::disk('public')->delete($user->avatar);
                     Log::info('Avatar lama untuk user ID: ' . $user->id . ' berhasil dihapus dari storage.');
                 }
 
-                $avatarPath = $validatedData['avatar']->store('avatars', 'public');
+                $avatarPath = $request->file('avatar')->store('avatars', 'public');
                 $user->avatar = $avatarPath;
                 Log::info('Avatar baru berhasil diunggah ke path: ' . $avatarPath);
+            } elseif ($request->filled('avatar_base64') && str_starts_with($request->input('avatar_base64'), 'data:image')) {
+                if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
+                    Storage::disk('public')->delete($user->avatar);
+                }
+                $base64Data = $request->input('avatar_base64');
+                $imageParts = explode(';base64,', $base64Data);
+                if (count($imageParts) === 2) {
+                    $imageTypeAux = explode('image/', $imageParts[0]);
+                    $imageType = $imageTypeAux[1] ?? 'jpg';
+                    if ($imageType === 'jpeg') $imageType = 'jpg';
+                    $imageBase64 = base64_decode($imageParts[1]);
+                    $fileName = 'avatars/avatar_' . $user->id . '_' . time() . '.' . $imageType;
+                    Storage::disk('public')->put($fileName, $imageBase64);
+                    $user->avatar = $fileName;
+                    Log::info('Avatar base64 berhasil disimpan ke path: ' . $fileName);
+                }
             }
 
             // Memperbarui kata sandi dengan teks biasa agar konsisten dengan seeder

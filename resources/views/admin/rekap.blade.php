@@ -1,10 +1,10 @@
 @php
     // Data laporan ditarik dari database melalui Controller AdminController
     $defaultReports = $defaultReports ?? [];
-    $bulanPilih = request('bulan', date('m'));
-    $tahunPilih = request('tahun', date('Y'));
+    $bulanPilih = $bulanPilih ?? request('bulan', date('m'));
+    $tahunPilih = $tahunPilih ?? request('tahun', date('Y'));
 
-    $monthsIndonesian = [
+    $monthsIndonesian = $monthsIndonesian ?? [
         '01' => 'Januari', '02' => 'Februari', '03' => 'Maret', 
         '04' => 'April',   '05' => 'Mei',      '06' => 'Juni', 
         '07' => 'Juli',    '08' => 'Agustus',  '09' => 'September', 
@@ -19,7 +19,7 @@
     <title>Rekap Bulanan &amp; Detail Laporan | SIPERKOM Kabupaten Cirebon</title>
     
     <link rel="icon" href="{{ asset('images/cirebon.png') }}" type="image/png">
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @include('partials.assets')
     @include('partials.session-guard')
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -84,8 +84,34 @@
                 border-bottom-left-radius: 1.5rem !important;
             }
             .desktop-layout {
-                height: 100vh;
-                overflow: hidden;
+                height: 100vh !important;
+                max-height: 100vh !important;
+                height: 100dvh !important;
+                max-height: 100dvh !important;
+                overflow: hidden !important;
+            }
+            .desktop-layout > aside {
+                width: min(19rem, calc(100vw - 1rem)) !important;
+                min-width: min(19rem, calc(100vw - 1rem)) !important;
+                max-width: min(19rem, calc(100vw - 1rem)) !important;
+                flex-shrink: 0 !important;
+                height: 100% !important;
+                max-height: 100% !important;
+                min-height: 0 !important;
+            }
+            .desktop-layout > aside .pelapor-mobile-actions {
+                position: relative !important;
+                bottom: auto !important;
+                left: auto !important;
+                right: auto !important;
+                margin-top: auto !important;
+            }
+            .desktop-layout > main {
+                min-width: 0 !important;
+                flex: 1 1 0% !important;
+                height: 100% !important;
+                max-height: 100% !important;
+                min-height: 0 !important;
             }
         }
 
@@ -153,35 +179,53 @@
         <!-- ============ SIDEBAR ADMIN (IDENTIK DENGAN PELAPOR) ============ -->
         <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
             @touchmove.stop.prevent="if (window.innerWidth < 1024) $event.preventDefault()"
-            class="fixed lg:static top-3.5 left-0 z-[9999] lg:z-auto w-[76vw] max-w-[275px] lg:w-[min(18rem,calc(100vw-1rem))] lg:max-w-none mega-mendung-bg flex flex-col justify-between p-4 sm:p-5 lg:p-6 text-white shrink-0 shadow-2xl transition-transform duration-300 ease-out h-[78vh] max-h-[580px] lg:h-full lg:max-h-none overflow-hidden lg:overflow-y-auto no-scrollbar touch-none lg:touch-auto overscroll-none select-none mobile-rounded-sidebar border-0 outline-none">
+            class="fixed lg:static top-3.5 left-0 z-[9999] lg:z-auto w-[82vw] max-w-[290px] lg:w-[min(19rem,calc(100vw-1rem))] lg:max-w-none mega-mendung-bg flex flex-col justify-between p-3.5 sm:p-4 lg:p-4.5 text-white shrink-0 shadow-2xl transition-transform duration-300 ease-out h-[78vh] max-h-[580px] lg:h-full lg:max-h-none overflow-hidden lg:overflow-y-auto no-scrollbar touch-none lg:touch-auto overscroll-none select-none mobile-rounded-sidebar border-0 outline-none">
 
             <!-- BAGIAN ATAS: USER BADGE, MENU -->
             <div class="space-y-3.5 lg:space-y-4">
 
-                <!-- Admin Profile Card -->
-                <div class="bg-gradient-to-r from-[#0b335c]/85 via-[#0c3966]/80 to-[#072544]/90 border border-blue-300/30 hover:border-[var(--keraton-gold)]/40 p-3 rounded-2xl flex items-center gap-3 shadow-lg backdrop-blur-sm transition-all duration-200">
+                <!-- Admin Profile Card (Modern Glassmorphic Style & Interactive) -->
+                <a href="{{ route('admin.profil.edit') }}" 
+                   class="group relative overflow-hidden bg-gradient-to-r from-white/[0.12] via-[#0c3966]/60 to-white/[0.04] hover:from-white/[0.18] hover:via-[#0c3966]/80 hover:to-white/[0.08] active:scale-[0.98] border border-white/15 hover:border-[var(--keraton-gold)]/70 active:border-[var(--keraton-gold)] p-2.5 sm:p-3 rounded-2xl flex items-center gap-2.5 sm:gap-3 shadow-lg shadow-black/20 backdrop-blur-md transition-all duration-200 cursor-pointer select-none touch-manipulation">
+                    
+                    <!-- Ambient Top Highlight & Soft Glow -->
+                    <div class="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+                    <div class="absolute -right-6 -bottom-6 w-16 h-16 bg-[var(--keraton-gold)]/10 rounded-full blur-xl group-hover:bg-[var(--keraton-gold)]/20 transition-all pointer-events-none"></div>
+
+                    <!-- Avatar with Ring and Live Status Dot -->
                     <div class="relative shrink-0">
                         @if(!empty(Auth::user()->avatar))
-                            <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="w-10 h-10 rounded-xl object-cover ring-2 ring-[var(--keraton-gold)]/80 shadow-md" alt="Foto Profil">
+                            <img src="{{ asset('storage/' . Auth::user()->avatar) }}" 
+                                 class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl object-cover ring-2 ring-[var(--keraton-gold)]/80 ring-offset-2 ring-offset-[#072544] shadow-md group-hover:scale-105 group-hover:ring-[var(--keraton-gold)] transition-all duration-200" 
+                                 alt="Foto Profil">
                         @else
-                            <img src="{{ asset('images/admin-avatar.svg') }}" class="w-10 h-10 rounded-xl object-cover ring-2 ring-[var(--keraton-gold)]/80 shadow-md bg-[#072544]" alt="Icon Administrator">
+                            <img src="{{ asset('images/admin-avatar.svg') }}" 
+                                 class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl object-cover ring-2 ring-[var(--keraton-gold)]/80 ring-offset-2 ring-offset-[#072544] shadow-md bg-[#072544] group-hover:scale-105 transition-all duration-200" 
+                                 alt="Icon Administrator">
                         @endif
                     </div>
+
+                    <!-- User Name & Role Badge -->
                     <div class="min-w-0 flex-1">
-                        <p class="font-bold text-xs lg:text-[13px] text-white leading-snug break-words line-clamp-2" title="{{ Auth::user()->name ?? 'Administrator' }}">
+                        <p class="font-bold text-xs sm:text-[13px] text-white leading-tight tracking-tight truncate group-hover:text-[var(--keraton-gold-soft)] transition-colors" 
+                           title="{{ Auth::user()->name ?? 'Administrator' }}">
                             {{ Auth::user()->name ?? 'Administrator' }}
                         </p>
                         <div class="flex items-center gap-1.5 mt-1">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-400/30 text-emerald-200 text-[10px] font-semibold tracking-wide shadow-xs">
-                                <span class="relative flex h-1.5 w-1.5 shrink-0">
-                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                    <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400"></span>
-                                </span>
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/10 border border-white/20 text-white/70 text-[10px] font-semibold tracking-wide">
+                                <svg class="w-2.5 h-2.5 shrink-0 text-[var(--keraton-gold-soft)]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
                                 <span>Admin &amp; Teknisi</span>
                             </span>
                         </div>
                     </div>
-                </div>
+
+                    <!-- Right Chevron / Action Hint -->
+                    <div class="shrink-0 w-6 h-6 rounded-lg bg-white/5 border border-white/10 group-hover:bg-white/15 group-hover:border-[var(--keraton-gold)]/40 flex items-center justify-center text-white/40 group-hover:text-[var(--keraton-gold-soft)] group-hover:translate-x-0.5 transition-all duration-200">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </a>
 
                 <!-- Navigasi Panel Menu Admin -->
                 <nav class="space-y-1 pt-1" aria-label="Menu Admin">
@@ -244,10 +288,10 @@
               :class="sidebarOpen ? 'overflow-hidden pointer-events-none touch-none select-none' : 'overflow-y-auto scrollable-content'">
 
             <!-- Header Halaman -->
-            <header class="bg-white border-b border-[#E3DCC8] px-3 sm:px-6 py-3 sm:py-4 sticky top-0 z-30 flex items-center justify-between shadow-sm gap-2 sm:gap-3 shrink-0 lg:rounded-t-3xl">
+            <header class="bg-white border-b border-[#E3DCC8] px-3 sm:px-6 py-2.5 sm:py-3.5 sticky top-0 z-30 flex items-center justify-between shadow-2xs gap-2 sm:gap-3 shrink-0 lg:rounded-t-3xl">
                 <div class="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
-                    <button type="button" @click="sidebarOpen = true" aria-label="Buka menu" class="lg:hidden p-2 rounded-xl bg-[var(--batik-cream)] border border-[#E3DCC8] text-[var(--mm-900)] shrink-0 hover:bg-[#F3EBD8] transition">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    <button type="button" @click="sidebarOpen = true" aria-label="Buka menu" class="lg:hidden w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[var(--batik-cream)] border border-[#E3DCC8] text-[var(--mm-900)] shrink-0 hover:bg-[#F3EBD8] active:scale-95 transition flex items-center justify-center shadow-2xs">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                     </button>
                     <div>
                         <h2 class="font-display font-bold text-[11px] leading-tight sm:text-sm text-[var(--mm-900)]">Rekapitulasi Akhir &amp; Ekspor Laporan</h2>
@@ -258,13 +302,17 @@
                 <div class="flex items-center gap-2 sm:gap-3 shrink-0">
                     <!-- Notifikasi Lonceng Admin: Khusus Laporan Masuk Baru dari Pelapor -->
                     <div class="relative" x-data="{ notifOpen: false }">
-                        <button type="button" @click="notifOpen = !notifOpen" class="relative p-2 rounded-xl bg-[var(--batik-cream)] border border-[#E3DCC8] hover:bg-[#F3EBD8] transition cursor-pointer" aria-label="Notifikasi Laporan Masuk">
-                            <svg class="w-4 h-4 text-[var(--mm-800)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button type="button" @click="notifOpen = !notifOpen" 
+                                class="relative w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[var(--batik-cream)] border border-[#E3DCC8] hover:bg-[#F3EBD8] active:scale-95 transition cursor-pointer text-[var(--mm-900)] flex items-center justify-center shadow-2xs shrink-0" 
+                                aria-label="Notifikasi Laporan Masuk" title="Notifikasi Laporan Masuk">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-[var(--mm-800)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                             </svg>
                             
                             <!-- Counter Badge: Jumlah Laporan Masuk Baru Belum Dibaca Admin -->
-                            <span x-show="unreadAdminReports.length > 0" x-cloak class="absolute -top-1 -right-1 bg-[var(--keraton-maroon)] text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center animate-pulse" x-text="unreadAdminReports.length"></span>
+                            <span x-show="unreadAdminReports.length > 0" x-cloak 
+                                  class="absolute -top-1 -right-1 bg-[var(--keraton-maroon)] text-white text-[9px] font-bold min-w-[16px] h-[16px] px-0.5 rounded-full flex items-center justify-center shadow-sm animate-pulse border border-white" 
+                                  x-text="unreadAdminReports.length"></span>
                         </button>
                         
                         <!-- Dropdown Notifikasi Laporan Masuk Admin -->
@@ -285,12 +333,10 @@
                                        :class="{ 'bg-amber-50/40': !seenAdminReportIds.includes(String(r.db_id || r.id)) }">
                                         <!-- PP Pelapor Mini -->
                                         <div class="shrink-0 mt-0.5">
-                                            <template x-if="r.pelapor_avatar">
-                                                <img :src="r.pelapor_avatar" class="w-8 h-8 rounded-full object-cover shadow-2xs border border-[#E3DCC8] ring-1 ring-white">
-                                            </template>
-                                            <template x-if="!r.pelapor_avatar">
-                                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 via-indigo-600 to-[#0b335c] text-white font-black flex items-center justify-center text-[10px] shadow-2xs border border-blue-300 ring-1 ring-white" x-text="getInitials(r.pelapor)"></div>
-                                            </template>
+                                            <img :src="r.pelapor_avatar || '{{ asset('images/pelapor-avatar.svg') }}'" 
+                                                 :alt="r.pelapor"
+                                                 class="w-8 h-8 rounded-full object-cover shadow-2xs border border-[#E3DCC8] ring-1 ring-white"
+                                                 onerror="this.src='{{ asset('images/pelapor-avatar.svg') }}'">
                                         </div>
                                         <div class="min-w-0 flex-1">
                                             <div class="flex items-center justify-between gap-1 mb-0.5">
@@ -327,43 +373,123 @@
             <div class="p-3.5 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 flex-1 pb-16">
                 
                 <!-- Filter Bulan & Tahun -->
-                <div class="bg-[var(--batik-cream)]/40 p-3.5 sm:p-5 rounded-2xl border border-[#E3DCC8]">
-                    <form method="GET" action="{{ route('admin.rekap') }}" class="grid grid-cols-2 sm:grid-cols-12 gap-2.5 sm:gap-3 items-end">
-                        <div class="col-span-1 sm:col-span-5">
+                <div class="bg-[var(--batik-cream)]/40 p-3.5 sm:p-5 rounded-2xl border border-[#E3DCC8] relative z-20">
+                    <form method="GET" action="{{ route('admin.rekap') }}" 
+                          class="grid grid-cols-2 sm:flex sm:items-end gap-2.5 sm:gap-4"
+                          x-data="{
+                              bulanOpen: false,
+                              tahunOpen: false,
+                              selectedBulan: '{{ $bulanPilih }}',
+                              selectedBulanName: '{{ $monthsIndonesian[$bulanPilih] ?? 'Januari' }}',
+                              selectedTahun: '{{ $tahunPilih }}',
+                              selectBulan(val, name) {
+                                  this.selectedBulan = val;
+                                  this.selectedBulanName = name;
+                                  this.bulanOpen = false;
+                              },
+                              selectTahun(val) {
+                                  this.selectedTahun = val;
+                                  this.tahunOpen = false;
+                              }
+                          }">
+                        <input type="hidden" name="bulan" :value="selectedBulan">
+                        <input type="hidden" name="tahun" :value="selectedTahun">
+
+                        <!-- Dropdown Kustom: Pilih Bulan -->
+                        <div class="col-span-1 relative sm:w-44" @click.outside="bulanOpen = false">
                             <label class="block text-xs font-bold text-[var(--mm-900)] mb-1">Pilih Bulan:</label>
-                            <select name="bulan" class="w-full px-3 py-2 rounded-xl border border-[#E3DCC8] bg-white text-xs font-semibold text-[var(--mm-900)] focus:outline-none focus:border-[var(--mm-600)] transition">
+                            <button type="button" 
+                                    @click="bulanOpen = !bulanOpen; tahunOpen = false" 
+                                    :class="bulanOpen ? 'border-[var(--keraton-gold)] ring-2 ring-[var(--keraton-gold)]/20 bg-amber-50/50' : 'border-[#E3DCC8] bg-white hover:bg-[var(--batik-cream)]/50'"
+                                    class="w-full px-3 py-2 rounded-xl border text-xs font-semibold text-[var(--mm-900)] flex items-center justify-between gap-1.5 focus:outline-none transition cursor-pointer select-none">
+                                <span x-text="selectedBulanName" class="truncate font-semibold"></span>
+                                <svg class="w-3.5 h-3.5 text-gray-500 transition-transform duration-200 shrink-0" 
+                                     :class="bulanOpen ? 'rotate-180 text-[var(--keraton-gold)]' : ''" 
+                                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </button>
+
+                            <!-- Menu Popup Bulan -->
+                            <div x-show="bulanOpen"
+                                 x-transition:enter="transition ease-out duration-150"
+                                 x-transition:enter-start="opacity-0 translate-y-1 scale-98"
+                                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                 x-transition:leave="transition ease-in duration-100"
+                                 x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                 x-transition:leave-end="opacity-0 translate-y-1 scale-98"
+                                 x-cloak
+                                 class="absolute left-0 mt-1.5 w-52 sm:w-56 bg-white rounded-2xl shadow-xl border border-[#E3DCC8] p-1.5 z-50 ring-1 ring-black/5 max-h-64 overflow-y-auto no-scrollbar">
                                 @foreach ($monthsIndonesian as $num => $name)
-                                    <option value="{{ $num }}" {{ $bulanPilih == $num ? 'selected' : '' }}>
-                                        {{ $name }}
-                                    </option>
+                                    <button type="button"
+                                            @click="selectBulan('{{ $num }}', '{{ $name }}')"
+                                            :class="selectedBulan === '{{ $num }}' ? 'bg-[var(--mm-800)] text-white font-bold' : 'text-gray-700 hover:bg-[var(--batik-cream)] hover:text-[var(--mm-900)] font-medium'"
+                                            class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer text-left">
+                                        <span>{{ $name }}</span>
+                                        <span class="text-[10px] font-mono" :class="selectedBulan === '{{ $num }}' ? 'text-[var(--keraton-gold-soft)] font-bold' : 'text-gray-400'">{{ $num }}</span>
+                                    </button>
                                 @endforeach
-                            </select>
+                            </div>
                         </div>
 
-                        <div class="col-span-1 sm:col-span-4">
+                        <!-- Dropdown Kustom: Pilih Tahun -->
+                        <div class="col-span-1 relative sm:w-28" @click.outside="tahunOpen = false">
                             <label class="block text-xs font-bold text-[var(--mm-900)] mb-1">Pilih Tahun:</label>
-                            <select name="tahun" class="w-full px-3 py-2 rounded-xl border border-[#E3DCC8] bg-white text-xs font-semibold text-[var(--mm-900)] focus:outline-none focus:border-[var(--mm-600)] transition">
+                            <button type="button" 
+                                    @click="tahunOpen = !tahunOpen; bulanOpen = false" 
+                                    :class="tahunOpen ? 'border-[var(--keraton-gold)] ring-2 ring-[var(--keraton-gold)]/20 bg-amber-50/50' : 'border-[#E3DCC8] bg-white hover:bg-[var(--batik-cream)]/50'"
+                                    class="w-full px-3 py-2 rounded-xl border text-xs font-semibold text-[var(--mm-900)] flex items-center justify-between gap-1.5 focus:outline-none transition cursor-pointer select-none">
+                                <span x-text="selectedTahun" class="truncate font-semibold"></span>
+                                <svg class="w-3.5 h-3.5 text-gray-500 transition-transform duration-200 shrink-0" 
+                                     :class="tahunOpen ? 'rotate-180 text-[var(--keraton-gold)]' : ''" 
+                                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </button>
+
+                            <!-- Menu Popup Tahun -->
+                            <div x-show="tahunOpen"
+                                 x-transition:enter="transition ease-out duration-150"
+                                 x-transition:enter-start="opacity-0 translate-y-1 scale-98"
+                                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                 x-transition:leave="transition ease-in duration-100"
+                                 x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                 x-transition:leave-end="opacity-0 translate-y-1 scale-98"
+                                 x-cloak
+                                 class="absolute left-0 mt-1.5 w-32 bg-white rounded-2xl shadow-xl border border-[#E3DCC8] p-1.5 z-50 ring-1 ring-black/5 max-h-56 overflow-y-auto no-scrollbar">
                                 @for ($y = 2024; $y <= 2030; $y++)
-                                    <option value="{{ $y }}" {{ $tahunPilih == $y ? 'selected' : '' }}>
-                                        {{ $y }}
-                                    </option>
+                                    <button type="button"
+                                            @click="selectTahun('{{ $y }}')"
+                                            :class="selectedTahun === '{{ $y }}' ? 'bg-[var(--mm-800)] text-white font-bold' : 'text-gray-700 hover:bg-[var(--batik-cream)] hover:text-[var(--mm-900)] font-medium'"
+                                            class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition cursor-pointer text-left">
+                                        <span>{{ $y }}</span>
+                                        @if ($y == date('Y'))
+                                            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded" :class="selectedTahun === '{{ $y }}' ? 'bg-amber-400/20 text-[var(--keraton-gold-soft)]' : 'bg-amber-100 text-amber-800'">Kini</span>
+                                        @endif
+                                    </button>
                                 @endfor
-                            </select>
+                            </div>
                         </div>
 
-                        <div class="col-span-2 sm:col-span-3">
-                            <button type="submit" class="w-full px-4 py-2.5 bg-[var(--mm-800)] hover:bg-[var(--mm-900)] text-white text-xs font-bold rounded-xl transition shadow flex items-center justify-center gap-2 cursor-pointer">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
+                        <div class="col-span-2 sm:col-span-1 flex items-center gap-2">
+                            <button type="submit" class="w-full sm:w-auto px-4 py-2 bg-[var(--mm-800)] hover:bg-[var(--mm-900)] text-white text-xs font-bold rounded-xl transition shadow cursor-pointer">
                                 Filter Histori
                             </button>
+                            @if($bulanPilih != date('m') || $tahunPilih != date('Y'))
+                                <a href="{{ route('admin.rekap') }}" title="Kembali ke Bulan Berjalan" class="px-3 py-2 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 text-xs font-bold rounded-xl transition shadow-xs whitespace-nowrap">
+                                    Bulan Ini
+                                </a>
+                            @endif
                         </div>
                     </form>
                 </div>
 
                 <!-- ================= STATE KOSONG (JIKA BELUM ADA SELESAI / DITOLAK) ================= -->
-                <div x-show="recapReports.length === 0" x-cloak class="bg-white p-12 rounded-3xl border border-[#E3DCC8] text-center shadow-sm space-y-3">
-                    <div class="w-16 h-16 mx-auto bg-amber-50 rounded-2xl flex items-center justify-center text-amber-600 mb-2">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <div x-show="recapReports.length === 0" x-cloak class="bg-white p-8 sm:p-14 rounded-3xl border border-[#E3DCC8] text-center shadow-sm space-y-3">
+                    <div class="relative w-20 h-20 mx-auto mb-3">
+                        <div class="w-20 h-20 bg-gradient-to-br from-amber-50 to-orange-50 rounded-3xl flex items-center justify-center text-amber-600 border border-amber-200/80 shadow-lg ring-4 ring-amber-50/60">
+                            <svg class="w-9 h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2V9a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/></svg>
+                        </div>
                     </div>
                     <h4 class="font-display font-bold text-base text-[var(--mm-900)]">Belum Ada Rekap Laporan</h4>
                     <p class="text-xs text-gray-500 max-w-md mx-auto">
@@ -464,11 +590,15 @@
                             <p class="text-xs text-gray-500 mt-0.5">Daftar laporan berstatus akhir pada periode terpilih.</p>
                         </div>
                         
-                        <div class="relative w-full sm:w-80">
-                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                            </span>
-                            <input type="text" x-model="searchQuery" placeholder="Cari ID, Pelapor, atau Teknisi..." class="w-full pl-9 pr-3 py-2 bg-white border border-[#E3DCC8] rounded-xl text-xs focus:outline-none focus:border-[var(--mm-600)] transition">
+                        <div class="relative w-full sm:w-80 flex items-center">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                </svg>
+                            </div>
+                            <input type="text" x-model="searchQuery" 
+                                   placeholder="Cari ID, pelapor, teknisi..." 
+                                   class="w-full pl-9 pr-3 h-8 sm:h-9 bg-white border border-[#E3DCC8] rounded-xl text-xs placeholder:text-xs text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[var(--mm-600)] transition shadow-2xs leading-normal block">
                         </div>
                     </div>
 
@@ -503,12 +633,10 @@
                                 <!-- Baris Pelapor & Info Alamat -->
                                 <div class="flex items-center justify-between gap-2 pl-1.5">
                                     <div class="flex items-center gap-2 min-w-0">
-                                        <template x-if="r.pelapor_avatar">
-                                            <img :src="r.pelapor_avatar" :alt="r.pelapor" class="w-7 h-7 rounded-full object-cover shadow-2xs border border-[#E3DCC8] shrink-0 ring-1 ring-white">
-                                        </template>
-                                        <template x-if="!r.pelapor_avatar">
-                                            <div class="w-7 h-7 rounded-full bg-gradient-to-br from-blue-600 via-indigo-600 to-[#0b335c] text-white font-black flex items-center justify-center text-[9px] shrink-0 shadow-2xs border border-blue-300 ring-1 ring-white" x-text="getInitials(r.pelapor)"></div>
-                                        </template>
+                                        <img :src="r.pelapor_avatar || '{{ asset('images/pelapor-avatar.svg') }}'" 
+                                             :alt="r.pelapor" 
+                                             class="w-7 h-7 rounded-full object-cover shadow-2xs border border-[#E3DCC8] shrink-0 ring-1 ring-white"
+                                             onerror="this.src='{{ asset('images/pelapor-avatar.svg') }}'">
                                         <div class="min-w-0">
                                             <p class="font-bold text-[11px] text-[var(--mm-900)] truncate" x-text="r.pelapor"></p>
                                             <p class="text-[9px] text-gray-500 flex items-center gap-0.5 truncate max-w-[140px]" :title="formatAlamat(r)">
@@ -521,7 +649,7 @@
                                     <div class="text-right shrink-0">
                                         <p class="font-bold text-[11px] text-[var(--mm-800)] truncate max-w-[130px]" x-text="r.perangkat"></p>
                                         <span class="inline-flex items-center gap-1 text-[8.5px] font-bold px-1.5 py-0.2 rounded bg-sky-50 text-sky-700 border border-sky-200">
-                                            <span x-text="r.teknisi || 'Fahri'"></span>
+                                            <span x-text="r.teknisi || 'Fahry Rizky Prayogi'"></span>
                                         </span>
                                     </div>
                                 </div>
@@ -598,12 +726,10 @@
                                         <td class="p-3 text-gray-600 font-medium" x-text="formatTanggal(r.tanggal_keluar || r.updated_at || r.tanggal)"></td>
                                         <td class="p-3">
                                             <div class="flex items-center gap-2.5">
-                                                <template x-if="r.pelapor_avatar">
-                                                    <img :src="r.pelapor_avatar" :alt="r.pelapor" class="w-7 h-7 rounded-full object-cover shadow-2xs border border-[#E3DCC8] shrink-0 ring-1 ring-white">
-                                                </template>
-                                                <template x-if="!r.pelapor_avatar">
-                                                    <div class="w-7 h-7 rounded-full bg-gradient-to-br from-blue-600 via-indigo-600 to-[#0b335c] text-white font-black flex items-center justify-center text-[9.5px] shrink-0 shadow-2xs border border-blue-300 ring-1 ring-white" x-text="getInitials(r.pelapor)"></div>
-                                                </template>
+                                                <img :src="r.pelapor_avatar || '{{ asset('images/pelapor-avatar.svg') }}'" 
+                                                     :alt="r.pelapor" 
+                                                     class="w-7 h-7 rounded-full object-cover shadow-2xs border border-[#E3DCC8] shrink-0 ring-1 ring-white"
+                                                     onerror="this.src='{{ asset('images/pelapor-avatar.svg') }}'">
                                                 <span class="font-semibold text-[var(--mm-800)] whitespace-nowrap" x-text="r.pelapor || '-'"></span>
                                             </div>
                                         </td>
@@ -621,7 +747,7 @@
                                                 <span class="text-gray-400 italic text-[11px]">Tanpa Bukti</span>
                                             </template>
                                         </td>
-                                        <td class="p-3 font-medium text-gray-800" x-text="r.teknisi || 'Fahri'"></td>
+                                        <td class="p-3 font-medium text-gray-800" x-text="r.teknisi || 'Fahry Rizky Prayogi'"></td>
                                         <td class="p-3 text-center">
                                             <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold inline-block"
                                                 :class="(r.status || '').trim().toLowerCase() === 'selesai' ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-red-100 text-red-800 border border-red-300'"

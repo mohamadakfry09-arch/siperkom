@@ -25,6 +25,7 @@ use App\Http\Controllers\Admin\LogAktivitasController;
 use App\Http\Controllers\Admin\PengumumanController;
 use App\Http\Controllers\Admin\AntreanController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\ProfileAdminController;
 
 // --- CONTROLLER FITUR LAYANAN PUBLIK & NOTIFIKASI ---
 use App\Http\Controllers\PublicController;
@@ -38,9 +39,18 @@ use App\Http\Controllers\NotificationController;
 
 // 1. HALAMAN LANDING PAGE & PUBLIK
 Route::get('/', function () {
-    return redirect()->route('login');
+    if (Auth::check()) {
+        $role = Auth::user()->role;
+        if ($role === 'admin' || $role === 'teknisi') {
+            return redirect()->route('admin.dashboard');
+        }
+        return redirect()->route('pelapor.dashboard');
+    }
+    return view('landing');
 });
-Route::get('/beranda', [PublicController::class, 'index'])->name('beranda');
+Route::get('/beranda', function () {
+    return view('landing');
+})->name('beranda');
 
 // 2. AKSES PUBLIC DOKUMEN / STORAGE SECARA LANGSUNG
 Route::get('/storage/{path}', function ($path) {
@@ -72,7 +82,13 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/notifikasi/{id}/baca', [NotificationController::class, 'markAsRead'])->name('notifikasi.read');
     Route::post('/notifikasi/baca-semua', [NotificationController::class, 'markAllAsRead'])->name('notifikasi.readAll');
 
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', function () {
+        $role = Auth::user()?->role;
+        if ($role === 'admin' || $role === 'teknisi') {
+            return redirect()->route('admin.dashboard');
+        }
+        return redirect()->route('pelapor.dashboard');
+    })->name('dashboard');
 
     // Rute Aman Pratinjau Dokumen PDF
     Route::get('/dokumen-preview/{filename}', function ($filename) {
@@ -175,6 +191,7 @@ Route::middleware(['auth'])->group(function () {
 
         // Rute Manajemen Akun Pelapor
         Route::get('/manajemen', [UserController::class, 'index'])->name('manajemen');
+        Route::get('/manajemen/live-sync', [UserController::class, 'liveSync'])->name('manajemen.live-sync');
         Route::post('/manajemen', [UserController::class, 'store'])->name('manajemen.store');
         Route::delete('/manajemen/{id}', [UserController::class, 'destroy'])->name('manajemen.destroy');
 
@@ -192,6 +209,18 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('pengumuman', PengumumanController::class);
         Route::get('/log-aktivitas', [LogAktivitasController::class, 'index'])->name('log-aktivitas.index');
         Route::get('/log-aktivitas/ekspor', [LogAktivitasController::class, 'export'])->name('log-aktivitas.export');
+
+        // Rute Profil Administrator
+        Route::get('/profil', [ProfileAdminController::class, 'edit'])->name('profil.edit');
+        Route::patch('/profil', [ProfileAdminController::class, 'update'])->name('profil.update');
+        Route::delete('/profil/avatar', [ProfileAdminController::class, 'removeAvatar'])->name('profil.avatar.destroy');
+        Route::delete('/profil', [ProfileAdminController::class, 'destroy'])->name('profil.destroy');
+
+        // Alias Rute Profile Administrator
+        Route::get('/profile', [ProfileAdminController::class, 'edit'])->name('profile.edit');
+        Route::patch('/profile', [ProfileAdminController::class, 'update'])->name('profile.update');
+        Route::delete('/profile/avatar', [ProfileAdminController::class, 'removeAvatar'])->name('profile.avatar.destroy');
+        Route::delete('/profile', [ProfileAdminController::class, 'destroy'])->name('profile.destroy');
     });
 
 });

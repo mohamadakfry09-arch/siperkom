@@ -81,8 +81,34 @@
                 border-bottom-left-radius: 1.5rem !important;
             }
             .desktop-layout {
-                height: 100vh;
-                overflow: hidden;
+                height: 100vh !important;
+                max-height: 100vh !important;
+                height: 100dvh !important;
+                max-height: 100dvh !important;
+                overflow: hidden !important;
+            }
+            .desktop-layout > aside {
+                width: min(19rem, calc(100vw - 1rem)) !important;
+                min-width: min(19rem, calc(100vw - 1rem)) !important;
+                max-width: min(19rem, calc(100vw - 1rem)) !important;
+                flex-shrink: 0 !important;
+                height: 100% !important;
+                max-height: 100% !important;
+                min-height: 0 !important;
+            }
+            .desktop-layout > aside .pelapor-mobile-actions {
+                position: relative !important;
+                bottom: auto !important;
+                left: auto !important;
+                right: auto !important;
+                margin-top: auto !important;
+            }
+            .desktop-layout > main {
+                min-width: 0 !important;
+                flex: 1 1 0% !important;
+                height: 100% !important;
+                max-height: 100% !important;
+                min-height: 0 !important;
             }
         }
 
@@ -126,35 +152,53 @@
         <!-- ============ SIDEBAR ADMIN (IDENTIK DENGAN PELAPOR) ============ -->
         <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
             @touchmove.stop.prevent="if (window.innerWidth < 1024) $event.preventDefault()"
-            class="fixed lg:static top-3.5 left-0 z-[9999] lg:z-auto w-[76vw] max-w-[275px] lg:w-[min(18rem,calc(100vw-1rem))] lg:max-w-none mega-mendung-bg flex flex-col justify-between p-4 sm:p-5 lg:p-6 text-white shrink-0 shadow-2xl transition-transform duration-300 ease-out h-[78vh] max-h-[580px] lg:h-full lg:max-h-none overflow-hidden lg:overflow-y-auto no-scrollbar touch-none lg:touch-auto overscroll-none select-none mobile-rounded-sidebar border-0 outline-none">
+            class="fixed lg:static top-3.5 left-0 z-[9999] lg:z-auto w-[82vw] max-w-[290px] lg:w-[min(19rem,calc(100vw-1rem))] lg:max-w-none mega-mendung-bg flex flex-col justify-between p-3.5 sm:p-4 lg:p-4.5 text-white shrink-0 shadow-2xl transition-transform duration-300 ease-out h-[78vh] max-h-[580px] lg:h-full lg:max-h-none overflow-hidden lg:overflow-y-auto no-scrollbar touch-none lg:touch-auto overscroll-none select-none mobile-rounded-sidebar border-0 outline-none">
 
             <!-- BAGIAN ATAS: USER BADGE, MENU -->
             <div class="space-y-3.5 lg:space-y-4">
 
-                <!-- Admin Profile Card -->
-                <div class="bg-gradient-to-r from-[#0b335c]/85 via-[#0c3966]/80 to-[#072544]/90 border border-blue-300/30 hover:border-[var(--keraton-gold)]/40 p-3 rounded-2xl flex items-center gap-3 shadow-lg backdrop-blur-sm transition-all duration-200">
+                <!-- Admin Profile Card (Modern Glassmorphic Style & Interactive) -->
+                <a href="{{ route('admin.profil.edit') }}" 
+                   class="group relative overflow-hidden bg-gradient-to-r from-white/[0.12] via-[#0c3966]/60 to-white/[0.04] hover:from-white/[0.18] hover:via-[#0c3966]/80 hover:to-white/[0.08] active:scale-[0.98] border border-white/15 hover:border-[var(--keraton-gold)]/70 active:border-[var(--keraton-gold)] p-2.5 sm:p-3 rounded-2xl flex items-center gap-2.5 sm:gap-3 shadow-lg shadow-black/20 backdrop-blur-md transition-all duration-200 cursor-pointer select-none touch-manipulation">
+                    
+                    <!-- Ambient Top Highlight & Soft Glow -->
+                    <div class="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+                    <div class="absolute -right-6 -bottom-6 w-16 h-16 bg-[var(--keraton-gold)]/10 rounded-full blur-xl group-hover:bg-[var(--keraton-gold)]/20 transition-all pointer-events-none"></div>
+
+                    <!-- Avatar with Ring and Live Status Dot -->
                     <div class="relative shrink-0">
                         @if(!empty(Auth::user()->avatar))
-                            <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="w-10 h-10 rounded-xl object-cover ring-2 ring-[var(--keraton-gold)]/80 shadow-md" alt="Foto Profil">
+                            <img src="{{ asset('storage/' . Auth::user()->avatar) }}" 
+                                 class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl object-cover ring-2 ring-[var(--keraton-gold)]/80 ring-offset-2 ring-offset-[#072544] shadow-md group-hover:scale-105 group-hover:ring-[var(--keraton-gold)] transition-all duration-200" 
+                                 alt="Foto Profil">
                         @else
-                            <img src="{{ asset('images/admin-avatar.svg') }}" class="w-10 h-10 rounded-xl object-cover ring-2 ring-[var(--keraton-gold)]/80 shadow-md bg-[#072544]" alt="Icon Administrator">
+                            <img src="{{ asset('images/admin-avatar.svg') }}" 
+                                 class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl object-cover ring-2 ring-[var(--keraton-gold)]/80 ring-offset-2 ring-offset-[#072544] shadow-md bg-[#072544] group-hover:scale-105 transition-all duration-200" 
+                                 alt="Icon Administrator">
                         @endif
                     </div>
+
+                    <!-- User Name & Role Badge -->
                     <div class="min-w-0 flex-1">
-                        <p class="font-bold text-xs lg:text-[13px] text-white leading-snug break-words line-clamp-2" title="{{ Auth::user()->name ?? 'Administrator' }}">
+                        <p class="font-bold text-xs sm:text-[13px] text-white leading-tight tracking-tight truncate group-hover:text-[var(--keraton-gold-soft)] transition-colors" 
+                           title="{{ Auth::user()->name ?? 'Administrator' }}">
                             {{ Auth::user()->name ?? 'Administrator' }}
                         </p>
                         <div class="flex items-center gap-1.5 mt-1">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-400/30 text-emerald-200 text-[10px] font-semibold tracking-wide shadow-xs">
-                                <span class="relative flex h-1.5 w-1.5 shrink-0">
-                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                    <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400"></span>
-                                </span>
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/10 border border-white/20 text-white/70 text-[10px] font-semibold tracking-wide">
+                                <svg class="w-2.5 h-2.5 shrink-0 text-[var(--keraton-gold-soft)]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
                                 <span>Admin &amp; Teknisi</span>
                             </span>
                         </div>
                     </div>
-                </div>
+
+                    <!-- Right Chevron / Action Hint -->
+                    <div class="shrink-0 w-6 h-6 rounded-lg bg-white/5 border border-white/10 group-hover:bg-white/15 group-hover:border-[var(--keraton-gold)]/40 flex items-center justify-center text-white/40 group-hover:text-[var(--keraton-gold-soft)] group-hover:translate-x-0.5 transition-all duration-200">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </a>
 
                 <!-- Navigasi Panel Menu Admin -->
                 <nav class="space-y-1 pt-1" aria-label="Menu Admin">
@@ -217,10 +261,10 @@
               :class="sidebarOpen ? 'overflow-hidden pointer-events-none touch-none select-none' : 'overflow-y-auto scrollable-content'">
 
             <!-- Top Header -->
-            <header class="bg-white border-b border-[#E3DCC8] px-3 sm:px-6 py-3 sm:py-4 sticky top-0 z-30 flex items-center justify-between shadow-sm gap-2 sm:gap-3 shrink-0 lg:rounded-t-3xl">
+            <header class="bg-white border-b border-[#E3DCC8] px-3 sm:px-6 py-2.5 sm:py-3.5 sticky top-0 z-30 flex items-center justify-between shadow-2xs gap-2 sm:gap-3 shrink-0 lg:rounded-t-3xl">
                 <div class="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
-                    <button type="button" @click="sidebarOpen = true" aria-label="Buka menu" class="lg:hidden p-2 rounded-xl bg-[var(--batik-cream)] border border-[#E3DCC8] text-[var(--mm-900)] shrink-0 hover:bg-[#F3EBD8] transition">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    <button type="button" @click="sidebarOpen = true" aria-label="Buka menu" class="lg:hidden w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[var(--batik-cream)] border border-[#E3DCC8] text-[var(--mm-900)] shrink-0 hover:bg-[#F3EBD8] active:scale-95 transition flex items-center justify-center shadow-2xs">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                     </button>
                     <div>
                         <h2 class="font-display font-bold text-[11px] leading-tight sm:text-sm text-[var(--mm-900)]">Manajemen Akun Pelapor</h2>
@@ -230,13 +274,17 @@
                 <div class="flex items-center gap-2 sm:gap-3 shrink-0">
                     <!-- Notifikasi Lonceng Admin: Khusus Laporan Masuk Baru dari Pelapor -->
                     <div class="relative" x-data="{ notifOpen: false }">
-                        <button type="button" @click="notifOpen = !notifOpen" class="relative p-2 rounded-xl bg-[var(--batik-cream)] border border-[#E3DCC8] hover:bg-[#F3EBD8] transition cursor-pointer" aria-label="Notifikasi Laporan Masuk">
-                            <svg class="w-4 h-4 text-[var(--mm-800)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button type="button" @click="notifOpen = !notifOpen" 
+                                class="relative w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[var(--batik-cream)] border border-[#E3DCC8] hover:bg-[#F3EBD8] active:scale-95 transition cursor-pointer text-[var(--mm-900)] flex items-center justify-center shadow-2xs shrink-0" 
+                                aria-label="Notifikasi Laporan Masuk" title="Notifikasi Laporan Masuk">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-[var(--mm-800)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                             </svg>
                             
                             <!-- Counter Badge: Jumlah Laporan Masuk Baru Belum Dibaca Admin -->
-                            <span x-show="unreadAdminReports.length > 0" x-cloak class="absolute -top-1 -right-1 bg-[var(--keraton-maroon)] text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center animate-pulse" x-text="unreadAdminReports.length"></span>
+                            <span x-show="unreadAdminReports.length > 0" x-cloak 
+                                  class="absolute -top-1 -right-1 bg-[var(--keraton-maroon)] text-white text-[9px] font-bold min-w-[16px] h-[16px] px-0.5 rounded-full flex items-center justify-center shadow-sm animate-pulse border border-white" 
+                                  x-text="unreadAdminReports.length"></span>
                         </button>
                         
                         <!-- Dropdown Notifikasi Laporan Masuk Admin -->
@@ -297,7 +345,7 @@
                             <div>
                                 <div class="flex items-center gap-2">
                                     <h3 class="text-base sm:text-lg font-extrabold font-display text-[var(--mm-900)] tracking-tight">Daftar Akun Terdaftar</h3>
-                                    <span class="text-[11px] font-extrabold text-[var(--mm-900)] bg-[var(--batik-cream)] border border-[#E3DCC8] px-2.5 py-0.5 rounded-lg shadow-xs">
+                                    <span class="text-[11px] font-extrabold text-[var(--mm-900)] bg-[var(--batik-cream)] border border-[#E3DCC8] px-2.5 py-0.5 rounded-lg shadow-xs" x-text="(searchQuery ? filteredUsers.length + ' dari ' + liveUsers.length : liveUsers.length) + ' Pelapor'">
                                         {{ isset($users) ? $users->count() : 0 }} Pelapor
                                     </span>
                                 </div>
@@ -307,14 +355,14 @@
 
                         <div class="flex items-center gap-2.5 flex-wrap sm:flex-nowrap w-full sm:w-auto">
                             <!-- Live Search Filter -->
-                            <div class="relative flex-1 sm:w-56 md:w-64">
+                            <div class="relative flex-1 sm:w-56 md:w-64 flex items-center">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                                    <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                                 </div>
                                 <input type="text" 
                                        x-model="searchQuery" 
                                        placeholder="Cari nama, email, alamat..." 
-                                       class="w-full pl-8 pr-7 py-2 text-xs rounded-xl border border-[#E3DCC8] bg-[var(--batik-cream)]/30 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[var(--mm-800)]/25 focus:border-[var(--mm-800)] transition placeholder-gray-400 shadow-xs">
+                                       class="w-full pl-9 pr-7 h-8 sm:h-9 text-xs placeholder:text-xs rounded-xl border border-[#E3DCC8] bg-[var(--batik-cream)]/30 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[var(--mm-800)]/25 focus:border-[var(--mm-800)] transition placeholder-gray-400 shadow-2xs leading-normal block">
                                 <button type="button" 
                                         x-show="searchQuery" 
                                         @click="searchQuery = ''" 
@@ -363,76 +411,58 @@
                         </div>
                     @endif
 
-                    @isset($users)
-                        <!-- ================= TAMPILAN MOBILE: KARTU AKUN MODERN ================= -->
-                        <div class="md:hidden space-y-3.5">
-                            @forelse($users as $user)
-                            <div x-show="userMatches('{{ addslashes($user->name) }}', '{{ addslashes($user->email) }}', '{{ addslashes($user->alamat ?? '') }}')"
-                                 x-transition
-                                 class="bg-white p-4.5 rounded-2xl border border-[#E3DCC8] shadow-xs hover:shadow-md transition space-y-3.5" 
-                                 x-data="{ showPassword: false }">
+                        <!-- ================= TAMPILAN MOBILE: KARTU AKUN LIVE (ALPINE) ================= -->
+                        <div class="md:hidden space-y-3.5" x-show="filteredUsers.length > 0">
+                            <!-- Live rows from Alpine -->
+                            <template x-for="u in filteredUsers" :key="'mob-' + u.id">
+                            <div class="bg-white p-4 rounded-2xl border border-[#E3DCC8] shadow-xs hover:shadow-md transition space-y-3"
+                                 x-data="{ showPass: false }">
                                 <div class="flex items-start justify-between gap-3">
                                     <div class="flex items-center gap-3 min-w-0">
-                                        @if(!empty($user->avatar))
-                                            <img src="{{ asset('storage/' . $user->avatar) }}" alt="{{ $user->name }}" class="w-10 h-10 rounded-full object-cover border border-[#E3DCC8] shrink-0 ring-2 ring-white">
-                                        @else
-                                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 via-indigo-600 to-[#0b335c] text-white font-black flex items-center justify-center text-xs shrink-0 shadow-xs ring-2 ring-white">
-                                                {{ strtoupper(substr($user->name ?? 'P', 0, 1)) }}
-                                            </div>
-                                        @endif
+                                        <img :src="u.avatar || '{{ asset('images/pelapor-avatar.svg') }}'" 
+                                             :alt="u.name" 
+                                             class="w-10 h-10 rounded-full object-cover border border-[#E3DCC8] shrink-0 ring-2 ring-white"
+                                             onerror="this.src='{{ asset('images/pelapor-avatar.svg') }}'">
                                         <div class="min-w-0">
-                                            <h4 class="font-bold text-sm text-[var(--mm-900)] truncate">{{ $user->name }}</h4>
-                                            <p class="text-xs text-gray-500 truncate">{{ $user->email }}</p>
+                                            <h4 class="font-bold text-sm text-[var(--mm-900)] truncate" x-text="u.name"></h4>
+                                            <p class="text-xs text-gray-500 truncate" x-text="u.email"></p>
                                         </div>
                                     </div>
                                     <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-200 shrink-0">
                                         <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> PELAPOR
                                     </span>
                                 </div>
-
                                 <div class="text-xs bg-[var(--batik-cream)]/60 p-2.5 rounded-xl border border-[#E3DCC8]/70 flex items-center gap-1.5">
                                     <svg class="w-3.5 h-3.5 text-amber-600 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
-                                    <span class="font-medium text-[var(--mm-900)] truncate">{{ (!empty($user->alamat) && $user->alamat !== '-') ? $user->alamat : 'cirebon' }}</span>
+                                    <span class="font-medium text-[var(--mm-900)] truncate" x-text="(u.alamat && u.alamat !== '-') ? u.alamat : 'cirebon'"></span>
                                 </div>
-
-                                <!-- Password Card -->
                                 <div class="flex items-center justify-between text-xs bg-slate-50 px-3 py-2 rounded-xl border border-slate-200/80">
                                     <span class="text-gray-500 text-[11px] font-semibold">Kata Sandi:</span>
                                     <div class="flex items-center gap-2 font-mono">
-                                        <span x-show="!showPassword" class="tracking-widest text-gray-400 font-bold select-none text-xs">••••••••</span>
-                                        <span x-show="showPassword" x-cloak class="text-[var(--mm-900)] font-bold text-xs select-all">{{ $user->password ?? 'password' }}</span>
-                                        <button @click="showPassword = !showPassword" type="button" class="text-gray-400 hover:text-[var(--mm-600)] p-0.5 cursor-pointer">
-                                            <svg x-show="!showPassword" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                                            <svg x-show="showPassword" x-cloak class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411l0 0L21 21"/></svg>
+                                        <span x-show="!showPass" class="tracking-widest text-gray-400 font-bold select-none text-xs">••••••••</span>
+                                        <span x-show="showPass" x-cloak class="text-[var(--mm-900)] font-bold text-xs select-all" x-text="u.password"></span>
+                                        <button @click="showPass = !showPass" type="button" class="text-gray-400 hover:text-[var(--mm-600)] p-0.5 cursor-pointer">
+                                            <svg x-show="!showPass" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                            <svg x-show="showPass" x-cloak class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411l0 0L21 21"/></svg>
                                         </button>
                                     </div>
                                 </div>
-
-                                <!-- Aksi -->
                                 <div class="flex items-center justify-end gap-2 pt-2 border-t border-gray-100">
-                                    <form action="{{ route('admin.manajemen.destroy', $user->id) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus akun {{ addslashes($user->name) }} secara permanen? Codingan seeder dan data akun ini akan ikut terhapus.')">
+                                    <form :action="'{{ url('admin/manajemen') }}/' + u.id" method="POST" class="inline" @submit.prevent="if(confirm('Hapus akun ' + u.name + '?')) $el.submit()">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="px-3 py-1.5 bg-rose-50 text-rose-700 hover:bg-rose-600 hover:text-white rounded-xl transition font-bold text-xs inline-flex items-center gap-1.5 cursor-pointer active:scale-95 border border-rose-200">
+                                        <button type="submit" class="px-3 py-1.5 bg-rose-50 text-rose-700 hover:bg-rose-600 hover:text-white rounded-xl transition font-bold text-xs inline-flex items-center gap-1.5 cursor-pointer border border-rose-200">
                                             <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                            <span>Hapus Akun</span>
+                                            <span>Hapus</span>
                                         </button>
                                     </form>
                                 </div>
                             </div>
-                            @empty
-                            <div class="p-8 text-center bg-[var(--batik-cream)]/30 rounded-2xl border border-dashed border-[#E3DCC8]">
-                                <div class="w-12 h-12 rounded-2xl bg-[var(--batik-cream)] border border-[#E3DCC8] flex items-center justify-center text-[var(--keraton-gold)] mx-auto mb-3 shadow-xs">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                                </div>
-                                <p class="font-bold text-sm text-[var(--mm-900)]">Belum Ada Akun Pelapor</p>
-                                <p class="text-xs text-gray-500 mt-1">Daftar akun staf pelapor masih kosong. Klik tombol "+ Tambah Akun" untuk mendaftarkan akun baru.</p>
-                            </div>
-                            @endforelse
+                            </template>
                         </div>
 
-                        <!-- ================= TAMPILAN DESKTOP/LAPTOP (TABEL PREMIUM) ================= -->
-                        <div class="hidden md:block rounded-2xl border border-[#E3DCC8] bg-white shadow-xs overflow-x-auto">
+                        <!-- ================= TAMPILAN DESKTOP: TABEL LIVE (ALPINE) ================= -->
+                        <div class="hidden md:block rounded-2xl border border-[#E3DCC8] bg-white shadow-xs overflow-x-auto" x-show="filteredUsers.length > 0">
                             <table class="w-full divide-y divide-[#E3DCC8]/70 text-xs text-left">
                                 <thead class="bg-gradient-to-r from-[var(--batik-cream)] via-[#FDFBF7] to-[var(--batik-cream)] border-b border-[#E3DCC8]">
                                     <tr>
@@ -444,71 +474,53 @@
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-100 bg-white">
-                                    @forelse($users as $user)
-                                    <tr x-show="userMatches('{{ addslashes($user->name) }}', '{{ addslashes($user->email) }}', '{{ addslashes($user->alamat ?? '') }}')"
-                                        x-transition:enter="transition ease-out duration-150"
-                                        x-transition:enter-start="opacity-0"
-                                        x-transition:enter-end="opacity-100"
-                                        class="hover:bg-amber-50/30 transition-colors group">
-                                        
-                                        <!-- 1. Kolom Nama & Avatar -->
+                                    <!-- Live rows from Alpine -->
+                                    <template x-for="u in filteredUsers" :key="'desk-' + u.id">
+                                    <tr class="hover:bg-amber-50/30 transition-colors group">
+                                        <!-- 1. Nama & Avatar -->
                                         <td class="px-5 py-3.5">
                                             <div class="flex items-center gap-3">
-                                                @if(!empty($user->avatar))
-                                                    <img src="{{ asset('storage/' . $user->avatar) }}" alt="{{ $user->name }}" 
-                                                         class="w-10 h-10 rounded-full object-cover shadow-sm border border-[#E3DCC8] shrink-0 ring-2 ring-white">
-                                                @else
-                                                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 via-indigo-600 to-[#0b335c] text-white font-black flex items-center justify-center text-xs shrink-0 shadow-sm border border-blue-300 ring-2 ring-white">
-                                                        {{ strtoupper(substr($user->name ?? 'P', 0, 1)) }}
-                                                    </div>
-                                                @endif
+                                                <img :src="u.avatar || '{{ asset('images/pelapor-avatar.svg') }}'" 
+                                                     :alt="u.name" 
+                                                     class="w-10 h-10 rounded-full object-cover shadow-sm border border-[#E3DCC8] shrink-0 ring-2 ring-white"
+                                                     onerror="this.src='{{ asset('images/pelapor-avatar.svg') }}'">
                                                 <div class="min-w-0">
-                                                    <p class="font-bold text-xs lg:text-sm text-[var(--mm-900)] group-hover:text-[var(--mm-600)] transition-colors">
-                                                        {{ $user->name }}
-                                                    </p>
+                                                    <p class="font-bold text-xs lg:text-sm text-[var(--mm-900)] group-hover:text-[var(--mm-600)] transition-colors" x-text="u.name"></p>
                                                     <p class="text-[11px] text-gray-500 flex items-center gap-1 mt-0.5">
                                                         <svg class="w-3 h-3 text-amber-600/80 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
-                                                        <span>{{ (!empty($user->alamat) && $user->alamat !== '-') ? $user->alamat : 'cirebon' }}</span>
+                                                        <span x-text="(u.alamat && u.alamat !== '-') ? u.alamat : 'cirebon'"></span>
                                                     </p>
                                                 </div>
                                             </div>
                                         </td>
-
-                                        <!-- 2. Kolom Email -->
+                                        <!-- 2. Email -->
                                         <td class="px-4 py-3.5 whitespace-nowrap">
                                             <div class="flex items-center gap-1.5 text-gray-600 text-xs font-medium">
                                                 <svg class="w-3.5 h-3.5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                                                <span>{{ $user->email }}</span>
+                                                <span x-text="u.email"></span>
                                             </div>
                                         </td>
-                                        
-                                        <!-- 3. Kolom Sandi Teks Biasa Interaktif -->
-                                        <td class="px-4 py-3.5 whitespace-nowrap" x-data="{ showPassword: false }">
+                                        <!-- 3. Kata Sandi -->
+                                        <td class="px-4 py-3.5 whitespace-nowrap" x-data="{ showP: false }">
                                             <div class="inline-flex items-center gap-2 bg-slate-50 border border-slate-200/90 hover:border-slate-300 px-3 py-1.5 rounded-xl shadow-xs transition">
-                                                <span x-show="!showPassword" class="tracking-widest font-mono text-gray-400 select-none text-xs">••••••••</span>
-                                                <span x-show="showPassword" x-cloak class="font-mono text-[var(--mm-900)] font-bold text-xs select-all">
-                                                    {{ $user->password ?? 'password' }}
-                                                </span>
-                                                <button type="button" @click="showPassword = !showPassword" 
-                                                        class="text-gray-400 hover:text-[var(--mm-600)] transition p-0.5 cursor-pointer" 
-                                                        :title="showPassword ? 'Sembunyikan sandi' : 'Lihat sandi'">
-                                                    <svg x-show="!showPassword" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                                                    <svg x-show="showPassword" x-cloak class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411l0 0L21 21"/></svg>
+                                                <span x-show="!showP" class="tracking-widest font-mono text-gray-400 select-none text-xs">••••••••</span>
+                                                <span x-show="showP" x-cloak class="font-mono text-[var(--mm-900)] font-bold text-xs select-all" x-text="u.password"></span>
+                                                <button type="button" @click="showP = !showP" class="text-gray-400 hover:text-[var(--mm-600)] transition p-0.5 cursor-pointer">
+                                                    <svg x-show="!showP" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                                    <svg x-show="showP" x-cloak class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411l0 0L21 21"/></svg>
                                                 </button>
                                             </div>
                                         </td>
-
-                                        <!-- 4. Kolom Role -->
+                                        <!-- 4. Role -->
                                         <td class="px-4 py-3.5 whitespace-nowrap">
                                             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10.5px] font-extrabold uppercase tracking-wide bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 border border-blue-200 shadow-xs">
                                                 <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
                                                 PELAPOR
                                             </span>
                                         </td>
-
-                                        <!-- 5. Kolom Aksi -->
+                                        <!-- 5. Aksi -->
                                         <td class="px-5 py-3.5 text-center whitespace-nowrap">
-                                            <form action="{{ route('admin.manajemen.destroy', $user->id) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus akun {{ addslashes($user->name) }} secara permanen? Codingan seeder dan data akun ini akan ikut terhapus.')">
+                                            <form :action="'{{ url('admin/manajemen') }}/' + u.id" method="POST" class="inline" @submit.prevent="if(confirm('Hapus akun ' + u.name + ' secara permanen?')) $el.submit()">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white rounded-xl transition-all duration-150 font-bold text-xs cursor-pointer active:scale-95 border border-rose-200 hover:border-rose-600 shadow-xs hover:shadow group">
@@ -518,25 +530,30 @@
                                             </form>
                                         </td>
                                     </tr>
-                                    @empty
-                                    <tr>
-                                        <td colspan="5" class="px-5 py-12 text-center text-gray-500">
-                                            <div class="max-w-xs mx-auto flex flex-col items-center justify-center text-center">
-                                                <div class="w-12 h-12 rounded-2xl bg-[var(--batik-cream)] border border-[#E3DCC8] flex items-center justify-center text-[var(--keraton-gold)] mb-3 shadow-xs">
-                                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                                                </div>
-                                                <p class="font-bold text-sm text-[var(--mm-900)]">Belum Ada Akun Pelapor</p>
-                                                <p class="text-xs text-gray-500 mt-1">Daftar akun staf pelapor masih kosong. Klik tombol "+ Tambah Akun" untuk mendaftarkan akun baru.</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    @endforelse
+                                    </template>
                                 </tbody>
                             </table>
                         </div>
-                    @else
-                        <p class="text-center text-xs text-gray-400 py-8">Belum ada data akun.</p>
-                    @endisset
+
+                        <!-- ================= STATE KOSONG (JIKA BELUM ADA AKUN PELAPOR / TIDAK DITEMUKAN) ================= -->
+                        <div x-show="filteredUsers.length === 0" x-cloak class="p-8 sm:p-14 text-center space-y-3">
+                            <div class="relative w-20 h-20 mx-auto mb-3">
+                                <div class="w-20 h-20 bg-gradient-to-br from-amber-50 to-orange-50 rounded-3xl flex items-center justify-center text-amber-600 border border-amber-200/80 shadow-lg ring-4 ring-amber-50/60">
+                                    <svg class="w-9 h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                                </div>
+                            </div>
+                            <h4 class="font-display font-bold text-base text-[var(--mm-900)]">
+                                <span x-show="!searchQuery">Belum Ada Akun Pelapor</span>
+                                <span x-show="searchQuery" x-cloak>Akun Pelapor Tidak Ditemukan</span>
+                            </h4>
+                            <p class="text-xs text-gray-500 max-w-md mx-auto leading-relaxed" x-show="!searchQuery">
+                                Data akun pelapor akan otomatis muncul di halaman ini setelah ada akun yang didaftarkan.
+                            </p>
+                            <p class="text-xs text-gray-500 max-w-md mx-auto leading-relaxed" x-show="searchQuery" x-cloak>
+                                Tidak ditemukan akun pelapor dengan kata kunci "<span x-text="searchQuery" class="font-bold text-[var(--mm-900)]"></span>".
+                            </p>
+                        </div>
+
                 </div>
             </div>
         </main>
@@ -639,7 +656,7 @@
     </div>
 
     <!-- ============ TOAST NOTIFIKASI ============ -->
-    <div x-show="toast.show" x-cloak x-transition
+    <div x-show="toast.show && toast.message" x-cloak x-transition
          class="fixed bottom-5 right-5 z-[60] bg-[var(--mm-900)] text-white px-4 py-3 rounded-xl shadow-2xl text-xs font-semibold flex items-center gap-2 border border-white/10">
         <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
         <span x-text="toast.message"></span>
@@ -648,6 +665,7 @@
     <!-- INJEKSI DATA LAPORAN UNTUK NOTIFIKASI -->
     <script>
         window.__notifReports = {!! json_encode(array_values($notifReports ?? [])) !!};
+        window.__initialUsers = {!! json_encode($initialUsers ?? []) !!};
     </script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script>
@@ -659,6 +677,17 @@
                 seenAdminReportIds: JSON.parse(localStorage.getItem('siperkom_admin_seen_reports') || '[]'),
                 toast: { show: false, message: '' },
                 searchQuery: '',
+                liveUsers: window.__initialUsers || [],
+
+                get filteredUsers() {
+                    if (!this.searchQuery) return this.liveUsers;
+                    const q = this.searchQuery.toLowerCase().trim();
+                    return this.liveUsers.filter(u => {
+                        return (u.name && u.name.toLowerCase().includes(q)) ||
+                               (u.email && u.email.toLowerCase().includes(q)) ||
+                               (u.alamat && u.alamat.toLowerCase().includes(q));
+                    });
+                },
 
                 userMatches(name, email, alamat) {
                     if (!this.searchQuery) return true;
@@ -670,6 +699,27 @@
 
                 init() {
                     setInterval(() => this.syncLiveNotifications(), 2500);
+                    setInterval(() => this.syncLiveUsers(), 3000);
+                },
+
+                async syncLiveUsers() {
+                    try {
+                        const resp = await fetch('{{ route("admin.manajemen.live-sync") }}', {
+                            headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+                        });
+                        if (!resp.ok) return;
+                        const data = await resp.json();
+                        if (data.users) {
+                            const oldIds = this.liveUsers.map(u => u.id);
+                            const newUsers = data.users.filter(u => !oldIds.includes(u.id));
+                            if (newUsers.length > 0) {
+                                this.liveUsers = data.users;
+                                this.showToast('🆕 ' + newUsers.length + ' akun baru terdaftar: ' + newUsers.map(u => u.name).join(', '));
+                            } else {
+                                this.liveUsers = data.users;
+                            }
+                        }
+                    } catch(e) {}
                 },
 
                 async syncLiveNotifications() {
@@ -713,9 +763,13 @@
                     }
                 },
 
+                getInitial(name) {
+                    return name ? name.charAt(0).toUpperCase() : 'P';
+                },
+
                 showToast(message) {
                     this.toast = { show: true, message: message };
-                    setTimeout(() => { this.toast.show = false; }, 3500);
+                    setTimeout(() => { this.toast.show = false; }, 4000);
                 }
             }
         }

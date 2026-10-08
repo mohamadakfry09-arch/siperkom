@@ -150,7 +150,7 @@ class AdminController extends Controller
                     'perangkat'        => $item->perangkat ?? '-',
                     'kendala'          => $item->kendala ?? '-',
                     'foto'             => $item->foto ?? null,
-                    'teknisi'          => $item->teknisi ?? 'Fahri',
+                    'teknisi'          => $item->teknisi ?? 'Fahry Rizky Prayogi',
                     'status'           => $item->status ?? $item->Status ?? 'Dalam Perbaikan',
                     'keterangan_rekap' => $item->keterangan_rekap ?? $item->keterangan ?? '-'
                 ];

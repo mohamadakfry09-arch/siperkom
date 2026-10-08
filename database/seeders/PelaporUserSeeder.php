@@ -15,9 +15,22 @@ class PelaporUserSeeder extends Seeder
             ['email' => 'nifary@gmail.com'],
             [
                 'name' => 'nifary',
-                'password' => '1',
+                'password' => 'Nifary16@',
                 'role' => 'pelapor',
-                'alamat' => 'cirebon',
+                'alamat' => 'kuningan',
+                'avatar' => 'avatars/rxgNk4DBf48cPcYgALMOQesLOQtm25IUNlWCk0as.jpg',
+                'must_change_password' => false,
+            ]
+        );
+
+        // Akun Pelapor: Ajis
+        User::updateOrCreate(
+            ['email' => 'ajis@gmail.com'],
+            [
+                'name' => 'Ajis',
+                'password' => 'Ajis1234@',
+                'role' => 'pelapor',
+                'alamat' => 'Cirebon',
                 'avatar' => null,
                 'must_change_password' => false,
             ]

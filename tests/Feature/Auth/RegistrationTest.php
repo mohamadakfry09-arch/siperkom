@@ -21,11 +21,26 @@ class RegistrationTest extends TestCase
         $response = $this->post('/register', [
             'name' => 'Test User',
             'email' => 'test@example.com',
-            'password' => 'password',
-            'password_confirmation' => 'password',
+            'password' => 'Password123!',
+            'password_confirmation' => 'Password123!',
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('pelapor.dashboard', absolute: false));
+        // Registration redirects to pelapor dashboard with auth_init query parameter
+        $response->assertRedirect(route('pelapor.dashboard', ['auth_init' => 1]));
+    }
+
+    public function test_registration_fails_if_password_does_not_meet_requirements(): void
+    {
+        // Gagal jika kurang dari 8 karakter atau tanpa simbol / angka / huruf kapital
+        $response = $this->post('/register', [
+            'name' => 'Weak Password User',
+            'email' => 'weak@example.com',
+            'password' => 'weakpass',
+            'password_confirmation' => 'weakpass',
+        ]);
+
+        $response->assertSessionHasErrors(['password']);
+        $this->assertGuest();
     }
 }

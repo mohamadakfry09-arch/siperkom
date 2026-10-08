@@ -1,6 +1,6 @@
 @php
     $reportsFinal = $reports ?? [];
-    $daftarTeknisiFinal = $daftarTeknisi ?? ['Fahri'];
+    $daftarTeknisiFinal = $daftarTeknisi ?? ['Fahry Rizky Prayogi'];
 @endphp
 <!DOCTYPE html>
 <html lang="id">
@@ -68,6 +68,10 @@
         }
 
         @media (min-width: 1024px) {
+            html, body {
+                height: 100% !important;
+                overflow: hidden !important;
+            }
             .mobile-rounded-sidebar {
                 border-top-right-radius: 1.5rem !important;
                 border-bottom-right-radius: 1.5rem !important;
@@ -75,8 +79,34 @@
                 border-bottom-left-radius: 1.5rem !important;
             }
             .desktop-layout {
-                height: 100vh;
-                overflow: hidden;
+                height: 100vh !important;
+                max-height: 100vh !important;
+                height: 100dvh !important;
+                max-height: 100dvh !important;
+                overflow: hidden !important;
+            }
+            .desktop-layout > aside {
+                width: min(19rem, calc(100vw - 1rem)) !important;
+                min-width: min(19rem, calc(100vw - 1rem)) !important;
+                max-width: min(19rem, calc(100vw - 1rem)) !important;
+                flex-shrink: 0 !important;
+                height: 100% !important;
+                max-height: 100% !important;
+                min-height: 0 !important;
+            }
+            .desktop-layout > aside .pelapor-mobile-actions {
+                position: relative !important;
+                bottom: auto !important;
+                left: auto !important;
+                right: auto !important;
+                margin-top: auto !important;
+            }
+            .desktop-layout > main {
+                min-width: 0 !important;
+                flex: 1 1 0% !important;
+                height: 100% !important;
+                max-height: 100% !important;
+                min-height: 0 !important;
             }
         }
 
@@ -123,8 +153,8 @@
     </style>
 </head>
 <body class="antialiased bg-[var(--batik-cream)] text-[var(--ink)]"
-    x-data="antreanApp()" x-init="init()"
-    :class="{ 'overflow-hidden touch-none overscroll-none': sidebarOpen || modalOpen || detailModalOpen || mediaModalOpen }">
+    x-data="antreanApp()"
+    :class="{ 'overflow-hidden overscroll-none': sidebarOpen || modalOpen || detailModalOpen || mediaModalOpen }">
 
     <div class="desktop-layout flex flex-row relative min-h-screen lg:min-h-0 lg:p-3 lg:gap-3 bg-[var(--batik-cream)]">
 
@@ -141,35 +171,53 @@
         <!-- ============ SIDEBAR ADMIN (IDENTIK DENGAN PELAPOR) ============ -->
         <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
             @touchmove.stop.prevent="if (window.innerWidth < 1024) $event.preventDefault()"
-            class="fixed lg:static top-3.5 left-0 z-[9999] lg:z-auto w-[76vw] max-w-[275px] lg:w-[min(18rem,calc(100vw-1rem))] lg:max-w-none mega-mendung-bg flex flex-col justify-between p-4 sm:p-5 lg:p-6 text-white shrink-0 shadow-2xl transition-transform duration-300 ease-out h-[78vh] max-h-[580px] lg:h-full lg:max-h-none overflow-hidden lg:overflow-y-auto no-scrollbar touch-none lg:touch-auto overscroll-none select-none mobile-rounded-sidebar border-0 outline-none">
+            class="fixed lg:static top-3.5 left-0 z-[9999] lg:z-auto w-[82vw] max-w-[290px] lg:w-[min(19rem,calc(100vw-1rem))] lg:max-w-none mega-mendung-bg flex flex-col justify-between p-3.5 sm:p-4 lg:p-4.5 text-white shrink-0 shadow-2xl transition-transform duration-300 ease-out h-[78vh] max-h-[580px] lg:h-full lg:max-h-none overflow-hidden lg:overflow-y-auto no-scrollbar touch-none lg:touch-auto overscroll-none select-none mobile-rounded-sidebar border-0 outline-none">
 
             <!-- BAGIAN ATAS: USER BADGE, MENU -->
             <div class="space-y-3.5 lg:space-y-4">
 
-                <!-- Admin Profile Card -->
-                <div class="bg-gradient-to-r from-[#0b335c]/85 via-[#0c3966]/80 to-[#072544]/90 border border-blue-300/30 hover:border-[var(--keraton-gold)]/40 p-3 rounded-2xl flex items-center gap-3 shadow-lg backdrop-blur-sm transition-all duration-200">
+                <!-- Admin Profile Card (Modern Glassmorphic Style & Interactive) -->
+                <a href="{{ route('admin.profil.edit') }}" 
+                   class="group relative overflow-hidden bg-gradient-to-r from-white/[0.12] via-[#0c3966]/60 to-white/[0.04] hover:from-white/[0.18] hover:via-[#0c3966]/80 hover:to-white/[0.08] active:scale-[0.98] border border-white/15 hover:border-[var(--keraton-gold)]/70 active:border-[var(--keraton-gold)] p-2.5 sm:p-3 rounded-2xl flex items-center gap-2.5 sm:gap-3 shadow-lg shadow-black/20 backdrop-blur-md transition-all duration-200 cursor-pointer select-none touch-manipulation">
+                    
+                    <!-- Ambient Top Highlight & Soft Glow -->
+                    <div class="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+                    <div class="absolute -right-6 -bottom-6 w-16 h-16 bg-[var(--keraton-gold)]/10 rounded-full blur-xl group-hover:bg-[var(--keraton-gold)]/20 transition-all pointer-events-none"></div>
+
+                    <!-- Avatar with Ring and Live Status Dot -->
                     <div class="relative shrink-0">
                         @if(!empty(Auth::user()->avatar))
-                            <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="w-10 h-10 rounded-xl object-cover ring-2 ring-[var(--keraton-gold)]/80 shadow-md" alt="Foto Profil">
+                            <img src="{{ asset('storage/' . Auth::user()->avatar) }}" 
+                                 class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl object-cover ring-2 ring-[var(--keraton-gold)]/80 ring-offset-2 ring-offset-[#072544] shadow-md group-hover:scale-105 group-hover:ring-[var(--keraton-gold)] transition-all duration-200" 
+                                 alt="Foto Profil">
                         @else
-                            <img src="{{ asset('images/admin-avatar.svg') }}" class="w-10 h-10 rounded-xl object-cover ring-2 ring-[var(--keraton-gold)]/80 shadow-md bg-[#072544]" alt="Icon Administrator">
+                            <img src="{{ asset('images/admin-avatar.svg') }}" 
+                                 class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl object-cover ring-2 ring-[var(--keraton-gold)]/80 ring-offset-2 ring-offset-[#072544] shadow-md bg-[#072544] group-hover:scale-105 transition-all duration-200" 
+                                 alt="Icon Administrator">
                         @endif
                     </div>
+
+                    <!-- User Name & Role Badge -->
                     <div class="min-w-0 flex-1">
-                        <p class="font-bold text-xs lg:text-[13px] text-white leading-snug break-words line-clamp-2" title="{{ Auth::user()->name ?? 'Administrator' }}">
+                        <p class="font-bold text-xs sm:text-[13px] text-white leading-tight tracking-tight truncate group-hover:text-[var(--keraton-gold-soft)] transition-colors" 
+                           title="{{ Auth::user()->name ?? 'Administrator' }}">
                             {{ Auth::user()->name ?? 'Administrator' }}
                         </p>
                         <div class="flex items-center gap-1.5 mt-1">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-400/30 text-emerald-200 text-[10px] font-semibold tracking-wide shadow-xs">
-                                <span class="relative flex h-1.5 w-1.5 shrink-0">
-                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                    <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400"></span>
-                                </span>
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/10 border border-white/20 text-white/70 text-[10px] font-semibold tracking-wide">
+                                <svg class="w-2.5 h-2.5 shrink-0 text-[var(--keraton-gold-soft)]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
                                 <span>Admin &amp; Teknisi</span>
                             </span>
                         </div>
                     </div>
-                </div>
+
+                    <!-- Right Chevron / Action Hint -->
+                    <div class="shrink-0 w-6 h-6 rounded-lg bg-white/5 border border-white/10 group-hover:bg-white/15 group-hover:border-[var(--keraton-gold)]/40 flex items-center justify-center text-white/40 group-hover:text-[var(--keraton-gold-soft)] group-hover:translate-x-0.5 transition-all duration-200">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </a>
 
                 <!-- Navigasi Menu Admin -->
                 <nav class="space-y-1 pt-1" aria-label="Menu Admin">
@@ -232,29 +280,37 @@
               :class="(sidebarOpen || modalOpen || detailModalOpen || mediaModalOpen) ? 'overflow-hidden pointer-events-none touch-none select-none' : 'overflow-y-auto scrollable-content'">
 
             <!-- Top Header -->
-            <header class="bg-white border-b border-[#E3DCC8] px-3 sm:px-6 py-3 sm:py-4 sticky top-0 z-30 flex items-center justify-between shadow-sm gap-2 sm:gap-3 shrink-0 lg:rounded-t-3xl">
+            <header class="bg-white border-b border-[#E3DCC8] px-3 sm:px-6 py-2.5 sm:py-3.5 sticky top-0 z-30 flex items-center justify-between shadow-2xs gap-2 sm:gap-3 shrink-0 lg:rounded-t-3xl">
                 <div class="flex items-center gap-2 sm:gap-3 w-full max-w-xs md:max-w-md">
-                    <button type="button" @click="sidebarOpen = true" aria-label="Buka menu" class="lg:hidden p-2 rounded-xl bg-[var(--batik-cream)] border border-[#E3DCC8] text-[var(--mm-950)] hover:bg-[#F3EBD8] transition">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    <button type="button" @click="sidebarOpen = true" aria-label="Buka menu" class="lg:hidden w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[var(--batik-cream)] border border-[#E3DCC8] text-[var(--mm-900)] shrink-0 hover:bg-[#F3EBD8] active:scale-95 transition flex items-center justify-center shadow-2xs">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                     </button>
-                    <div class="relative w-full">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                        </span>
-                        <input type="text" x-model="searchQuery" @input="currentPage = 1" placeholder="Cari ID, alamat, atau pelapor..." class="w-full pl-10 pr-4 py-2 bg-[var(--batik-cream)]/60 border border-[#E3DCC8] rounded-xl text-xs focus:outline-none focus:border-[var(--mm-600)] transition">
+                    <div class="relative w-full flex items-center">
+                        <div class="absolute inset-y-0 left-0 pl-3 sm:pl-3.5 flex items-center pointer-events-none text-gray-400">
+                            <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                        </div>
+                        <input type="text" x-model="searchQuery" @input="currentPage = 1" 
+                               placeholder="Cari ID, alamat, pelapor..." 
+                               class="w-full pl-9 sm:pl-10 pr-3 sm:pr-4 h-8 sm:h-9 bg-[var(--batik-cream)]/60 border border-[#E3DCC8] rounded-xl text-xs placeholder:text-xs text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[var(--mm-600)] focus:bg-white transition shadow-2xs leading-normal block">
                     </div>
                 </div>
 
                 <div class="flex items-center gap-2 sm:gap-3 shrink-0">
                     <!-- Notifikasi Lonceng Admin: Khusus Laporan Masuk Baru dari Pelapor -->
                     <div class="relative" x-data="{ notifOpen: false }">
-                        <button type="button" @click="notifOpen = !notifOpen" class="relative p-2 rounded-xl bg-[var(--batik-cream)] border border-[#E3DCC8] hover:bg-[#F3EBD8] transition cursor-pointer" aria-label="Notifikasi Laporan Masuk">
-                            <svg class="w-4 h-4 text-[var(--mm-800)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button type="button" @click="notifOpen = !notifOpen" 
+                                class="relative w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[var(--batik-cream)] border border-[#E3DCC8] hover:bg-[#F3EBD8] active:scale-95 transition cursor-pointer text-[var(--mm-900)] flex items-center justify-center shadow-2xs shrink-0" 
+                                aria-label="Notifikasi Laporan Masuk" title="Notifikasi Laporan Masuk">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-[var(--mm-800)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                             </svg>
                             
                             <!-- Counter Badge: Jumlah Laporan Masuk Baru Belum Dibaca Admin -->
-                            <span x-show="unreadAdminReports.length > 0" x-cloak class="absolute -top-1 -right-1 bg-[var(--keraton-maroon)] text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center animate-pulse" x-text="unreadAdminReports.length"></span>
+                            <span x-show="unreadAdminReports.length > 0" x-cloak 
+                                  class="absolute -top-1 -right-1 bg-[var(--keraton-maroon)] text-white text-[9px] font-bold min-w-[16px] h-[16px] px-0.5 rounded-full flex items-center justify-center shadow-sm animate-pulse border border-white" 
+                                  x-text="unreadAdminReports.length"></span>
                         </button>
                         
                         <!-- Dropdown Notifikasi Laporan Masuk Admin -->
@@ -265,7 +321,7 @@
                                     <p class="text-[11px] font-bold text-[var(--mm-900)]">Laporan Masuk (Admin)</p>
                                     <p class="text-[8.5px] text-gray-500">Antrean masuk dari pelapor</p>
                                 </div>
-                                <span x-show="unreadAdminReports.length > 0" class="text-[9px] text-blue-600 font-semibold cursor-pointer hover:underline" @click="markAllAdminNotifsRead()">Tandai dibaca</span>
+                                <span x-show="unreadAdminReports.length > 0" class="text-[9px] text-blue-600 font-semibold cursor-pointer hover:underline" @click="markAllAdminNotifsRead(true)">Tandai dibaca</span>
                             </div>
                             <div class="max-h-72 overflow-y-auto divide-y divide-[#E3DCC8] bg-white">
                                 <template x-for="r in notifReports" :key="'admin-notif-' + (r.db_id || r.id)">
@@ -274,12 +330,10 @@
                                          :class="{ 'bg-amber-50/40': !seenAdminReportIds.includes(String(r.db_id || r.id)) }">
                                         <!-- PP Pelapor Mini -->
                                         <div class="shrink-0 mt-0.5">
-                                            <template x-if="r.pelapor_avatar">
-                                                <img :src="r.pelapor_avatar" class="w-8 h-8 rounded-full object-cover shadow-2xs border border-[#E3DCC8] ring-1 ring-white">
-                                            </template>
-                                            <template x-if="!r.pelapor_avatar">
-                                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 via-indigo-600 to-[#0b335c] text-white font-black flex items-center justify-center text-[10px] shadow-2xs border border-blue-300 ring-1 ring-white" x-text="getInitials(r.pelapor)"></div>
-                                            </template>
+                                            <img :src="r.pelapor_avatar || '{{ asset('images/pelapor-avatar.svg') }}'" 
+                                                 :alt="r.pelapor"
+                                                 class="w-8 h-8 rounded-full object-cover shadow-2xs border border-[#E3DCC8] ring-1 ring-white"
+                                                 onerror="this.src='{{ asset('images/pelapor-avatar.svg') }}'">
                                         </div>
                                         <div class="min-w-0 flex-1">
                                             <div class="flex items-center justify-between gap-1 mb-0.5">
@@ -315,13 +369,15 @@
             <div class="p-3.5 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 flex-1 pb-16">
 
                 <!-- ================= STATE KOSONG ANTREAN (JIKA BELUM ADA LAPORAN) ================= -->
-                <div x-show="reports.length === 0" x-cloak class="bg-white p-6 sm:p-12 rounded-3xl border border-[#E3DCC8] text-center shadow-sm space-y-3">
-                    <div class="w-16 h-16 mx-auto bg-amber-50 rounded-2xl flex items-center justify-center text-amber-600 mb-2">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                <div x-show="reports.length === 0" x-cloak class="bg-white p-8 sm:p-14 rounded-3xl border border-[#E3DCC8] text-center shadow-sm space-y-3">
+                    <div class="relative w-20 h-20 mx-auto mb-3">
+                        <div class="w-20 h-20 bg-gradient-to-br from-amber-50 to-orange-50 rounded-3xl flex items-center justify-center text-amber-600 border border-amber-200/80 shadow-lg ring-4 ring-amber-50/60">
+                            <svg class="w-9 h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                        </div>
                     </div>
                     <h4 class="font-display font-bold text-base text-[var(--mm-900)]">Belum Ada Antrean Laporan</h4>
                     <p class="text-xs text-gray-500 max-w-md mx-auto">
-                        Data antrean perbaikan akan otomatis muncul di halaman ini setelah ada tiket perbaikan yang berstatus <span class="text-amber-700 font-bold">Dalam Perbaikan</span> atau <span class="text-blue-700 font-bold">Menunggu Part</span>.
+                        Data antrean perbaikan akan otomatis muncul di halaman ini setelah ada tiket perbaikan yang berstatus <span class="text-amber-700 font-bold">Dalam Perbaikan</span> atau <span class="text-blue-700 font-bold">Menunggu Part</span>. Laporan yang telah <span class="text-emerald-700 font-bold">Selesai</span> atau <span class="text-rose-700 font-bold">Ditolak</span> otomatis dipindahkan ke halaman Rekap.
                     </p>
                 </div>
 
@@ -547,7 +603,7 @@
 
                             <!-- Status Filter Tabs with Live Report Counts -->
                             <div class="flex items-center gap-1 bg-[var(--batik-cream)] p-1 rounded-xl border border-[#E3DCC8] overflow-x-auto no-scrollbar shadow-2xs max-w-full">
-                                <template x-for="opt in ['Semua', 'Dalam Perbaikan', 'Menunggu Part', 'Selesai', 'Ditolak']" :key="opt">
+                                <template x-for="opt in ['Semua', 'Dalam Perbaikan', 'Menunggu Part']" :key="opt">
                                     <button type="button"
                                             @click="statusFilter = opt; currentPage = 1"
                                             :class="statusFilter === opt ? 'bg-[var(--mm-800)] text-white shadow' : 'text-[var(--mm-800)] hover:bg-white/80'"
@@ -640,12 +696,10 @@
                                 <!-- Baris Pelapor & Info Alamat -->
                                 <div class="flex items-center justify-between gap-2 pl-1.5">
                                     <div class="flex items-center gap-2 min-w-0">
-                                        <template x-if="r.pelapor_avatar">
-                                            <img :src="r.pelapor_avatar" :alt="r.pelapor" class="w-7 h-7 rounded-full object-cover shadow-2xs border border-[#E3DCC8] shrink-0 ring-1 ring-white">
-                                        </template>
-                                        <template x-if="!r.pelapor_avatar">
-                                            <div class="w-7 h-7 rounded-full bg-gradient-to-br from-blue-600 via-indigo-600 to-[#0b335c] text-white font-black flex items-center justify-center text-[9px] shrink-0 shadow-2xs border border-blue-300 ring-1 ring-white" x-text="getInitials(r.pelapor)"></div>
-                                        </template>
+                                        <img :src="r.pelapor_avatar || '{{ asset('images/pelapor-avatar.svg') }}'" 
+                                             :alt="r.pelapor" 
+                                             class="w-7 h-7 rounded-full object-cover shadow-2xs border border-[#E3DCC8] shrink-0 ring-1 ring-white"
+                                             onerror="this.src='{{ asset('images/pelapor-avatar.svg') }}'">
                                         <div class="min-w-0">
                                             <p class="font-bold text-[11px] text-[var(--mm-900)] truncate" x-text="r.pelapor"></p>
                                             <p class="text-[9px] text-gray-500 flex items-center gap-0.5 truncate max-w-[140px]" :title="formatAlamat(r)">
@@ -659,7 +713,7 @@
                                         <p class="font-bold text-[11px] text-[var(--mm-800)] truncate max-w-[130px]" x-text="r.perangkat"></p>
                                         <span class="inline-flex items-center gap-1 text-[8.5px] font-bold px-1.5 py-0.2 rounded bg-sky-50 text-sky-700 border border-sky-200">
                                             <svg class="w-2.5 h-2.5 text-sky-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                                            <span x-text="r.teknisi || 'Fahri'"></span>
+                                            <span x-text="r.teknisi || 'Fahry Rizky Prayogi'"></span>
                                         </span>
                                     </div>
                                 </div>
@@ -715,26 +769,26 @@
                     </div>
 
                     <!-- ================= 2. TAMPILAN DESKTOP: TABEL LENGKAP (hidden lg:block) ================= -->
-                    <div class="hidden lg:block table-responsive rounded-2xl border border-[#E3DCC8] bg-white shadow-xs">
+                    <div class="hidden lg:block overflow-x-auto rounded-2xl border border-[#E3DCC8] bg-white">
                         <table class="w-full text-left border-collapse text-xs whitespace-nowrap">
                             <thead>
-                                <tr class="bg-gradient-to-r from-[var(--batik-cream)] via-[#FDFBF7] to-[var(--batik-cream)] border-b border-[#E3DCC8] text-[var(--mm-900)]">
-                                    <th class="px-4 py-3.5 font-extrabold uppercase tracking-wider text-[11px]">ID &amp; Tanggal</th>
-                                    <th class="px-4 py-3.5 font-extrabold uppercase tracking-wider text-[11px]">Pelapor &amp; Alamat</th>
-                                    <th class="px-4 py-3.5 font-extrabold uppercase tracking-wider text-[11px]">Perangkat &amp; Kendala</th>
-                                    <th class="px-3.5 py-3.5 font-extrabold uppercase tracking-wider text-[11px]">Teknisi</th>
-                                    <th class="px-3.5 py-3.5 text-center font-extrabold uppercase tracking-wider text-[11px]">Prioritas</th>
-                                    <th class="px-3.5 py-3.5 text-center font-extrabold uppercase tracking-wider text-[11px]">Status</th>
-                                    <th class="px-3.5 py-3.5 text-center font-extrabold uppercase tracking-wider text-[11px]">Lampiran</th>
-                                    <th class="px-4 py-3.5 text-center font-extrabold uppercase tracking-wider text-[11px]">Aksi</th>
+                                <tr class="bg-[var(--batik-cream)] text-[var(--mm-900)] font-bold border-b border-[#E3DCC8]">
+                                    <th class="py-3 px-3.5 font-bold uppercase tracking-wider text-[11px]">ID &amp; Tanggal</th>
+                                    <th class="py-3 px-3.5 font-bold uppercase tracking-wider text-[11px]">Pelapor &amp; Alamat</th>
+                                    <th class="py-3 px-3.5 font-bold uppercase tracking-wider text-[11px]">Perangkat &amp; Kendala</th>
+                                    <th class="py-3 px-3 font-bold uppercase tracking-wider text-[11px]">Teknisi</th>
+                                    <th class="py-3 px-3 text-center font-bold uppercase tracking-wider text-[11px]">Prioritas</th>
+                                    <th class="py-3 px-3 text-center font-bold uppercase tracking-wider text-[11px]">Status</th>
+                                    <th class="py-3 px-3 text-center font-bold uppercase tracking-wider text-[11px]">Lampiran</th>
+                                    <th class="py-3 px-3.5 text-center font-bold uppercase tracking-wider text-[11px] whitespace-nowrap">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-[#E3DCC8]/70 bg-white">
                                 <template x-for="r in paginatedReports" :key="r.db_id">
                                     <tr class="hover:bg-amber-50/50 transition-colors group">
                                         <!-- 1. ID & Tanggal Masuk -->
-                                        <td class="px-4 py-3.5">
-                                            <div class="font-mono font-extrabold text-[var(--mm-900)] text-xs group-hover:text-[var(--mm-600)] transition-colors" x-text="r.id"></div>
+                                        <td class="py-3 px-3.5">
+                                            <div class="font-mono font-bold text-[var(--mm-900)] text-xs group-hover:text-[var(--mm-600)] transition-colors" x-text="r.id"></div>
                                             <div class="text-[10px] text-gray-500 font-medium flex items-center gap-1 mt-0.5">
                                                 <svg class="w-3 h-3 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                                                 <span x-text="formatTanggal(r.tanggal_masuk ?? r.tanggal)"></span>
@@ -742,17 +796,15 @@
                                         </td>
 
                                         <!-- 2. Pelapor & Alamat -->
-                                        <td class="px-4 py-3.5">
-                                            <div class="flex items-center gap-2.5">
-                                                <template x-if="r.pelapor_avatar">
-                                                    <img :src="r.pelapor_avatar" :alt="r.pelapor" class="w-9 h-9 rounded-full object-cover shadow-2xs border border-[#E3DCC8] shrink-0 ring-2 ring-white">
-                                                </template>
-                                                <template x-if="!r.pelapor_avatar">
-                                                    <div class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-600 via-indigo-600 to-[#0b335c] text-white font-black flex items-center justify-center text-[10.5px] shrink-0 shadow-2xs border border-blue-300 ring-2 ring-white" x-text="getInitials(r.pelapor)"></div>
-                                                </template>
+                                        <td class="py-3 px-3.5">
+                                            <div class="flex items-center gap-2">
+                                                <img :src="r.pelapor_avatar || '{{ asset('images/pelapor-avatar.svg') }}'" 
+                                                     :alt="r.pelapor" 
+                                                     class="w-8 h-8 rounded-full object-cover shadow-2xs border border-[#E3DCC8] shrink-0 ring-1 ring-white"
+                                                     onerror="this.src='{{ asset('images/pelapor-avatar.svg') }}'">
                                                 <div class="min-w-0">
                                                     <p class="font-bold text-xs text-[var(--mm-900)] truncate group-hover:text-[var(--mm-600)] transition-colors" x-text="r.pelapor"></p>
-                                                    <p class="text-[10px] text-gray-500 flex items-center gap-1 mt-0.5 truncate max-w-[150px]" :title="formatAlamat(r)">
+                                                    <p class="text-[10px] text-gray-500 flex items-center gap-1 mt-0.5 truncate max-w-[130px]" :title="formatAlamat(r)">
                                                         <svg class="w-2.5 h-2.5 text-amber-600 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
                                                         <span x-text="formatAlamat(r)"></span>
                                                     </p>
@@ -761,7 +813,7 @@
                                         </td>
 
                                         <!-- 3. Perangkat & Kendala -->
-                                        <td class="px-4 py-3.5 max-w-[210px]">
+                                        <td class="py-3 px-3.5 max-w-[180px]">
                                             <div class="font-bold text-xs text-[var(--mm-800)] truncate" x-text="r.perangkat"></div>
                                             <div class="text-[10.5px] text-gray-500 truncate mt-0.5" :title="r.kendala">
                                                 <span class="text-gray-400 font-medium">Kendala:</span> <span class="text-gray-700 font-medium" x-text="r.kendala || '-'"></span>
@@ -769,52 +821,51 @@
                                         </td>
 
                                         <!-- 4. Teknisi -->
-                                        <td class="px-3.5 py-3.5">
+                                        <td class="py-3 px-3">
                                             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[10.5px] bg-sky-50 text-sky-800 border border-sky-200 font-bold shadow-2xs">
                                                 <svg class="w-3 h-3 text-sky-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                                                <span x-text="r.teknisi || 'Fahri'"></span>
+                                                <span x-text="r.teknisi || 'Fahry Rizky Prayogi'"></span>
                                             </span>
                                         </td>
 
                                         <!-- 5. Prioritas -->
-                                        <td class="px-3 py-3.5 text-center">
-                                            <span :class="priorityBadgeClass(r.prioritas)" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold shadow-2xs border inline-block" x-text="r.prioritas"></span>
+                                        <td class="py-3 px-3 text-center">
+                                            <span :class="priorityBadgeClass(r.prioritas)" class="px-2 py-0.5 rounded-full text-[10px] font-bold shadow-2xs border inline-block" x-text="r.prioritas"></span>
                                         </td>
 
                                         <!-- 6. Status Pengerjaan -->
-                                        <td class="px-3.5 py-3.5 text-center">
-                                            <span :class="statusBadgeClass(r.status)" class="px-2.5 py-1 rounded-full text-[10.5px] font-extrabold shadow-2xs border inline-flex items-center gap-1.5" x-text="r.status"></span>
+                                        <td class="py-3 px-3 text-center">
+                                            <span :class="statusBadgeClass(r.status)" class="px-2 py-0.5 rounded-full text-[10px] font-extrabold shadow-2xs border inline-flex items-center gap-1" x-text="r.status"></span>
                                         </td>
 
                                         <!-- 7. Lampiran -->
-                                        <td class="px-3 py-3.5 text-center">
-                                            <div class="inline-flex items-center justify-center gap-1.5">
-                                                <button type="button" x-show="r.foto" @click="openMedia(r.foto, 'image')" title="Lihat Foto Kerusakan" class="px-2 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 transition shadow-2xs border border-emerald-200 inline-flex items-center gap-1 text-[10.5px] font-bold cursor-pointer active:scale-95">
-                                                    <svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                        <td class="py-3 px-3 text-center">
+                                            <div class="inline-flex items-center justify-center gap-1">
+                                                <button type="button" x-show="r.foto" @click="openMedia(r.foto, 'image')" title="Lihat Foto Kerusakan" class="px-2 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 transition shadow-2xs border border-emerald-200 inline-flex items-center gap-1 text-[10px] font-bold cursor-pointer active:scale-95">
+                                                    <svg class="w-3 h-3 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                                                     <span>Foto</span>
                                                 </button>
-                                                <button type="button" x-show="r.dokumen" @click="openMedia(r.dokumen, 'pdf')" title="Lihat Dokumen PDF" class="px-2 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 transition shadow-2xs border border-rose-200 inline-flex items-center gap-1 text-[10.5px] font-bold cursor-pointer active:scale-95">
-                                                    <svg class="w-3.5 h-3.5 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                                                <button type="button" x-show="r.dokumen" @click="openMedia(r.dokumen, 'pdf')" title="Lihat Dokumen PDF" class="px-2 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 transition shadow-2xs border border-rose-200 inline-flex items-center gap-1 text-[10px] font-bold cursor-pointer active:scale-95">
+                                                    <svg class="w-3 h-3 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                                                     <span>PDF</span>
                                                 </button>
-                                                <span x-show="!r.foto && !r.dokumen" class="text-gray-400 italic text-[11px]">-</span>
+                                                <span x-show="!r.foto && !r.dokumen" class="text-gray-400 italic text-[10px]">-</span>
                                             </div>
                                         </td>
 
                                         <!-- 8. Aksi -->
-                                        <td class="px-4 py-3.5 text-center">
+                                        <td class="py-3 px-3.5 text-center whitespace-nowrap">
                                             <div class="inline-flex items-center gap-1.5 justify-center">
-                                                <button type="button" @click="openDetail(r)" class="px-2.5 py-1.5 bg-white hover:bg-amber-50/80 text-[var(--mm-900)] border border-[#E3DCC8] hover:border-[var(--keraton-gold)] rounded-xl text-[11px] font-bold transition shadow-2xs inline-flex items-center gap-1 cursor-pointer active:scale-95">
+                                                <button type="button" @click="openDetail(r)" class="px-2.5 py-1 bg-[var(--batik-cream)] hover:bg-[#F3EBD8] text-[var(--mm-800)] border border-[#E3DCC8] rounded-xl text-[10.5px] font-bold transition shadow-2xs inline-flex items-center gap-1 cursor-pointer active:scale-95">
                                                     <svg class="w-3 h-3 text-[var(--keraton-gold)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                                                     <span>Detail</span>
                                                 </button>
-                                                <button type="button" @click="openStatusModal(r)" class="px-2.5 py-1.5 bg-gradient-to-r from-[var(--mm-800)] to-[var(--mm-900)] hover:from-[var(--mm-600)] hover:to-[var(--mm-800)] text-white rounded-xl text-[11px] font-bold transition shadow-xs inline-flex items-center gap-1 cursor-pointer active:scale-95 border border-white/10">
+                                                <button type="button" @click="openStatusModal(r)" class="px-2.5 py-1 bg-gradient-to-r from-[var(--mm-800)] to-[var(--mm-900)] hover:from-[var(--mm-600)] hover:to-[var(--mm-800)] text-white rounded-xl text-[10.5px] font-bold transition shadow-xs inline-flex items-center gap-1 cursor-pointer active:scale-95 border border-white/10">
                                                     <svg class="w-3 h-3 text-[var(--keraton-gold-soft)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                                                     <span>Status</span>
                                                 </button>
-                                                <button type="button" @click="deleteReport(r.db_id, r.id)" class="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white rounded-xl text-[11px] font-bold transition border border-rose-200 hover:border-rose-600 shadow-2xs inline-flex items-center gap-1 cursor-pointer active:scale-95 group">
+                                                <button type="button" @click="deleteReport(r.db_id, r.id)" class="p-1.5 bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white rounded-xl text-[10.5px] font-bold transition border border-rose-200 hover:border-rose-600 shadow-2xs inline-flex items-center cursor-pointer active:scale-95 group" title="Hapus Laporan">
                                                     <svg class="w-3 h-3 text-rose-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                                    <span>Hapus</span>
                                                 </button>
                                             </div>
                                         </td>
@@ -908,7 +959,7 @@
                 <div class="space-y-1">
                     <label class="font-semibold text-gray-700">Teknisi Bertugas:</label>
                     <select x-model="currentReport.teknisi" class="w-full bg-[var(--batik-cream)] border border-[#E3DCC8] rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:border-[var(--mm-600)]">
-                        <option value="Fahri">Fahri</option>
+                        <option value="Fahry Rizky Prayogi">Fahry Rizky Prayogi</option>
                     </select>
                 </div>
 
@@ -927,6 +978,12 @@
                     <input type="date" x-model="currentTanggalKeluar" class="w-full bg-[var(--batik-cream)] border border-[#E3DCC8] rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:border-[var(--mm-600)]">
                 </div>
 
+                <!-- Informasi Pemindahan Tiket ke Rekap -->
+                <div x-show="currentStatus === 'Selesai' || currentStatus === 'Ditolak'" class="p-2.5 rounded-xl bg-amber-50 border border-amber-200/80 text-[11px] text-amber-900 flex items-center gap-2">
+                    <svg class="w-4 h-4 text-amber-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span>Status ini akan <strong>mengeluarkan tiket dari antrean</strong> dan otomatis memindahkannya ke <strong>Rekap Laporan</strong>.</span>
+                </div>
+
                 <div class="space-y-1">
                     <label class="font-semibold text-gray-700">Catatan / Keterangan Progres (Opsional):</label>
                     <textarea x-model="currentCatatan" rows="3" placeholder="Masukkan keterangan pengerjaan atau alasan penolakan..." class="w-full bg-[var(--batik-cream)] border border-[#E3DCC8] rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:border-[var(--mm-600)]"></textarea>
@@ -940,82 +997,91 @@
         </div>
     </div>
 
-    <div x-show="detailModalOpen" x-cloak class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 p-0 sm:p-4">
-        <div class="bg-white rounded-t-[28px] sm:rounded-2xl max-w-lg w-full p-5 sm:p-6 space-y-4 shadow-2xl border border-[#E3DCC8] max-h-[90vh] sm:max-h-[85vh] overflow-y-auto" @click.away="detailModalOpen = false">
-            <div class="w-12 h-1.5 bg-slate-300 rounded-full mx-auto mb-1 sm:hidden"></div>
-            <div class="flex justify-between items-center border-b pb-3">
-                <div>
-                    <h3 class="font-display font-bold text-base text-[var(--mm-900)]" x-text="currentReport?.id"></h3>
-                    <p class="text-[10px] text-gray-500">Detail & riwayat penanganan laporan perangkat</p>
+    <div x-show="detailModalOpen" x-cloak class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 p-0 sm:p-4 backdrop-blur-xs">
+        <div class="fixed inset-0" @click="detailModalOpen = false"></div>
+        <div class="relative z-10 bg-white rounded-t-[28px] rounded-b-none sm:rounded-2xl max-w-lg w-full shadow-2xl border-t border-x sm:border border-[#E3DCC8] h-[82dvh] max-h-[82dvh] sm:h-auto sm:max-h-[85vh] flex flex-col overflow-hidden"
+             @click.stop>
+            <!-- Header Modal (Pinned Top) -->
+            <div class="px-5 sm:px-6 pt-3.5 sm:pt-5 pb-3 border-b border-[#E3DCC8] shrink-0 bg-white">
+                <div class="w-12 h-1.5 bg-slate-300 rounded-full mx-auto mb-2 sm:hidden shrink-0"></div>
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 class="font-display font-bold text-base text-[var(--mm-900)]" x-text="currentReport?.id"></h3>
+                        <p class="text-[10px] text-gray-500">Detail &amp; riwayat penanganan laporan perangkat</p>
+                    </div>
+                    <button @click="detailModalOpen = false" class="text-gray-400 hover:text-gray-600 text-lg leading-none cursor-pointer w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-100 transition shrink-0">✕</button>
                 </div>
-                <button @click="detailModalOpen = false" class="text-gray-400 hover:text-gray-600">✕</button>
             </div>
 
-            <div class="grid grid-cols-2 gap-3 text-xs" x-show="currentReport">
-                <div class="bg-[var(--batik-cream)] rounded-xl p-3">
-                    <p class="text-[10px] text-gray-500 font-semibold">Tanggal Masuk</p>
-                    <p class="font-bold text-[var(--mm-800)]" x-text="formatTanggal(currentReport?.tanggal_masuk ?? currentReport?.tanggal)"></p>
-                </div>
-                <div class="bg-[var(--batik-cream)] rounded-xl p-3">
-                    <p class="text-[10px] text-gray-500 font-semibold">Tanggal Keluar</p>
-                    <p class="font-bold" :class="currentReport?.tanggal_keluar ? 'text-[var(--mm-800)]' : 'text-gray-400 italic'"
-                       x-text="currentReport?.tanggal_keluar ? formatTanggal(currentReport.tanggal_keluar) : 'Belum keluar'"></p>
-                </div>
-                <div class="bg-[var(--batik-cream)] rounded-xl p-3 flex items-center gap-2.5">
-                    <template x-if="currentReport?.pelapor_avatar">
-                        <img :src="currentReport?.pelapor_avatar" class="w-9 h-9 rounded-full object-cover shadow-2xs border border-[#E3DCC8] ring-1 ring-white shrink-0">
-                    </template>
-                    <template x-if="!currentReport?.pelapor_avatar">
-                        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-600 via-indigo-600 to-[#0b335c] text-white font-black flex items-center justify-center text-xs shadow-2xs border border-blue-300 ring-1 ring-white shrink-0" x-text="getInitials(currentReport?.pelapor)"></div>
-                    </template>
-                    <div class="min-w-0">
-                        <p class="text-[10px] text-gray-500 font-semibold">Nama Pelapor</p>
-                        <p class="font-bold text-[var(--ink)] truncate" x-text="currentReport?.pelapor"></p>
+            <!-- Konten Modal (Scrollable Body) -->
+            <div class="flex-1 min-h-0 overflow-y-auto scrollable-content px-5 sm:px-6 py-4 space-y-4 overscroll-contain"
+                 style="touch-action: pan-y; -webkit-overflow-scrolling: touch;">
+                <div class="grid grid-cols-2 gap-3 text-xs" x-show="currentReport">
+                    <div class="bg-[var(--batik-cream)] rounded-xl p-3">
+                        <p class="text-[10px] text-gray-500 font-semibold">Tanggal Masuk</p>
+                        <p class="font-bold text-[var(--mm-800)]" x-text="formatTanggal(currentReport?.tanggal_masuk ?? currentReport?.tanggal)"></p>
+                    </div>
+                    <div class="bg-[var(--batik-cream)] rounded-xl p-3">
+                        <p class="text-[10px] text-gray-500 font-semibold">Tanggal Keluar</p>
+                        <p class="font-bold" :class="currentReport?.tanggal_keluar ? 'text-[var(--mm-800)]' : 'text-gray-400 italic'"
+                           x-text="currentReport?.tanggal_keluar ? formatTanggal(currentReport.tanggal_keluar) : 'Belum keluar'"></p>
+                    </div>
+                    <div class="bg-[var(--batik-cream)] rounded-xl p-3 flex items-center gap-2.5">
+                        <img :src="currentReport?.pelapor_avatar || '{{ asset('images/pelapor-avatar.svg') }}'" 
+                             :alt="currentReport?.pelapor"
+                             class="w-9 h-9 rounded-full object-cover shadow-2xs border border-[#E3DCC8] ring-1 ring-white shrink-0"
+                             onerror="this.src='{{ asset('images/pelapor-avatar.svg') }}'">
+                        <div class="min-w-0">
+                            <p class="text-[10px] text-gray-500 font-semibold">Nama Pelapor</p>
+                            <p class="font-bold text-[var(--ink)] truncate" x-text="currentReport?.pelapor"></p>
+                        </div>
+                    </div>
+                    <div class="bg-[var(--batik-cream)] rounded-xl p-3">
+                        <p class="text-[10px] text-gray-500 font-semibold">Alamat</p>
+                        <p class="font-bold text-[var(--ink)]" x-text="formatAlamat(currentReport)"></p>
+                    </div>
+                    <div class="bg-[var(--batik-cream)] rounded-xl p-3">
+                        <p class="text-[10px] text-gray-500 font-semibold">Perangkat</p>
+                        <p class="font-bold text-[var(--ink)]" x-text="currentReport?.perangkat"></p>
+                    </div>
+                    <div class="bg-[var(--batik-cream)] rounded-xl p-3">
+                        <p class="text-[10px] text-gray-500 font-semibold">Prioritas</p>
+                        <span :class="priorityBadgeClass(currentReport?.prioritas)" class="inline-block mt-0.5 px-2.5 py-1 rounded-lg text-[10px] font-bold" x-text="currentReport?.prioritas"></span>
+                    </div>
+                    <div class="bg-[var(--batik-cream)] rounded-xl p-3">
+                        <p class="text-[10px] text-gray-500 font-semibold">Status Saat Ini</p>
+                        <span :class="statusBadgeClass(currentReport?.status)" class="inline-block mt-0.5 px-2.5 py-1 rounded-lg text-[10px] font-bold" x-text="currentReport?.status"></span>
+                    </div>
+                    <div class="bg-[var(--batik-cream)] rounded-xl p-3 col-span-2">
+                        <p class="text-[10px] text-gray-500 font-semibold">Kendala / Kerusakan</p>
+                        <p class="font-medium text-[var(--ink)]" x-text="currentReport?.kendala"></p>
                     </div>
                 </div>
-                <div class="bg-[var(--batik-cream)] rounded-xl p-3">
-                    <p class="text-[10px] text-gray-500 font-semibold">Alamat</p>
-                    <p class="font-bold text-[var(--ink)]" x-text="formatAlamat(currentReport)"></p>
-                </div>
-                <div class="bg-[var(--batik-cream)] rounded-xl p-3">
-                    <p class="text-[10px] text-gray-500 font-semibold">Perangkat</p>
-                    <p class="font-bold text-[var(--ink)]" x-text="currentReport?.perangkat"></p>
-                </div>
-                <div class="bg-[var(--batik-cream)] rounded-xl p-3">
-                    <p class="text-[10px] text-gray-500 font-semibold">Prioritas</p>
-                    <span :class="priorityBadgeClass(currentReport?.prioritas)" class="inline-block mt-0.5 px-2.5 py-1 rounded-lg text-[10px] font-bold" x-text="currentReport?.prioritas"></span>
-                </div>
-                <div class="bg-[var(--batik-cream)] rounded-xl p-3">
-                    <p class="text-[10px] text-gray-500 font-semibold">Status Saat Ini</p>
-                    <span :class="statusBadgeClass(currentReport?.status)" class="inline-block mt-0.5 px-2.5 py-1 rounded-lg text-[10px] font-bold" x-text="currentReport?.status"></span>
-                </div>
-                <div class="bg-[var(--batik-cream)] rounded-xl p-3 col-span-2">
-                    <p class="text-[10px] text-gray-500 font-semibold">Kendala / Kerusakan</p>
-                    <p class="font-medium text-[var(--ink)]" x-text="currentReport?.kendala"></p>
+
+                <div class="space-y-2 pt-2" x-show="currentReport">
+                    <p class="font-display font-bold text-sm text-[var(--mm-900)]">Riwayat Penanganan (History Log)</p>
+                    <div class="relative pl-4 border-l-2 border-[var(--mm-200)] space-y-4">
+                        <template x-for="(h, i) in (currentReport?.riwayat || [])" :key="i">
+                            <div class="relative">
+                                <span class="absolute -left-[21px] top-0.5 w-3 h-3 rounded-full bg-[var(--keraton-gold)] ring-4 ring-white"></span>
+                                <p class="text-[10px] text-gray-500 font-semibold" x-text="h.tanggal"></p>
+                                <p class="text-xs font-bold text-[var(--mm-800)]" x-text="h.status"></p>
+                                <p class="text-[11px] text-gray-600" x-text="h.catatan"></p>
+                            </div>
+                        </template>
+                    </div>
                 </div>
             </div>
 
-            <div class="space-y-2 pt-2" x-show="currentReport">
-                <p class="font-display font-bold text-sm text-[var(--mm-900)]">Riwayat Penanganan (History Log)</p>
-                <div class="relative pl-4 border-l-2 border-[var(--mm-200)] space-y-4">
-                    <template x-for="(h, i) in (currentReport?.riwayat || [])" :key="i">
-                        <div class="relative">
-                            <span class="absolute -left-[21px] top-0.5 w-3 h-3 rounded-full bg-[var(--keraton-gold)] ring-4 ring-white"></span>
-                            <p class="text-[10px] text-gray-500 font-semibold" x-text="h.tanggal"></p>
-                            <p class="text-xs font-bold text-[var(--mm-800)]" x-text="h.status"></p>
-                            <p class="text-[11px] text-gray-600" x-text="h.catatan"></p>
-                        </div>
-                    </template>
-                </div>
-            </div>
-
-            <div class="flex justify-end gap-2 pt-3 border-t">
-                <button @click="detailModalOpen = false" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-semibold transition">Tutup</button>
+            <!-- Footer Tombol Aksi Modal (Mobile-Friendly Bottom Action Bar) -->
+            <div class="shrink-0 bg-white border-t border-slate-100 px-5 sm:px-6 pt-2.5 pb-2.5 sm:pb-3.5 shadow-[0_-4px_16px_rgba(0,0,0,0.04)]"
+                 style="padding-bottom: max(0.875rem, env(safe-area-inset-bottom, 0.875rem));">
+                <button @click="detailModalOpen = false" class="w-full py-2.5 sm:py-3 px-4 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 rounded-xl text-xs sm:text-sm font-bold transition flex items-center justify-center cursor-pointer shadow-2xs active:scale-95">Tutup</button>
             </div>
         </div>
     </div>
 
-    <div x-show="toast.show" x-cloak x-transition
+    <div x-show="toast.show && toast.message" x-cloak x-transition
          class="fixed bottom-5 right-5 z-[60] bg-[var(--mm-900)] text-white px-4 py-3 rounded-xl shadow-2xl text-xs font-semibold flex items-center gap-2 border border-white/10">
         <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
         <span x-text="toast.message"></span>
@@ -1035,7 +1101,7 @@
                 reports: @json($reportsFinal),
                 notifReports: @json($notifReports ?? []),
                 seenAdminReportIds: JSON.parse(localStorage.getItem('siperkom_admin_seen_reports') || '[]'),
-                daftarTeknisi: ['Fahri'],
+                daftarTeknisi: ['Fahry Rizky Prayogi'],
                 toast: { show: false, message: '' },
                 
                 modalOpen: false,
@@ -1078,18 +1144,11 @@
                         localStorage.setItem('siperkom_admin_seen_reports', JSON.stringify(seen));
                     }
                     
-                    const target = this.reports.find(item => (item.db_id || item.id) == (r.db_id || r.id));
-                    if (target) {
-                        this.openDetail(target);
-                    } else {
-                        this.searchQuery = r.id;
-                    }
+                    const target = this.reports.find(item => (item.db_id || item.id) == (r.db_id || r.id)) || r;
+                    this.openDetail(target);
                 },
 
                 init() {
-                    // Otomatis hilangkan angka notifikasi laporan saat admin membuka antrean tanpa harus klik lonceng
-                    this.markAllAdminNotifsRead(false);
-
                     this.$watch('statusFilter', () => { this.currentPage = 1; });
                     this.$watch('deviceFilter', () => { this.currentPage = 1; });
 
@@ -1127,7 +1186,6 @@
                             }
                             if (data.notifReports) {
                                 this.notifReports = data.notifReports;
-                                this.markAllAdminNotifsRead(false);
                             }
                         }
                     } catch (e) {}
@@ -1275,20 +1333,28 @@
                     .then(res => res.json())
                     .then(data => {
                         if(data.success) {
-                            this.currentReport.status = this.currentStatus;
-                            this.currentReport.tanggal_keluar = tanggalKeluarBaru;
-                            
-                            // Menyimpan catatan ke keterangan_rekap agar langsung sinkron dengan halaman Rekap
-                            this.currentReport.keterangan_rekap = this.currentCatatan || ('Status diperbarui menjadi ' + this.currentStatus);
+                            if (this.currentStatus === 'Selesai' || this.currentStatus === 'Ditolak') {
+                                const repId = this.currentReport.id;
+                                const statusName = this.currentStatus;
+                                // Hapus langsung dari antrean karena telah selesai / ditolak dan masuk ke rekap
+                                this.reports = this.reports.filter(r => r.db_id !== this.currentReport.db_id);
+                                this.showToast('Laporan ' + repId + ' berstatus ' + statusName + ' & dipindahkan ke Rekap!');
+                            } else {
+                                this.currentReport.status = this.currentStatus;
+                                this.currentReport.tanggal_keluar = tanggalKeluarBaru;
+                                
+                                // Menyimpan catatan ke keterangan_rekap agar langsung sinkron dengan halaman Rekap
+                                this.currentReport.keterangan_rekap = this.currentCatatan || ('Status diperbarui menjadi ' + this.currentStatus);
 
-                            if (!this.currentReport.riwayat) this.currentReport.riwayat = [];
-                            this.currentReport.riwayat.push({
-                                tanggal: new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) + ' ' + new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
-                                status: this.currentStatus,
-                                catatan: this.currentCatatan || ('Status diperbarui menjadi ' + this.currentStatus)
-                            });
+                                if (!this.currentReport.riwayat) this.currentReport.riwayat = [];
+                                this.currentReport.riwayat.push({
+                                    tanggal: new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) + ' ' + new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+                                    status: this.currentStatus,
+                                    catatan: this.currentCatatan || ('Status diperbarui menjadi ' + this.currentStatus)
+                                });
 
-                            this.showToast('Status berhasil diperbarui!');
+                                this.showToast('Status berhasil diperbarui!');
+                            }
                             this.modalOpen = false;
                         } else {
                             alert('Gagal memperbarui status: ' + (data.message || 'Kesalahan server'));
